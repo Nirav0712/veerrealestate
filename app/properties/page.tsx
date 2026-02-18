@@ -19,6 +19,7 @@ function PropertiesContent() {
         maxPrice: '',
         bedrooms: searchParams.get('bedrooms') || 'all',
         location: searchParams.get('location') || '',
+        transaction: searchParams.get('transaction') || 'all',
     });
 
     useEffect(() => {
@@ -45,6 +46,7 @@ function PropertiesContent() {
             maxPrice: filters.maxPrice ? parseFloat(filters.maxPrice) : undefined,
             bedrooms: filters.bedrooms !== 'all' ? parseInt(filters.bedrooms) : undefined,
             location: filters.location || undefined,
+            transaction: filters.transaction !== 'all' ? filters.transaction : undefined,
         };
 
         const filtered = filterPropertiesHelper(props, filterParams);
@@ -70,6 +72,7 @@ function PropertiesContent() {
             maxPrice: '',
             bedrooms: 'all',
             location: '',
+            transaction: 'all',
         };
         setFilters(clearedFilters);
         setFilteredProperties(properties);
@@ -134,6 +137,22 @@ function PropertiesContent() {
                                         <option value="Condo">Condo</option>
                                         <option value="Land">Land</option>
                                         <option value="Retail">Retail</option>
+                                    </select>
+                                </div>
+
+                                {/* Transaction */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Transaction</label>
+                                    <select
+                                        name="transaction"
+                                        value={filters.transaction}
+                                        onChange={handleFilterChange}
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                    >
+                                        <option value="all">All</option>
+                                        <option value="new">New Property</option>
+                                        <option value="resale">Resale</option>
+                                        <option value="underconstruction">Under Construction</option>
                                     </select>
                                 </div>
 

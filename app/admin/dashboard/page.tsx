@@ -14,6 +14,7 @@ export default function AdminDashboard() {
     const [deleteId, setDeleteId] = useState<number | null>(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [isUploading, setIsUploading] = useState(false);
     const [formData, setFormData] = useState<Partial<Property>>({
         title: '',
         price: 0,
@@ -139,6 +140,56 @@ export default function AdminDashboard() {
     const closeModal = () => {
         setShowModal(false);
         setEditingProperty(null);
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+
+        const file = e.target.files[0];
+
+        // 5MB Limit Check
+        if (file.size > 5 * 1024 * 1024) {
+            alert('File size exceeds 5MB limit. Please upload a smaller image.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        setIsUploading(true);
+
+        try {
+            // Replace with your actual Hostinger Upload PHP script URL
+            const uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_API_URL || 'http://localhost/upload.php';
+
+            const res = await fetch(uploadUrl, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!res.ok) {
+                // Handle HTTP errors (404, 500, etc.)
+                throw new Error(`Server responded with ${res.status} ${res.statusText}`);
+            }
+
+            const data = await res.json();
+
+            if (data.success) {
+                setFormData(prev => ({ ...prev, image: data.url }));
+            } else {
+                alert('Upload failed: ' + data.message);
+            }
+        } catch (error: any) {
+            console.error('Error uploading image:', error);
+            // Specific handling for "Failed to fetch" which usually means network/CORS/URL issues
+            if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+                alert('Connection Failed: Could not reach the upload server.\n\n1. Check if NEXT_PUBLIC_UPLOAD_API_URL is set correctly in .env\n2. Ensure your Hostinger script is deployed and accessible.\n3. Check CORS settings.');
+            } else {
+                alert('Error uploading image: ' + (error.message || 'Unknown error'));
+            }
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     const handleLogout = async () => {
@@ -485,15 +536,56 @@ export default function AdminDashboard() {
                                 </div>
 
                                 <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Property Image</label>
+
+                                    {/* File Input */}
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                {isUploading ? (
+                                                    <i className="fas fa-spinner fa-spin text-2xl text-primary mb-2"></i>
+                                                ) : (
+                                                    <i className="fas fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
+                                                )}
+                                                <p className="text-sm text-gray-500">
+                                                    {isUploading ? 'Uploading...' : 'Click to upload image'}
+                                                </p>
+                                            </div>
+                                            <input
+                                                type="file"
+                                                className="hidden"
+                                                accept="image/*"
+                                                onChange={handleImageUpload}
+                                                disabled={isUploading}
+                                            />
+                                        </label>
+                                    </div>
+
+                                    {/* Image Preview */}
+                                    {formData.image && (
+                                        <div className="relative w-full h-48 rounded-lg overflow-hidden border border-gray-200 mb-4">
+                                            <Image
+                                                src={formData.image}
+                                                alt="Preview"
+                                                fill
+                                                className="object-cover"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
+                                                className="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-md"
+                                            >
+                                                <i className="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {/* Hidden Input for URL */}
                                     <input
-                                        type="url"
+                                        type="hidden"
                                         name="image"
                                         value={formData.image}
-                                        onChange={handleInputChange}
                                         required
-                                        placeholder="https://example.com/image.jpg"
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                                     />
                                 </div>
 

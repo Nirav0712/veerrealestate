@@ -8,33 +8,6 @@ export default function Header() {
 
     return (
         <>
-            {/* Top Bar */}
-            {/* <div className="bg-secondary text-white/50 py-2.5 text-sm">
-                <div className="container mx-auto px-4">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-                        <div className="flex gap-6">
-                            <a href="mailto:info@veerrealstate.com" className="flex items-center gap-2 hover:text-primary transition-colors">
-                                <i className="fas fa-envelope"></i>
-                                info@veerrealstate.com
-                            </a>
-                            <a href="tel:+919876543210" className="flex items-center gap-2 hover:text-primary transition-colors">
-                                <i className="fas fa-phone"></i>
-                                +91 00000 00000
-                            </a>
-                        </div>
-                        <div className="flex gap-6">
-                            <Link href="/admin" className="flex items-center gap-2 hover:text-primary transition-colors">
-                                <i className="fas fa-user"></i>
-                                Login
-                            </Link>
-                            <Link href="/admin/dashboard" className="flex items-center gap-2 hover:text-primary transition-colors">
-                                <i className="fas fa-tachometer-alt"></i>
-                                Dashboard
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </div> */}
 
             {/* Main Header */}
             <header className="bg-white/30 backdrop-blur-md shadow-sm sticky top-0 z-50 transition-all">
@@ -82,12 +55,12 @@ export default function Header() {
 
                         {/* CTA Button */}
                         <div className="hidden lg:flex items-center gap-4">
-                            {/* <Link
+                            <Link
                                 href="/properties"
                                 className="bg-primary text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-md"
                             >
                                 Search Properties
-                            </Link> */}
+                            </Link>
                             <Link
                                 href="/login"
                                 className="bg-primary text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-md"
