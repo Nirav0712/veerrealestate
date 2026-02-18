@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent, ChangeEvent, JSX } from "react";
+import { useRouter } from "next/navigation";
 
 interface LoginForm {
   email: string;
@@ -8,10 +9,14 @@ interface LoginForm {
 }
 
 export default function Login(): JSX.Element {
+  const router = useRouter();
+
   const [form, setForm] = useState<LoginForm>({
     email: "",
     password: "",
   });
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({
@@ -22,6 +27,7 @@ export default function Login(): JSX.Element {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await fetch("/api/login", {
@@ -32,23 +38,32 @@ export default function Login(): JSX.Element {
 
       const data = await res.json();
 
-      if (data.token) {
+      if (res.ok && data.token) {
+        // Store token
         localStorage.setItem("token", data.token);
-        alert("Login successful");
+
+        // Redirect to Admin Panel
+        router.push("/admin/dashboard");
       } else {
-        alert(data.error);
+        alert(data.error || "Invalid credentials");
       }
-    } catch (error) {
+    } catch (error) { 
       alert("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-                <img src="/veer-logo.png" alt=""  style={{height:'50px', margin:'10px 0', paddingLeft:'75px'}}/>
+        <img
+          src="/veer-logo.png"
+          alt="Logo"
+          style={{ height: "50px", margin: "10px 0", paddingLeft: "70px" }}
+        />
 
-        <h2 style={styles.title}>Welcome Back </h2>
+        <h2 style={styles.title}>Welcome Back</h2>
         <p style={styles.subtitle}>Login to your account</p>
 
         <form onSubmit={handleSubmit}>
@@ -72,15 +87,14 @@ export default function Login(): JSX.Element {
             style={styles.input}
           />
 
-
-          <button type="submit" style={styles.loginButton}>
-            Login
+          <button type="submit" style={styles.loginButton} disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </button>
 
           <button
             type="button"
             style={styles.registerButton}
-            onClick={() => (window.location.href = "/register")}
+            onClick={() => router.push("/register")}
           >
             Create Account
           </button>
