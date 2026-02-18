@@ -89,13 +89,13 @@ export default function Login(): JSX.Element {
             {loading ? "Logging in..." : "Login"}
           </button>
 
-          <button
+          {/* <button
             type="button"
             style={styles.registerButton}
             onClick={() => router.push("/register")}
           >
             Create Account
-          </button>
+          </button> */}
         </form>
       </div>
     </div>

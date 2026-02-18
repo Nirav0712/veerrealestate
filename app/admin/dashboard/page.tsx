@@ -1,9 +1,11 @@
 'use client';
 
+
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { type Property, formatPrice } from '@/lib/properties';
+// import router from "next/router";
 
 export default function AdminDashboard() {
     const [properties, setProperties] = useState<Property[]>([]);
@@ -193,6 +195,22 @@ export default function AdminDashboard() {
                                     Logout
                                 </button>
                             </li>
+                            
+                            <li>
+                                <Link href="/register" className="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-primary hover:text-secondary transition-colors">
+                                    <i className="fas fa-user-plus w-5"></i>
+                                    Create Account
+                                </Link>
+                            </li>
+                            {/* <li>
+                                <button
+                                    type="button"
+                                    onClick={() => router.push("/register")}
+                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-red-500 hover:text-white transition-colors text-left"
+                                >
+                                    Create Account
+                                </button>
+                            </li> */}
                         </ul>
                     </nav>
                 </aside>
