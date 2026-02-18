@@ -19,17 +19,17 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const {
             title, price, location, type, status, bedrooms, bathrooms, area,
-            featured, image, description, yearBuilt, parking
+            featured, image, description, yearBuilt, parking, transaction
         } = body;
 
         const [result] = await pool.query<ResultSetHeader>(
             `INSERT INTO properties (
         title, price, location, type, status, bedrooms, bathrooms, area,
-        featured, image, description, yearBuilt, parking
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        featured, image, description, yearBuilt, parking, transaction
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 title, price, location, type, status, bedrooms, bathrooms, area,
-                featured, image, description, yearBuilt, parking
+                featured, image, description, yearBuilt, parking, transaction
             ]
         );
 

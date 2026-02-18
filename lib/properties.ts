@@ -14,6 +14,7 @@ export interface Property {
     yearBuilt?: number;
     parking?: number;
     amenities?: string[];
+    transaction?: 'new' | 'resale' | 'underconstruction';
 }
 
 export const sampleProperties: Property[] = [
@@ -32,7 +33,8 @@ export const sampleProperties: Property[] = [
         description: 'Stunning beachfront villa with panoramic Arabian Sea views, infinity pool, and modern amenities.',
         yearBuilt: 2020,
         parking: 3,
-        amenities: ['Swimming Pool', 'Arabian Sea View', 'Smart Home', 'Security System', 'Private Beach']
+        amenities: ['Swimming Pool', 'Arabian Sea View', 'Smart Home', 'Security System', 'Private Beach'],
+        transaction: 'resale'
     },
     {
         id: 2,
@@ -49,7 +51,8 @@ export const sampleProperties: Property[] = [
         description: 'Sleek modern apartment near tech parks with city skyline views and premium amenities.',
         yearBuilt: 2021,
         parking: 2,
-        amenities: ['Club House', 'Gym', 'Swimming Pool', 'Power Backup', '24/7 Security']
+        amenities: ['Club House', 'Gym', 'Swimming Pool', 'Power Backup', '24/7 Security'],
+        transaction: 'new'
     },
     {
         id: 3,
@@ -66,7 +69,8 @@ export const sampleProperties: Property[] = [
         description: 'Beautiful family home in gated community with excellent schools nearby.',
         yearBuilt: 2018,
         parking: 2,
-        amenities: ['Gated Community', 'Children Play Area', 'Garden', 'Modular Kitchen']
+        amenities: ['Gated Community', 'Children Play Area', 'Garden', 'Modular Kitchen'],
+        transaction: 'resale'
     },
     {
         id: 4,
@@ -83,7 +87,8 @@ export const sampleProperties: Property[] = [
         description: 'Exclusive penthouse with golf course views, private elevator, and world-class finishes.',
         yearBuilt: 2022,
         parking: 3,
-        amenities: ['Golf Course View', 'Private Elevator', 'Terrace Garden', 'Club Access', 'Wine Cellar']
+        amenities: ['Golf Course View', 'Private Elevator', 'Terrace Garden', 'Club Access', 'Wine Cellar'],
+        transaction: 'new'
     },
     {
         id: 5,
@@ -100,7 +105,8 @@ export const sampleProperties: Property[] = [
         description: 'Serene cottage with valley views, surrounded by nature and trekking trails.',
         yearBuilt: 2017,
         parking: 2,
-        amenities: ['Valley View', 'Mountain Air', 'Fireplace', 'Private Garden', 'Water Supply']
+        amenities: ['Valley View', 'Mountain Air', 'Fireplace', 'Private Garden', 'Water Supply'],
+        transaction: 'resale'
     },
     {
         id: 6,
@@ -117,7 +123,8 @@ export const sampleProperties: Property[] = [
         description: 'Modern loft with contemporary design, high ceilings, and premium amenities.',
         yearBuilt: 2020,
         parking: 1,
-        amenities: ['High Ceilings', 'Gym', 'Cafeteria', 'Pet Friendly', 'Wi-Fi']
+        amenities: ['High Ceilings', 'Gym', 'Cafeteria', 'Pet Friendly', 'Wi-Fi'],
+        transaction: 'resale'
     },
     {
         id: 7,
@@ -134,7 +141,8 @@ export const sampleProperties: Property[] = [
         description: 'Direct beach access, infinity pool, home theater, and wine cellar.',
         yearBuilt: 2021,
         parking: 4,
-        amenities: ['Beach Access', 'Infinity Pool', 'Home Theater', 'Wine Cellar', 'Outdoor Kitchen']
+        amenities: ['Beach Access', 'Infinity Pool', 'Home Theater', 'Wine Cellar', 'Outdoor Kitchen'],
+        transaction: 'new'
     },
     {
         id: 8,
@@ -151,7 +159,8 @@ export const sampleProperties: Property[] = [
         description: 'Breathtaking Himalayan views with modern architecture and eco-friendly design.',
         yearBuilt: 2019,
         parking: 3,
-        amenities: ['Mountain View', 'Solar Panels', 'Rainwater Harvesting', 'Fireplace', 'Large Terrace']
+        amenities: ['Mountain View', 'Solar Panels', 'Rainwater Harvesting', 'Fireplace', 'Large Terrace'],
+        transaction: 'resale'
     },
     {
         id: 9,
@@ -168,7 +177,8 @@ export const sampleProperties: Property[] = [
         description: 'Efficient studio apartment perfect for young professionals near IT parks.',
         yearBuilt: 2020,
         parking: 1,
-        amenities: ['Fully Furnished', 'Wi-Fi', 'Gym', 'Near Metro', 'Power Backup']
+        amenities: ['Fully Furnished', 'Wi-Fi', 'Gym', 'Near Metro', 'Power Backup'],
+        transaction: 'resale'
     },
     {
         id: 10,
@@ -185,7 +195,8 @@ export const sampleProperties: Property[] = [
         description: 'Sustainable row house with solar panels, rainwater harvesting, and beautiful garden.',
         yearBuilt: 2020,
         parking: 2,
-        amenities: ['Solar Panels', 'Rainwater Harvesting', 'Organic Garden', 'Compost Pit', 'Energy Efficient']
+        amenities: ['Solar Panels', 'Rainwater Harvesting', 'Organic Garden', 'Compost Pit', 'Energy Efficient'],
+        transaction: 'resale'
     },
     {
         id: 11,
@@ -200,7 +211,8 @@ export const sampleProperties: Property[] = [
         featured: false,
         image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80',
         description: 'Premium commercial land in high-growth IT corridor, approved for mixed-use development.',
-        amenities: ['Commercial Zone', 'Wide Road Frontage', 'All Utilities', 'Metro Connectivity', 'High FAR']
+        amenities: ['Commercial Zone', 'Wide Road Frontage', 'All Utilities', 'Metro Connectivity', 'High FAR'],
+        transaction: 'new'
     },
     {
         id: 12,
@@ -215,7 +227,8 @@ export const sampleProperties: Property[] = [
         featured: false,
         image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80',
         description: 'HMDA approved residential plot near HITEC City, all utilities available.',
-        amenities: ['HMDA Approved', 'Clear Title', 'Gated Layout', 'Water & Electricity', 'Near IT Hub']
+        amenities: ['HMDA Approved', 'Clear Title', 'Gated Layout', 'Water & Electricity', 'Near IT Hub'],
+        transaction: 'new'
     }
 ];
 
@@ -290,6 +303,7 @@ export const filterProperties = (filters: {
     maxPrice?: number;
     bedrooms?: number;
     location?: string;
+    transaction?: string;
 }): Property[] => {
     return filterPropertiesHelper(getProperties(), filters);
 };
@@ -301,6 +315,7 @@ export const filterPropertiesHelper = (properties: Property[], filters: {
     maxPrice?: number;
     bedrooms?: number;
     location?: string;
+    transaction?: string;
 }): Property[] => {
 
     if (filters.status && filters.status !== 'all') {
@@ -329,6 +344,11 @@ export const filterPropertiesHelper = (properties: Property[], filters: {
             p.location.toLowerCase().includes(searchTerm) ||
             p.title.toLowerCase().includes(searchTerm)
         );
+    }
+
+    if (filters.transaction && filters.transaction !== 'all') {
+        const transTerm = filters.transaction.toLowerCase().replace(/\s+/g, '');
+        properties = properties.filter(p => p.transaction === transTerm || (p.transaction === 'underconstruction' && transTerm === 'underconstruction'));
     }
 
     return properties;
