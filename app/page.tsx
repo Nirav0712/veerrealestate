@@ -131,7 +131,7 @@ export default function HomePage() {
               </div>
 
               {/* Search Form */}
-              <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {/* <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <input
                   type="text"
                   name="location"
@@ -170,7 +170,106 @@ export default function HomePage() {
                   <i className="fas fa-search"></i>
                   Search
                 </button>
-              </form>
+              </form> */}
+              <form
+  onSubmit={handleSearch}
+  className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white/20 backdrop-blur-md p-6 rounded-xl border border-white/30 shadow-lg"
+>
+  {/* Buy / Rent */}
+  {/* <select
+    name="purpose"
+    className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
+  >
+    <option value="">For Buy/Rent</option>
+    <option value="buy">Buy</option>
+    <option value="rent">Rent</option>
+  </select> */}
+
+  {/* Property Type */}
+  <select
+    name="type"
+    className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
+  >
+    <option value="">Property Types</option>
+    <option value="Villa">Villa</option>
+    <option value="Apartment">Apartment</option>
+    <option value="House">House</option>
+    <option value="Condo">Condo</option>
+    <option value="Land">Land</option>
+  </select>
+
+  {/* Location */}
+  <select
+    name="location"
+    className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
+  >
+    <option value="">Location</option>
+    <option value="Ahmedabad">Ahmedabad</option>
+    <option value="Shahibaug">Shahibaug</option>
+    <option value="Bopal">Bopal</option>
+    <option value="Satellite">Satellite</option>
+    <option value="Thaltej">Thaltej</option>
+  </select>
+
+  {/* BHK */}
+  <select
+    name="bhk"
+    className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
+  >
+    <option value="">BHK</option>
+    <option value="1">1 BHK</option>
+    <option value="2">2 BHK</option>
+    <option value="3">3 BHK</option>
+    <option value="4">4 BHK</option>
+    <option value="5">5+ BHK</option>
+  </select>
+
+  {/* Min Budget */}
+  <select
+    name="minBudget"
+    className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
+  >
+    <option value="">Min Budget</option>
+    <option value="1000000">10 Lakh</option>
+    <option value="2000000">20 Lakh</option>
+    <option value="3000000">30 Lakh</option>
+    <option value="5000000">50 Lakh</option>
+    <option value="10000000">1 Crore</option>
+  </select>
+
+  {/* Max Budget */}
+  <select
+    name="maxBudget"
+    className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
+  >
+    <option value="">Max Budget</option>
+    <option value="2000000">20 Lakh</option>
+    <option value="5000000">50 Lakh</option>
+    <option value="10000000">1 Crore</option>
+    <option value="20000000">2 Crore</option>
+    <option value="50000000">5 Crore</option>
+  </select>
+
+  {/* Transaction */}
+  <select
+    name="transaction"
+    className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
+  >
+    <option value="">Transaction</option>
+    <option value="new">New Property</option>
+    <option value="resale">Resale</option>
+    <option value="underconstruction">Under Construction</option>
+  </select>
+
+  {/* Search Button */}
+  <button
+    type="submit"
+    className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-md col-span-1 md:col-span-3"
+  >
+    Search
+  </button>
+</form>
+
             </div>
 
           </div>

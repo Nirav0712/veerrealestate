@@ -77,12 +77,12 @@ export default function Header() {
 
                         {/* CTA Button */}
                         <div className="hidden lg:flex items-center gap-4">
-                            <Link
+                            {/* <Link
                                 href="/properties"
                                 className="bg-primary text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-md"
                             >
                                 Search Properties
-                            </Link>
+                            </Link> */}
                             <Link
                                 href="/login"
                                 className="bg-primary text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-md"
