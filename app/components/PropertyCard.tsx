@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { formatPrice } from '@/lib/properties';
+import { FaHeart } from 'react-icons/fa';
 
 interface Property {
     id: number;
@@ -88,7 +89,11 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                             : 'bg-white text-gray-600 hover:bg-primary hover:text-secondary'
                             }`}
                     >
-                        <i className="fas fa-heart"></i>
+                        {/* <i className="fas fa-heart"></i> */}
+                        <FaHeart
+                            className={`text-lg transition ${isFavorite ? "text-red-500" : "text-gray-400"
+                                }`}
+                        />
                     </button>
                 </div>
 

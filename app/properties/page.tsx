@@ -259,7 +259,7 @@ function PropertiesContent() {
 
 export default function PropertiesPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
             <PropertiesContent />
         </Suspense>
     );

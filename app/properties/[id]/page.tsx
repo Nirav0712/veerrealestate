@@ -7,6 +7,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import PropertyCard from '../../components/PropertyCard';
 import { type Property } from '@/lib/properties';
+import { FaHeart } from "react-icons/fa";   
 
 export default function PropertyDetailsPage() {
     const params = useParams();
@@ -127,7 +128,11 @@ export default function PropertyDetailsPage() {
                                         : 'bg-white text-gray-600 hover:bg-primary hover:text-secondary'
                                         }`}
                                 >
-                                    <i className="fas fa-heart text-lg"></i>
+                                    {/* <i className="fas fa-heart text-lg"></i> */}
+                                    <FaHeart
+                                        className={`text-xl transition ${isFavorite ? "text-red-500" : "text-gray-400"
+                                            }`}
+                                    />
                                 </button>
                             </div>
 
