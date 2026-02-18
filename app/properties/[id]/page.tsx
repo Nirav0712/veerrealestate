@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import PropertyCard from '../../components/PropertyCard';
-import { getPropertyById, getProperties, type Property } from '@/lib/properties';
+import { type Property } from '@/lib/properties';
 
 export default function PropertyDetailsPage() {
     const params = useParams();
@@ -16,26 +16,41 @@ export default function PropertyDetailsPage() {
     const [isFavorite, setIsFavorite] = useState(false);
 
     useEffect(() => {
-        const id = parseInt(params.id as string);
-        const prop = getPropertyById(id);
+        const fetchData = async () => {
+            if (!params.id) return;
+            const id = parseInt(params.id as string);
 
-        if (!prop) {
-            router.push('/properties');
-            return;
-        }
+            try {
+                // Fetch current property
+                const res = await fetch(`/api/properties/${id}`);
+                if (!res.ok) {
+                    router.push('/properties');
+                    return;
+                }
+                const prop = await res.json();
+                setProperty(prop);
 
-        setProperty(prop);
+                // Fetch all properties for "Similar Properties"
+                // Optimization: In a real app, strict filtering should happen on server
+                const resAll = await fetch('/api/properties');
+                if (resAll.ok) {
+                    const allProps: Property[] = await resAll.json();
+                    const similar = allProps
+                        .filter(p => p.id !== id && p.type === prop.type)
+                        .slice(0, 3);
+                    setSimilarProperties(similar);
+                }
 
-        // Get similar properties
-        const allProps = getProperties();
-        const similar = allProps
-            .filter(p => p.id !== id && p.type === prop.type)
-            .slice(0, 3);
-        setSimilarProperties(similar);
+                // Check if favorite
+                const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+                setIsFavorite(favorites.includes(id));
 
-        // Check if favorite
-        const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-        setIsFavorite(favorites.includes(id));
+            } catch (error) {
+                console.error('Error fetching property data:', error);
+            }
+        };
+
+        fetchData();
     }, [params.id, router]);
 
     const toggleFavorite = () => {

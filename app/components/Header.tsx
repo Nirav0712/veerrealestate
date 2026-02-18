@@ -83,6 +83,12 @@ export default function Header() {
                             >
                                 Search Properties
                             </Link>
+                            <Link
+                                href="/login"
+                                className="bg-primary text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-md"
+                            >
+                                Login
+                            </Link>
                         </div>
 
                         {/* Mobile Menu Toggle */}

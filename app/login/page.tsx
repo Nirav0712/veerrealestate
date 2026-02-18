@@ -38,16 +38,14 @@ export default function Login(): JSX.Element {
 
       const data = await res.json();
 
-      if (res.ok && data.token) {
-        // Store token
-        localStorage.setItem("token", data.token);
-
+      if (res.ok) {
         // Redirect to Admin Panel
         router.push("/admin/dashboard");
+        router.refresh(); // Refresh to update middleware state
       } else {
         alert(data.error || "Invalid credentials");
       }
-    } catch (error) { 
+    } catch (error) {
       alert("Something went wrong");
     } finally {
       setLoading(false);

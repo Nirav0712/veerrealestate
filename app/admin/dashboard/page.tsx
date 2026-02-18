@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getProperties, addProperty, updateProperty, deleteProperty, type Property, formatPrice } from '@/lib/properties';
+import { type Property, formatPrice } from '@/lib/properties';
 
 export default function AdminDashboard() {
     const [properties, setProperties] = useState<Property[]>([]);
@@ -11,6 +11,7 @@ export default function AdminDashboard() {
     const [editingProperty, setEditingProperty] = useState<Property | null>(null);
     const [deleteId, setDeleteId] = useState<number | null>(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [formData, setFormData] = useState<Partial<Property>>({
         title: '',
         price: 0,
@@ -28,12 +29,22 @@ export default function AdminDashboard() {
     });
 
     useEffect(() => {
-        loadProperties();
+        fetchProperties();
     }, []);
 
-    const loadProperties = () => {
-        const props = getProperties();
-        setProperties(props);
+    const fetchProperties = async () => {
+        try {
+            setIsLoading(true);
+            const res = await fetch('/api/properties');
+            if (!res.ok) throw new Error('Failed to fetch properties');
+            const data = await res.json();
+            setProperties(data);
+        } catch (error) {
+            console.error('Error fetching properties:', error);
+            alert('Failed to load properties');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -45,17 +56,32 @@ export default function AdminDashboard() {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (editingProperty) {
-            updateProperty(editingProperty.id, formData);
-        } else {
-            addProperty(formData as Omit<Property, 'id'>);
-        }
+        try {
+            if (editingProperty) {
+                const res = await fetch(`/api/properties/${editingProperty.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+                if (!res.ok) throw new Error('Failed to update property');
+            } else {
+                const res = await fetch('/api/properties', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+                if (!res.ok) throw new Error('Failed to create property');
+            }
 
-        loadProperties();
-        closeModal();
+            fetchProperties();
+            closeModal();
+        } catch (error) {
+            console.error('Error saving property:', error);
+            alert('Failed to save property');
+        }
     };
 
     const handleEdit = (property: Property) => {
@@ -69,13 +95,22 @@ export default function AdminDashboard() {
         setShowDeleteModal(true);
     };
 
-    const confirmDelete = () => {
+    const confirmDelete = async () => {
         if (deleteId !== null) {
-            deleteProperty(deleteId);
-            loadProperties();
-            alert('Property deleted successfully');
-            setShowDeleteModal(false);
-            setDeleteId(null);
+            try {
+                const res = await fetch(`/api/properties/${deleteId}`, {
+                    method: 'DELETE',
+                });
+                if (!res.ok) throw new Error('Failed to delete property');
+
+                fetchProperties();
+                alert('Property deleted successfully');
+                setShowDeleteModal(false);
+                setDeleteId(null);
+            } catch (error) {
+                console.error('Error deleting property:', error);
+                alert('Failed to delete property');
+            }
         }
     };
 
@@ -104,12 +139,25 @@ export default function AdminDashboard() {
         setEditingProperty(null);
     };
 
+    const handleLogout = async () => {
+        try {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/login';
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
+
     const stats = [
         { label: 'Total Properties', value: properties.length, icon: 'fa-home', color: 'primary' },
         { label: 'For Sale', value: properties.filter(p => p.status === 'For Sale').length, icon: 'fa-tag', color: 'success' },
         { label: 'For Rent', value: properties.filter(p => p.status === 'For Rent').length, icon: 'fa-key', color: 'info' },
         { label: 'Featured', value: properties.filter(p => p.featured).length, icon: 'fa-star', color: 'warning' },
     ];
+
+    if (isLoading) {
+        return <div className="flex h-screen items-center justify-center">Loading...</div>;
+    }
 
     return (
         <>
@@ -131,16 +179,19 @@ export default function AdminDashboard() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/admin/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-primary hover:text-secondary transition-colors">
-                                    <i className="fas fa-home w-5"></i>
-                                    Properties
-                                </Link>
-                            </li>
-                            <li>
                                 <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-primary hover:text-secondary transition-colors">
                                     <i className="fas fa-globe w-5"></i>
                                     View Website
                                 </Link>
+                            </li>
+                            <li>
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-red-500 hover:text-white transition-colors text-left"
+                                >
+                                    <i className="fas fa-sign-out-alt w-5"></i>
+                                    Logout
+                                </button>
                             </li>
                         </ul>
                     </nav>
@@ -498,3 +549,4 @@ export default function AdminDashboard() {
         </>
     );
 }
+

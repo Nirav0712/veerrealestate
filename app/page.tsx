@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import PropertyCard from './components/PropertyCard';
-import { getProperties, formatPrice, type Property } from '@/lib/properties';
+import { formatPrice, type Property } from '@/lib/properties';
 
 export default function HomePage() {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -30,10 +30,21 @@ export default function HomePage() {
   }, [heroImages.length]);
 
   useEffect(() => {
-    const allProperties = getProperties();
-    setProperties(allProperties);
+    const fetchProperties = async () => {
+      try {
+        const res = await fetch('/api/properties');
+        if (!res.ok) throw new Error('Failed to fetch properties');
+        const data = await res.json();
+        setProperties(data);
+      } catch (error) {
+        console.error('Error fetching properties:', error);
+      }
+    };
+
+    fetchProperties();
   }, []);
 
+  // Filter featured properties from the fetched data
   const featuredProperties = properties.filter(p => p.featured).slice(0, 6);
   const displayedProperties = activeTab === 'all'
     ? featuredProperties

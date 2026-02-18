@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PropertyCard from '../components/PropertyCard';
-import { getProperties, filterProperties, type Property } from '@/lib/properties';
+import { filterPropertiesHelper, type Property } from '@/lib/properties';
 
 function PropertiesContent() {
     const searchParams = useSearchParams();
@@ -22,9 +22,19 @@ function PropertiesContent() {
     });
 
     useEffect(() => {
-        const props = getProperties();
-        setProperties(props);
-        applyFilters(props);
+        const fetchProperties = async () => {
+            try {
+                const res = await fetch('/api/properties');
+                if (!res.ok) throw new Error('Failed to fetch properties');
+                const data = await res.json();
+                setProperties(data);
+                applyFilters(data);
+            } catch (error) {
+                console.error('Error fetching properties:', error);
+            }
+        };
+
+        fetchProperties();
     }, []);
 
     const applyFilters = (props: Property[] = properties) => {
@@ -37,7 +47,7 @@ function PropertiesContent() {
             location: filters.location || undefined,
         };
 
-        const filtered = filterProperties(filterParams);
+        const filtered = filterPropertiesHelper(props, filterParams);
         setFilteredProperties(filtered);
     };
 

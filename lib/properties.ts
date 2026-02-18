@@ -291,7 +291,17 @@ export const filterProperties = (filters: {
     bedrooms?: number;
     location?: string;
 }): Property[] => {
-    let properties = getProperties();
+    return filterPropertiesHelper(getProperties(), filters);
+};
+
+export const filterPropertiesHelper = (properties: Property[], filters: {
+    status?: string;
+    type?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    bedrooms?: number;
+    location?: string;
+}): Property[] => {
 
     if (filters.status && filters.status !== 'all') {
         properties = properties.filter(p => p.status === filters.status);

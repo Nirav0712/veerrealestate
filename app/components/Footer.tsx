@@ -64,11 +64,11 @@ export default function Footer() {
                                     Contact
                                 </Link>
                             </li>
-                            <li>
+                            {/* <li>
                                 <Link href="/admin/dashboard" className="text-white/80 hover:text-primary transition-colors">
                                     Admin Panel
                                 </Link>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
 
