@@ -16,7 +16,7 @@ export default function AboutPage() {
             <section className="relative bg-linear-to-br from-secondary to-secondary-light text-white py-24">
                 <div className="container mx-auto px-4">
                     <div className="max-w-3xl mx-auto text-center">
-                        <h1 className="text-5xl md:text-6xl font-bold mb-6">About VeerRealEstate</h1>
+                        <h1 className="text-5xl md:text-6xl font-bold mb-6">About Veer Real Estate</h1>
                         <p className="text-xl md:text-2xl opacity-95">
                             Your trusted partner in finding the perfect property for over 15 years
                         </p>
@@ -31,7 +31,7 @@ export default function AboutPage() {
                         <div>
                             <h2 className="text-4xl font-bold text-secondary mb-6">Our Story</h2>
                             <p className="text-gray-600 leading-relaxed mb-4">
-                                Founded in 2008, VeerRealEstate has grown from a small local real estate agency to one of the most trusted
+                                Founded in 2008, Veer RealEstate has grown from a small local real estate agency to one of the most trusted
                                 property platforms in the country. Our journey began with a simple mission: to make property buying
                                 and renting accessible, transparent, and stress-free for everyone.
                             </p>
@@ -47,7 +47,7 @@ export default function AboutPage() {
                         <div className="relative h-96 rounded-2xl overflow-hidden shadow-lg">
                             <Image
                                 src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80"
-                                alt="About VeerRealEstate"
+                                alt="About Veer RealEstate"
                                 fill
                                 className="object-cover"
                             />
@@ -177,7 +177,7 @@ export default function AboutPage() {
                 <div className="container mx-auto px-4 text-center">
                     <h2 className="text-4xl font-bold mb-6">Ready to Find Your Dream Property?</h2>
                     <p className="text-xl mb-8 opacity-95 max-w-2xl mx-auto">
-                        Join thousands of satisfied clients who found their perfect home with VeerRealEstate
+                        Join thousands of satisfied clients who found their perfect home with Veer Real Estate
                     </p>
                     <a
                         href="/properties"

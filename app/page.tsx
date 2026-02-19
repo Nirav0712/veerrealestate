@@ -144,11 +144,16 @@ export default function HomePage() {
                   className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
                 >
                   <option value="">Property Types</option>
+                  <option value="Land">Land</option>
+                  <option value="Plot">Plot</option>
                   <option value="Villa">Villa</option>
-                  <option value="Apartment">Apartment</option>
                   <option value="House">House</option>
                   <option value="Condo">Condo</option>
-                  <option value="Land">Land</option>
+                  <option value="Banglow">Banglow</option>
+                  <option value="Apartment">Apartment</option>
+                  <option value="Industrial">Industrial</option>
+                  <option value="Commercial">Commercial Shops</option>
+                  <option value="Commercial">Commercial Office</option>
                 </select>
 
                 {/* Location */}
@@ -307,25 +312,25 @@ export default function HomePage() {
             {/* Right Side - Content */}
             <div>
               <div className="mb-4">
-                <span className="text-primary font-semibold">About VeerRealEstate</span>
+                <span className="text-primary font-semibold">About Veer Real Estate</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-secondary mb-6 leading-tight">
                 Embrace the Elegance<br />Our Exclusive Property
               </h2>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                At VeerRealEstate, we're redefining the way people find, sell, and invest in properties.
+                At Veer Real Estate, we're redefining the way people find, sell, and invest in properties.
                 Our mission is to simplify real estate by providing innovative solutions, expert guidance,
                 and personalized service.
               </p>
 
               {/* Stats */}
               <div className="grid grid-cols-3 gap-6 mb-8">
-                <div>
+                {/* <div>
                   <div className="text-4xl font-bold text-secondary mb-1">10K</div>
                   <div className="text-sm text-gray-600">Homes Sold</div>
-                </div>
+                </div> */}
                 <div>
-                  <div className="text-4xl font-bold text-secondary mb-1">9K</div>
+                  <div className="text-4xl font-bold text-secondary mb-1">5K</div>
                   <div className="text-sm text-gray-600">Happy Client</div>
                 </div>
                 <div>
@@ -348,14 +353,12 @@ export default function HomePage() {
       </section>
 
       {/* Search Section */}
-      <section className="py-12 bg-white">
+      {/* <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl font-bold text-secondary text-center mb-8">Find Your Perfect Property</h2>
 
-            {/* Search Widget */}
             <div className="bg-gray-50 rounded-xl p-6 shadow-lg">
-              {/* Tabs */}
               <div className="flex gap-4 mb-6 border-b-2 border-gray-200">
                 <button
                   onClick={() => setSearchStatus('For Sale')}
@@ -383,7 +386,6 @@ export default function HomePage() {
                 </button>
               </div>
 
-              {/* Search Form */}
               <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <input
                   type="text"
@@ -427,31 +429,8 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* Stats Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-5xl font-bold text-primary mb-2">10K+</div>
-              <div className="text-gray-600">Properties Sold</div>
-            </div>
-            <div>
-              <div className="text-5xl font-bold text-primary mb-2">5K+</div>
-              <div className="text-gray-600">Happy Customers</div>
-            </div>
-            <div>
-              <div className="text-5xl font-bold text-primary mb-2">500+</div>
-              <div className="text-gray-600">Expert Agents</div>
-            </div>
-            <div>
-              <div className="text-5xl font-bold text-primary mb-2">15+</div>
-              <div className="text-gray-600">Years Experience</div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Featured Properties */}
       <section className="py-20">
@@ -465,7 +444,7 @@ export default function HomePage() {
 
           {/* Property Type Tabs */}
           <div className="flex flex-wrap justify-center gap-4 mb-12">
-            {['all', 'Villa', 'Apartment', 'House', 'Condo'].map((type) => (
+            {['all', 'Villa', 'Apartment', 'House', 'Condo', 'Commercial', 'Industrial', 'Plot'].map((type) => (
               <button
                 key={type}
                 onClick={() => setActiveTab(type)}
@@ -504,6 +483,29 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Stats Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-5xl font-bold text-primary mb-2">10K+</div>
+              <div className="text-gray-600">Properties Sold</div>
+            </div>
+            <div>
+              <div className="text-5xl font-bold text-primary mb-2">5K+</div>
+              <div className="text-gray-600">Happy Customers</div>
+            </div>
+            <div>
+              <div className="text-5xl font-bold text-primary mb-2">500+</div>
+              <div className="text-gray-600">Expert Agents</div>
+            </div>
+            <div>
+              <div className="text-5xl font-bold text-primary mb-2">15+</div>
+              <div className="text-gray-600">Years Experience</div>
+            </div>
+          </div>
+        </div>
+      </section>
       {/* Popular Cities */}
       <section className="py-20">
         <div className="container mx-auto px-4">
@@ -565,32 +567,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-secondary mb-4">Why Choose VeerRealEstate?</h2>
-            <p className="text-xl text-gray-600">India's most trusted real estate platform</p>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { title: 'Verified Listings', desc: 'All properties are verified by our expert team', icon: 'fa-check-circle' },
-              { title: 'Best Prices', desc: 'Competitive pricing and exclusive deals', icon: 'fa-tag' },
-              { title: 'Expert Guidance', desc: 'Professional agents to help you', icon: 'fa-user-tie' },
-              { title: 'Legal Support', desc: 'Complete documentation assistance', icon: 'fa-file-contract' }
-            ].map((benefit, index) => (
-              <div key={index} className="text-center">
-                <div className="w-20 h-20 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
-                  <i className={`fas ${benefit.icon} text-4xl text-primary`}></i>
-                </div>
-                <h3 className="text-xl font-semibold text-secondary mb-3">{benefit.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{benefit.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* How It Works */}
       <section className="py-20 bg-gray-50">
@@ -634,6 +611,34 @@ export default function HomePage() {
         </div>
       </section>
 
+
+      {/* Why Choose Us */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-secondary mb-4">Why Choose Veer Real Estate?</h2>
+            <p className="text-xl text-gray-600">India's most trusted real estate platform</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { title: 'Verified Listings', desc: 'All properties are verified by our expert team', icon: 'fa-check-circle' },
+              { title: 'Best Prices', desc: 'Competitive pricing and exclusive deals', icon: 'fa-tag' },
+              { title: 'Expert Guidance', desc: 'Professional agents to help you', icon: 'fa-user-tie' },
+              { title: 'Legal Support', desc: 'Complete documentation assistance', icon: 'fa-file-contract' }
+            ].map((benefit, index) => (
+              <div key={index} className="text-center">
+                <div className="w-20 h-20 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
+                  <i className={`fas ${benefit.icon} text-4xl text-primary`}></i>
+                </div>
+                <h3 className="text-xl font-semibold text-secondary mb-3">{benefit.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{benefit.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials */}
       <section className="py-20">
         <div className="container mx-auto px-4">
@@ -648,7 +653,7 @@ export default function HomePage() {
                 name: 'Rajesh Kumar',
                 role: 'Villa Owner',
                 image: 'https://randomuser.me/api/portraits/men/43.jpg',
-                text: 'VeerRealEstate helped us find our dream villa in Mumbai. The team was professional and understood our requirements perfectly!'
+                text: 'Veer RealEstate helped us find our dream villa in Mumbai. The team was professional and understood our requirements perfectly!'
               },
               {
                 name: 'Priya Sharma',

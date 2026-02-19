@@ -18,7 +18,6 @@ export default function Header() {
                             {/* Veer<span className="text-primary">RealEstate</span> */}
                             <img src="/veer-logo.png" alt="veer-logo" className="w-32" />
                         </Link>
-
                         {/* Desktop Menu */}
                         <ul className="hidden lg:flex items-center gap-8">
                             <li>
@@ -27,19 +26,41 @@ export default function Header() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/about" className="text-secondary hover:text-primary font-medium transition-colors">
+                                    About
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/properties" className="text-secondary hover:text-primary font-medium transition-colors">
                                     Properties
                                 </Link>
                             </li>
-                            <li>
-                                <Link href="/projects" className="text-secondary hover:text-primary font-medium transition-colors">
+                            <li className="relative group">
+                                <Link
+                                    href="/projects"
+                                    className="text-secondary hover:text-primary font-medium transition-colors"
+                                >
                                     Projects
                                 </Link>
-                            </li>
-                            <li>
-                                <Link href="/about" className="text-secondary hover:text-primary font-medium transition-colors">
-                                    About
-                                </Link>
+                                {/* Dropdown */}
+                                <ul className="absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md opacity-0 translate-y-2 invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-300 z-50">
+                                    <li>
+                                        <Link
+                                            href="/projects/east"
+                                            className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-primary"
+                                        >
+                                            East Projects
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            href="/projects/west"
+                                            className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-primary"
+                                        >
+                                            West Projects
+                                        </Link>
+                                    </li>
+                                </ul>
                             </li>
                             <li>
                                 <Link href="/blog" className="text-secondary hover:text-primary font-medium transition-colors">

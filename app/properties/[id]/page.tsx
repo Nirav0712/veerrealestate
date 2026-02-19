@@ -102,7 +102,7 @@ export default function PropertyDetailsPage() {
                         {/* Main Content */}
                         <div className="lg:col-span-2">
                             {/* Image */}
-                            <div className="relative h-96 md:h-[500px] rounded-2xl overflow-hidden mb-8">
+                            <div className="relative h-96 md:h-125 rounded-2xl overflow-hidden mb-8">
                                 <Image
                                     src={property.image}
                                     alt={property.title}
