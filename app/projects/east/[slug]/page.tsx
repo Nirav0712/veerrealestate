@@ -29,7 +29,7 @@ export default function WestProjectDetailsPage() {
 
     // ✅ ONLY EAST PROJECTS
     const foundProject = projects.find(
-      (p) => p.slug === slug && p.zone === "east"
+      (p) => p.slug === slug && p.zone === "East"
     );
 
     if (!foundProject) {
@@ -41,7 +41,7 @@ export default function WestProjectDetailsPage() {
 
     // ✅ Similar East Projects
     const similar = projects
-      .filter(p => p.slug !== slug && p.zone === "east")
+      .filter(p => p.slug !== slug && p.zone === "East")
       .slice(0, 3);
 
     setSimilarProjects(similar);

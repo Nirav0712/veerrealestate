@@ -295,13 +295,13 @@ export default function HomePage() {
                           key={i}
                           src={img}
                           alt={`Customer ${i + 1}`}
-                          width={32}
-                          height={32}
+                          width={30}
+                          height={25}
                           className="rounded-full border-2 border-white"
                         />
                       ))}
                       <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center shrink-0 text-secondary text-xs font-bold border-2 border-white">
-                        2k+
+                        5k+
                       </div>
                     </div>
                   </div>
@@ -330,7 +330,7 @@ export default function HomePage() {
                   <div className="text-sm text-gray-600">Homes Sold</div>
                 </div> */}
                 <div>
-                  <div className="text-4xl font-bold text-secondary mb-1">5K</div>
+                  <div className="text-4xl font-bold text-secondary mb-1">5K+</div>
                   <div className="text-sm text-gray-600">Happy Client</div>
                 </div>
                 <div>

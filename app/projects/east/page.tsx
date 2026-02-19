@@ -19,7 +19,7 @@ export default function EastProjectPage() {
 
   // Only EAST projects
   const eastProjects = projects.filter(
-    (project) => project.zone === "east"
+    (project) => project.zone === "East"
   );
 
   const handleFilterChange = (

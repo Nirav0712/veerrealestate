@@ -9,8 +9,8 @@ export default function Footer() {
                     {/* About Section */}
                     <div>
                         <h4 className="text-xl font-semibold mb-4">About Veer RealEstate</h4>
-                        <p className="text-white/80 mb-4 leading-relaxed">
-                            Your trusted partner in finding the perfect property. We connect buyers, sellers, and renters with their ideal real estate solutions.
+                        <p className="text-white/80 mb-4 leading-relaxed align-justify">
+                            Your trusted partner in finding the perfect property in Ahmedabad. Discover Omkar Enclave, Ranip (West Ahmedabad) – premium 2 & 3 BHK residences thoughtfully designed for modern urban living with excellent connectivity and secure gated amenities.
                         </p>
                         <div className="flex gap-3">
                             <a
@@ -43,10 +43,15 @@ export default function Footer() {
                     {/* Quick Links */}
                     <div>
                         <h4 className="text-xl font-semibold mb-4">Quick Links</h4>
-                        <ul className="space-y-2">
+                        <ul className="space-y-6">
                             <li>
                                 <Link href="/" className="text-white/80 hover:text-primary transition-colors">
                                     Home
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/about" className="text-white/80 hover:text-primary transition-colors">
+                                    About Us
                                 </Link>
                             </li>
                             <li>
@@ -55,8 +60,13 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/about" className="text-white/80 hover:text-primary transition-colors">
-                                    About Us
+                                <Link href="/projects" className="text-white/80 hover:text-primary transition-colors">
+                                    Projects
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/blogs" className="text-white/80 hover:text-primary transition-colors">
+                                    Blogs
                                 </Link>
                             </li>
                             <li>
@@ -75,7 +85,7 @@ export default function Footer() {
                     {/* Property Types */}
                     <div>
                         <h4 className="text-xl font-semibold mb-4">Property Types</h4>
-                        <ul className="space-y-2">
+                        <ul className="space-y-1">
                             <li>
                                 <Link href="/properties?type=Villa" className="text-white/80 hover:text-primary transition-colors">
                                     Villas
@@ -132,12 +142,11 @@ export default function Footer() {
 
                     {/* Contact Info */}
                     <div>
-                        <h4 className="text-xl font-semibold mb-6 text-center pl-10">Contact Info</h4>
+                        <h4 className="text-xl font-semibold mb-6 text-center ">Contact Info</h4>
                         <div className='flex items-start gap-10 text-white/80'>
                             <div>
-                                                <h5 className="text-md font-semibold mb-4 ">East</h5>
-
-                                <ul className="space-y-3">
+                                <h5 className="text-md font-semibold mb-4 pl-3">East</h5>
+                                <ul className="space-y-6">
                                     <li className="flex items-start gap-3 text-white/80">
                                         <i className="fas fa-map-marker-alt text-primary mt-1"></i>
                                         <span>C-238, Sumel 7, Near- Soni ni Chali Cross Road, Odhav, Ahmedabad-382415</span>
@@ -148,7 +157,7 @@ export default function Footer() {
                                             +91 93769 96179
                                         </a>
                                     </li>
-                                    <li className="flex items-center gap-3">
+                                    <li className="flex items-center gap-3 m">
                                         <i className="fas fa-phone text-primary"></i>
                                         <a href="tel:+91 97270 27052" className="text-white/80 hover:text-primary transition-colors">
                                            +91 97270 27052
@@ -163,8 +172,8 @@ export default function Footer() {
                                 </ul>
                             </div>
                             <div >
-                                  <h5 className="text-md font-semibold mb-4 ">West</h5>
-                                <ul className="space-y-3">
+                                  <h5 className="text-md font-semibold mb-4 pl-3">West</h5>
+                                <ul className="space-y-4">
                                     <li className="flex items-start gap-3 text-white/80">
                                         <i className="fas fa-map-marker-alt text-primary mt-1"></i>
                                         <span> 431, Yash Arian complex, Near Swami Vivekanand Circle. Memnagar Ahmedabad 380052</span>
