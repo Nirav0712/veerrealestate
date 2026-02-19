@@ -12,8 +12,8 @@ export function middleware(request: NextRequest) {
         }
     }
 
-    // Redirect Logged-In Users away from Login/Register
-    if (pathname === '/login' || pathname === '/register') {
+    // Redirect Logged-In Users away from Login
+    if (pathname === '/login') {
         if (token) {
             return NextResponse.redirect(new URL('/admin/dashboard', request.url));
         }

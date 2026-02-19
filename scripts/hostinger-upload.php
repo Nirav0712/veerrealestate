@@ -39,10 +39,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
         mkdir($target_dir, 0755, true);
     }
 
-    $file_name = basename($_FILES["file"]["name"]);
+    $original_name = basename($_FILES["file"]["name"]);
     $file_size = $_FILES["file"]["size"];
     $file_tmp = $_FILES["file"]["tmp_name"];
-    $file_type = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+    $file_type = strtolower(pathinfo($original_name, PATHINFO_EXTENSION));
 
     // Allow certain file formats
     $allowed_types = array("jpg", "jpeg", "png", "gif", "webp");
@@ -60,30 +60,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
         exit();
     }
 
+    // SANITIZATION: Remove spaces and special chars from filename
+    // 1. Remove extension
+    $filename_without_ext = pathinfo($original_name, PATHINFO_FILENAME);
+    // 2. Replace spaces with hyphens and remove other special chars
+    $clean_name = preg_replace('/[^a-zA-Z0-9-]/', '-', $filename_without_ext);
+    // 3. Remove multiple hyphens
+    $clean_name = preg_replace('/-+/', '-', $clean_name);
+    // 4. Trim hyphens from ends
+    $clean_name = trim($clean_name, '-');
+
     // Generate a unique name to prevent overwriting
-    $new_file_name = uniqid() . '-' . $file_name;
+    $new_file_name = uniqid() . '-' . $clean_name . '.' . $file_type;
     $target_file = $target_dir . $new_file_name;
 
     if (move_uploaded_file($file_tmp, $target_file)) {
         // Construct the public URL
-        // Assuming the script is at public_html/upload.php and images are in public_html/uploads/
+        // Improved logic to correctly build the URL based on server environment
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-        $domain = $_SERVER['HTTP_HOST'];
-        $path = dirname($_SERVER['PHP_SELF']);
+        $host = $_SERVER['HTTP_HOST'];
 
-        // Handle root path case
-        if ($path == '/' || $path == '\\') {
-            $path = '';
-        }
+        // specific fix for Hostinger or different directory structures
+        $script_dir = dirname($_SERVER['PHP_SELF']);
 
-        $public_url = "$protocol://$domain$path/$target_file";
+        // Ensure strictly no backslashes in URL (Windows servers might introduce them)
+        $script_dir = str_replace('\\', '/', $script_dir);
+
+        // Remove trailing slash if present
+        $script_dir = rtrim($script_dir, '/');
+
+        $public_url = "$protocol://$host$script_dir/$target_file";
 
         $response['success'] = true;
         $response['message'] = "The file has been uploaded.";
         $response['url'] = $public_url;
+        // Debug info - helpful for verifying path issues
+        $response['debug_path'] = realpath($target_file);
     }
     else {
         $response['message'] = "Sorry, there was an error uploading your file.";
+        $response['debug_error'] = error_get_last();
     }
 
 }
@@ -94,3 +110,4 @@ else {
 header('Content-Type: application/json');
 echo json_encode($response);
 ?>
+
