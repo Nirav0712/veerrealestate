@@ -5,12 +5,14 @@ import { useSearchParams } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PropertyCard from '../components/PropertyCard';
+import Loader from '../components/Loader';
 import { filterPropertiesHelper, type Property } from '@/lib/properties';
 
 function PropertiesContent() {
     const searchParams = useSearchParams();
     const [properties, setProperties] = useState<Property[]>([]);
     const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
+    const [loading, setLoading] = useState(true);
 
     const [filters, setFilters] = useState({
         status: searchParams.get('status') || 'all',
@@ -25,6 +27,7 @@ function PropertiesContent() {
     useEffect(() => {
         const fetchProperties = async () => {
             try {
+                setLoading(true);
                 const res = await fetch('/api/properties');
                 if (!res.ok) throw new Error('Failed to fetch properties');
                 const data = await res.json();
@@ -32,6 +35,8 @@ function PropertiesContent() {
                 applyFilters(data);
             } catch (error) {
                 console.error('Error fetching properties:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -229,7 +234,9 @@ function PropertiesContent() {
                             </p>
                         </div>
 
-                        {filteredProperties.length > 0 ? (
+                        {loading ? (
+                            <Loader />
+                        ) : filteredProperties.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                                 {filteredProperties.map((property) => (
                                     <PropertyCard key={property.id} property={property} />
@@ -264,3 +271,4 @@ export default function PropertiesPage() {
         </Suspense>
     );
 }
+

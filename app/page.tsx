@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import PropertyCard from './components/PropertyCard';
+import Loader from './components/Loader';
 import { formatPrice, type Property } from '@/lib/properties';
 
 export default function HomePage() {
@@ -13,6 +14,7 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<string>('all');
   const [searchStatus, setSearchStatus] = useState<string>('For Sale');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const heroImages = [
     'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&q=80',
@@ -32,12 +34,15 @@ export default function HomePage() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
+        setLoading(true);
         const res = await fetch('/api/properties');
         if (!res.ok) throw new Error('Failed to fetch properties');
         const data = await res.json();
         setProperties(data);
       } catch (error) {
         console.error('Error fetching properties:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -459,7 +464,9 @@ export default function HomePage() {
           </div>
 
           {/* Property Grid */}
-          {displayedProperties.length > 0 ? (
+          {loading ? (
+            <Loader />
+          ) : displayedProperties.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {displayedProperties.map((property) => (
                 <PropertyCard key={property.id} property={property} />
@@ -557,7 +564,7 @@ export default function HomePage() {
                 <div className="p-6">
                   <h3 className="text-xl font-semibold text-secondary mb-2">{item.type}</h3>
                   <p className="text-gray-600">{item.desc}</p>
-                  <button className="mt-4 text-primary font-medium hover:text-primary-dark transition-colors">
+                  <button onClick={() => window.location.href = '/properties'} className="mt-4 text-primary font-medium hover:text-primary-dark transition-colors">
                     View Properties <i className="fas fa-arrow-right ml-2"></i>
                   </button>
                 </div>

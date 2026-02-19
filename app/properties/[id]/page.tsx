@@ -7,7 +7,8 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import PropertyCard from '../../components/PropertyCard';
 import { type Property } from '@/lib/properties';
-import { FaHeart } from "react-icons/fa";   
+import { FaHeart } from "react-icons/fa";
+import Loader from '@/app/components/Loader';
 
 export default function PropertyDetailsPage() {
     const params = useParams();
@@ -78,7 +79,7 @@ export default function PropertyDetailsPage() {
     };
 
     if (!property) {
-        return <div>Loading...</div>;
+        return <div className='flex justify-center items-center py-20'><Loader /></div>;
     }
 
     return (
