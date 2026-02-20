@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import WhatsAppButton from "./components/whatsappbutton";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,6 +24,8 @@ export default function RootLayout({
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className="antialiased">
         {children}
+        {/* number uske ayege thik he ok */}
+        <WhatsAppButton phoneNumber="+91 93769 96179" />
       </body>
     </html>
   );
