@@ -65,7 +65,9 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-secondary mb-1">Our Office</h3>
-                                        <p className="text-gray-600">Office No. 301, Phoenix Tower<br />Senapati Bapat Road, Pune - 411016</p>
+                                        <p className="text-gray-600"><b>East Ahmedabad :</b> C-238, Sumel 7, Near- Soni <br /> ni Chali Cross Road, Odhav, Ahmedabad-382415</p>
+                                        <p className="text-gray-600 pt-2"><b>West Ahmedabad :</b>431, Yash Arian complex, <br />Near Swami Vivekanand Circle, Memnagar<br /> Ahmedabad 380052</p>
+
                                     </div>
                                 </div>
 
@@ -75,7 +77,8 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-secondary mb-1">Phone</h3>
-                                        <p className="text-gray-600">+91 20 2567 8900</p>
+                                        <p className="text-gray-600"><b>East Ahmedabad : </b>+91 93769 96179 <span className="block pt-1 pl-37">+91 97270 27052</span> </p>
+                                        <p className="text-gray-600 pt-2"><b>West Ahmedabad : </b>+91 88661 13391 <span className="block pt-1 pl-38">+91 90672 30240</span> </p>
                                     </div>
                                 </div>
 
@@ -85,7 +88,7 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-secondary mb-1">Email</h3>
-                                        <p className="text-gray-600">info@veerrealestate.com</p>
+                                        <p className="text-gray-600">horseveer@gmail.com</p>
                                     </div>
                                 </div>
 
@@ -96,9 +99,8 @@ export default function ContactPage() {
                                     <div>
                                         <h3 className="font-semibold text-secondary mb-1">Business Hours</h3>
                                         <p className="text-gray-600">
-                                            Mon - Fri: 9:00 AM - 6:00 PM<br />
-                                            Sat: 10:00 AM - 4:00 PM<br />
-                                            Sun: Closed
+                                            Mon - Sun: 10:00 AM - 7:00 PM<br />
+                                            Sun: Running
                                         </p>
                                     </div>
                                 </div>
@@ -107,19 +109,41 @@ export default function ContactPage() {
                             {/* Social Media */}
                             <div className="mt-8">
                                 <h3 className="font-semibold text-secondary mb-4">Follow Us</h3>
-                                <div className="flex gap-3">
-                                    <a href="#" className="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors">
+                                <span className="text-gray-700 font-medium"><b>East Ahmedabad</b></span>
+                                <div className="flex gap-3 pt-2">
+
+                                    <a href="https://www.facebook.com/people/Veer-Real-Estate-East-Ahmedabad/61571731020972/" className="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors">
                                         <i className="fab fa-facebook-f"></i>
                                     </a>
-                                    <a href="#" className="w-10 h-10 bg-blue-400 text-white rounded-lg flex items-center justify-center hover:bg-blue-500 transition-colors">
-                                        <i className="fab fa-twitter"></i>
+                                    <a href="https://www.youtube.com/@VeerRealEstate" className="w-10 h-10 bg-blue-400 text-white rounded-lg flex items-center justify-center hover:bg-blue-500 transition-colors">
+                                        <i className="fab fa-youtube"></i>
                                     </a>
-                                    <a href="#" className="w-10 h-10 bg-pink-600 text-white rounded-lg flex items-center justify-center hover:bg-pink-700 transition-colors">
+                                    <a href="https://www.instagram.com/veerrealestateeastahmedabad/?hl=en" className="w-10 h-10 bg-pink-600 text-white rounded-lg flex items-center justify-center hover:bg-pink-700 transition-colors">
                                         <i className="fab fa-instagram"></i>
                                     </a>
-                                    <a href="#" className="w-10 h-10 bg-blue-700 text-white rounded-lg flex items-center justify-center hover:bg-blue-800 transition-colors">
+                                    <a href=" https://g.page/r/CcSCOVV14JRdEAI/review" className="w-10 h-10 bg-blue-700 text-white rounded-lg flex items-center justify-center hover:bg-blue-800 transition-colors">
+                                        <i className="fab fa-google"></i>
+                                    </a>
+                                </div>
+                                <span className="text-gray-700 font-medium mt-4 block"><b>West Ahmedabad</b></span>
+                                <div className="flex gap-3 pt-2">
+
+                                    <a href=" https://www.facebook.com/people/Veer-Real-Estate/61558935522154/" className="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors">
+                                        <i className="fab fa-facebook-f"></i>
+                                    </a>
+                                    <a href="https://www.youtube.com/@VeerRealEstate" className="w-10 h-10 bg-blue-400 text-white rounded-lg flex items-center justify-center hover:bg-blue-500 transition-colors">
+                                        <i className="fab fa-youtube"></i>
+                                    </a>
+                                    <a href="https://www.instagram.com/veer.real_estate/" className="w-10 h-10 bg-pink-600 text-white rounded-lg flex items-center justify-center hover:bg-pink-700 transition-colors">
+                                        <i className="fab fa-instagram"></i>
+                                    </a>
+                                    <a href="https://g.page/r/CcSCOVV14JRdEAI/review" className="w-10 h-10 bg-blue-700 text-white rounded-lg flex items-center justify-center hover:bg-blue-800 transition-colors">
+                                        <i className="fab fa-google"></i>
+                                    </a>
+                                    <a href=" https://www.linkedin.com/company/veer-real-estate-ahmedabad/?viewAsMember=true" className="w-10 h-10 bg-blue-900 text-white rounded-lg flex items-center justify-center hover:bg-blue-800 transition-colors">
                                         <i className="fab fa-linkedin-in"></i>
                                     </a>
+
                                 </div>
                             </div>
                         </div>
@@ -218,6 +242,31 @@ export default function ContactPage() {
             <section className="py-20 bg-gray-50">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-8">
+                        <h2 className="text-4xl font-bold text-secondary mb-4">
+                            Visit Our Office
+                        </h2>
+                        <p className="text-xl text-gray-600">
+                            We'd love to meet you in person
+                        </p>
+                    </div>
+
+                    <div className="rounded-2xl overflow-hidden h-96 shadow-lg">
+                        <iframe
+                            src="https://www.google.com/maps?q=Veer+Real+Estate+Ahmedabad&output=embed"
+                            width="100%"
+                            height="100%"
+                            style={{ border: 0 }}
+                            // allowFullScreen=""
+                            loading="lazy"
+                            // referrerPolicy="no-referrer-when-downgrade"
+                            title="Veer Real Estate Location"
+                        ></iframe>
+                    </div>
+                </div>
+            </section>
+            {/* <section className="py-20 bg-gray-50">
+                <div className="container mx-auto px-4">
+                    <div className="text-center mb-8">
                         <h2 className="text-4xl font-bold text-secondary mb-4">Visit Our Office</h2>
                         <p className="text-xl text-gray-600">We'd love to meet you in person</p>
                     </div>
@@ -229,7 +278,7 @@ export default function ContactPage() {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
 
             <Footer />
         </>

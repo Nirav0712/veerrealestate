@@ -78,7 +78,7 @@ export default function HomePage() {
       <Header />
 
       {/* Hero Section with Auto-Scrolling Background */}
-      <section className="relative h-[800px] flex items-center justify-center overflow-hidden">
+      <section className="relative h-200 flex items-center justify-center overflow-hidden">
         {/* Background Image Carousel */}
         <div className="absolute inset-0">
           {heroImages.map((image, index) => (
@@ -493,18 +493,18 @@ export default function HomePage() {
       {/* Stats Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 text-center">
+            {/* <div>
               <div className="text-5xl font-bold text-primary mb-2">10K+</div>
               <div className="text-gray-600">Properties Sold</div>
-            </div>
+            </div> */}
             <div>
               <div className="text-5xl font-bold text-primary mb-2">5K+</div>
               <div className="text-gray-600">Happy Customers</div>
             </div>
             <div>
-              <div className="text-5xl font-bold text-primary mb-2">500+</div>
-              <div className="text-gray-600">Expert Agents</div>
+              <div className="text-5xl font-bold text-primary mb-2">100+</div>
+              <div className="text-gray-600">Projects</div>
             </div>
             <div>
               <div className="text-5xl font-bold text-primary mb-2">15+</div>

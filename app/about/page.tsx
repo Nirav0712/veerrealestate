@@ -63,18 +63,18 @@ export default function AboutPage() {
                         <h2 className="text-4xl font-bold text-secondary mb-4">Our Achievements</h2>
                         <p className="text-xl text-gray-600">Numbers that speak for themselves</p>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                        <div className="text-center">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+                        {/* <div className="text-center">
                             <div className="text-5xl md:text-6xl font-bold text-primary mb-2">10K+</div>
                             <div className="text-gray-600 text-lg">Properties Sold</div>
-                        </div>
+                        </div> */}
                         <div className="text-center">
                             <div className="text-5xl md:text-6xl font-bold text-primary mb-2">5K+</div>
                             <div className="text-gray-600 text-lg">Happy Customers</div>
                         </div>
                         <div className="text-center">
-                            <div className="text-5xl md:text-6xl font-bold text-primary mb-2">500+</div>
-                            <div className="text-gray-600 text-lg">Expert Agents</div>
+                            <div className="text-5xl md:text-6xl font-bold text-primary mb-2">100+</div>
+                            <div className="text-gray-600 text-lg">Projects</div>
                         </div>
                         <div className="text-center">
                             <div className="text-5xl md:text-6xl font-bold text-primary mb-2">15+</div>
@@ -93,37 +93,68 @@ export default function AboutPage() {
                             The principles that guide everything we do
                         </p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+
+                        {/* Integrity */}
                         <div className="bg-white p-8 rounded-xl shadow-sm text-center">
                             <div className="w-20 h-20 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
-                                <i className="fas fa-shield-alt text-4xl text-primary"></i>
+                                <i className="fas fa-handshake text-4xl text-primary"></i>
                             </div>
-                            <h3 className="text-2xl font-semibold text-secondary mb-4">Trust & Integrity</h3>
+                            <h3 className="text-2xl font-semibold text-secondary mb-4">Integrity</h3>
                             <p className="text-gray-600 leading-relaxed">
-                                We believe in complete transparency and honesty in all our dealings, building lasting relationships
-                                based on trust.
+                                We uphold the highest standards of honesty and ethics, ensuring every interaction is built on trust,
+                                accountability, and long-term commitment.
                             </p>
                         </div>
+
+                        {/* Resourceful */}
                         <div className="bg-white p-8 rounded-xl shadow-sm text-center">
                             <div className="w-20 h-20 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
-                                <i className="fas fa-star text-4xl text-primary"></i>
+                                <i className="fas fa-lightbulb text-4xl text-primary"></i>
                             </div>
-                            <h3 className="text-2xl font-semibold text-secondary mb-4">Excellence</h3>
+                            <h3 className="text-2xl font-semibold text-secondary mb-4">Resourceful</h3>
                             <p className="text-gray-600 leading-relaxed">
-                                We strive for excellence in every interaction, ensuring our clients receive the highest quality
-                                service at all times.
+                                We approach every challenge with creativity and adaptability, finding smart solutions that deliver
+                                value and exceed expectations.
                             </p>
                         </div>
+
+                        {/* Transparency */}
                         <div className="bg-white p-8 rounded-xl shadow-sm text-center">
                             <div className="w-20 h-20 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
-                                <i className="fas fa-users text-4xl text-primary"></i>
+                                <i className="fas fa-eye text-4xl text-primary"></i>
                             </div>
-                            <h3 className="text-2xl font-semibold text-secondary mb-4">Customer First</h3>
+                            <h3 className="text-2xl font-semibold text-secondary mb-4">Transparency</h3>
                             <p className="text-gray-600 leading-relaxed">
-                                Your needs and satisfaction are our top priority. We go the extra mile to ensure you find exactly
-                                what you're looking for.
+                                We communicate openly and clearly, providing honest guidance and complete clarity at every stage
+                                of the process.
                             </p>
                         </div>
+
+                        {/* Service Excellence */}
+                        <div className="bg-white p-8 rounded-xl shadow-sm text-center">
+                            <div className="w-20 h-20 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
+                                <i className="fas fa-award text-4xl text-primary"></i>
+                            </div>
+                            <h3 className="text-2xl font-semibold text-secondary mb-4">Service Excellence</h3>
+                            <p className="text-gray-600 leading-relaxed">
+                                We strive for excellence in every interaction, delivering exceptional service that consistently
+                                exceeds client expectations.
+                            </p>
+                        </div>
+
+                        {/* Knowledge */}
+                        <div className="bg-white p-8 rounded-xl shadow-sm text-center">
+                            <div className="w-20 h-20 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
+                                <i className="fas fa-book-open text-4xl text-primary"></i>
+                            </div>
+                            <h3 className="text-2xl font-semibold text-secondary mb-4">Knowledge</h3>
+                            <p className="text-gray-600 leading-relaxed">
+                                Our deep industry expertise and market understanding empower clients to make confident,
+                                informed decisions.
+                            </p>
+                        </div>
+
                     </div>
                 </div>
             </section>

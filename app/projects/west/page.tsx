@@ -249,7 +249,7 @@ export default function EastProjectPage() {
 
   // ✅ Only WEST projects
   const westProjects = projects.filter(
-    (project) => project.zone === "west"
+    (project) => project.zone === "West"
   );
 
   const handleFilterChange = (

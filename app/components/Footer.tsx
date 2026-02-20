@@ -12,27 +12,61 @@ export default function Footer() {
                         <p className="text-white/80 mb-4 leading-relaxed align-justify">
                             Your trusted partner in finding the perfect property in Ahmedabad. Discover Omkar Enclave, Ranip (West Ahmedabad) – premium 2 & 3 BHK residences thoughtfully designed for modern urban living with excellent connectivity and secure gated amenities.
                         </p>
+                        <span className="text-white-700 font-medium mb-2 block"><b>East Ahmedabad</b></span>
                         <div className="flex gap-3">
                             <a
-                                href="#"
+                                href="https://www.facebook.com/people/Veer-Real-Estate-East-Ahmedabad/61571731020972/"
                                 className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
                             >
                                 <i className="fab fa-facebook-f"></i>
                             </a>
                             <a
-                                href="#"
+                                href=" https://www.youtube.com/@VeerRealEstate"
                                 className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
                             >
-                                <i className="fab fa-twitter"></i>
+                                <i className="fab fa-youtube"></i>
                             </a>
                             <a
-                                href="#"
+                                href=" https://www.instagram.com/veerrealestateeastahmedabad/?hl=en"
                                 className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
                             >
                                 <i className="fab fa-instagram"></i>
                             </a>
                             <a
-                                href="#"
+                                href=" https://g.page/r/CcSCOVV14JRdEAI/review"
+                                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
+                            >
+                                <i className="fab fa-google"></i>
+                            </a>
+                        </div>
+                        <span className="text-white-700 font-medium mb-2 block mt-5"><b>West Ahmedabad</b></span>
+                        <div className="flex gap-3">
+                            <a
+                                href=" https://www.facebook.com/people/Veer-Real-Estate/61558935522154/"
+                                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
+                            >
+                                <i className="fab fa-facebook-f"></i>
+                            </a>
+                            <a
+                                href=" https://www.youtube.com/@VeerRealEstate"
+                                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
+                            >
+                                <i className="fab fa-youtube"></i>
+                            </a>
+                            <a
+                                href=" https://www.instagram.com/veer.real_estate/"
+                                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
+                            >
+                                <i className="fab fa-instagram"></i>
+                            </a>
+                            <a
+                                href="https://g.page/r/CcSCOVV14JRdEAI/review"
+                                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
+                            >
+                                <i className="fab fa-google"></i>
+                            </a>
+                            <a
+                                href=" https://www.linkedin.com/company/veer-real-estate-ahmedabad/?viewAsMember=true"
                                 className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
                             >
                                 <i className="fab fa-linkedin-in"></i>

@@ -49,7 +49,7 @@ export default function Header() {
                                             href="/projects/east"
                                             className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-primary"
                                         >
-                                            East Projects
+                                            East Ahmedabad Projects
                                         </Link>
                                     </li>
                                     <li>
@@ -57,7 +57,7 @@ export default function Header() {
                                             href="/projects/west"
                                             className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-primary"
                                         >
-                                            West Projects
+                                            West Ahmedabad Projects
                                         </Link>
                                     </li>
                                 </ul>
