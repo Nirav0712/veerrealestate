@@ -74,7 +74,7 @@ export default function HomePage() {
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
       {/* Hero Section with Auto-Scrolling Background */}
-      <section className="relative min-h-[500px] md:h-[600px] lg:h-screen max-h-[800px] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-125 md:h-150 lg:h-screen max-h-200 flex items-center justify-center overflow-hidden">
         {/* Background Image Carousel */}
         <div className="absolute inset-0">
           {heroImages.map((image, index) => (
