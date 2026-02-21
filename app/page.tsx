@@ -510,7 +510,7 @@ export default function HomePage() {
         </div>
       </section>
       {/* Popular Cities */}
-      <section className="py-20">
+      {/* <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-secondary mb-4">Explore Properties by City</h2>
@@ -536,7 +536,7 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Property Types */}
       <section className="py-20 bg-gray-50">
