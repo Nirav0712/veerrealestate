@@ -37,7 +37,7 @@ export default function Header() {
                             </li>
                             <li className="relative group">
                                 <Link
-                                    href="/projects"
+                                    href="#"
                                     className="text-secondary hover:text-primary font-medium transition-colors"
                                 >
                                     Projects
@@ -100,66 +100,94 @@ export default function Header() {
                     </nav>
 
                     {/* Mobile Menu */}
-                    {mobileMenuOpen && (
-                        <div className="lg:hidden py-4 border-t">
-                            <ul className="flex flex-col gap-4">
-                                <li>
-                                    <Link
-                                        href="/"
-                                        className="block text-secondary hover:text-primary font-medium transition-colors"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        Home
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/properties"
-                                        className="block text-secondary hover:text-primary font-medium transition-colors"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        Properties
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/about"
-                                        className="block text-secondary hover:text-primary font-medium transition-colors"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        About
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/blog"
-                                        className="block text-secondary hover:text-primary font-medium transition-colors"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        Blog
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/contact"
-                                        className="block text-secondary hover:text-primary font-medium transition-colors"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        Contact
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/properties"
-                                        className="block bg-primary text-white px-6 py-2.5 rounded-lg font-medium text-center hover:bg-primary-dark transition-colors"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        Browse Properties
-                                    </Link>
-                                </li>
-                            </ul>
-                        </div>
-                    )}
+                    <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-[600px] border-t py-4' : 'max-h-0'}`}>
+                        <ul className="flex flex-col gap-4">
+                            <li>
+                                <Link
+                                    href="/"
+                                    className="block text-secondary hover:text-primary font-medium transition-colors"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    Home
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/about"
+                                    className="block text-secondary hover:text-primary font-medium transition-colors"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    About
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/properties"
+                                    className="block text-secondary hover:text-primary font-medium transition-colors"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    Properties
+                                </Link>
+                            </li>
+                            <li className="border-b border-gray-100 pb-2">
+                                <div className="text-secondary font-medium mb-2">Projects</div>
+                                <ul className="pl-4 flex flex-col gap-2">
+                                    <li>
+                                        <Link
+                                            href="/projects/east"
+                                            className="block text-gray-600 hover:text-primary transition-colors"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            East Ahmedabad
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            href="/projects/west"
+                                            className="block text-gray-600 hover:text-primary transition-colors"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            West Ahmedabad
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/blog"
+                                    className="block text-secondary hover:text-primary font-medium transition-colors"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    Blog
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/contact"
+                                    className="block text-secondary hover:text-primary font-medium transition-colors"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    Contact
+                                </Link>
+                            </li>
+                            <li className="flex flex-col gap-3 mt-2">
+                                <Link
+                                    href="/properties"
+                                    className="block bg-primary text-white px-6 py-2.5 rounded-lg font-medium text-center hover:bg-primary-dark transition-colors"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    Search Properties
+                                </Link>
+                                <Link
+                                    href="/login"
+                                    className="block border-2 border-primary text-primary px-6 py-2.5 rounded-lg font-medium text-center hover:bg-primary hover:text-white transition-colors"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    Login
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </header>
         </>

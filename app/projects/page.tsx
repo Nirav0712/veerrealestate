@@ -5,8 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from 'next/navigation';
 
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import { projects } from "@/lib/projects";
 
 export default function ProjectPage() {
@@ -82,7 +80,6 @@ export default function ProjectPage() {
 
     return (
         <>
-            <Header />
 
             {/* Page Header */}
             <div className="bg-linear-to-br from-secondary to-secondary-light text-white py-16">
@@ -294,7 +291,7 @@ export default function ProjectPage() {
                 </div>
             </div>
 
-            <Footer />
+
         </>
     );
 }

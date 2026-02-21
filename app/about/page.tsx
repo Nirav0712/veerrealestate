@@ -1,15 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 
 export default function AboutPage() {
     return (
         <>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-            <Header />
 
 
             {/* Hero Section */}
@@ -93,7 +89,7 @@ export default function AboutPage() {
                             The principles that guide everything we do
                         </p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
 
                         {/* Integrity */}
                         <div className="bg-white p-8 rounded-xl shadow-sm text-center">
@@ -219,7 +215,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            <Footer />
+
         </>
     );
 }

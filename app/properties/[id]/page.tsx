@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
 import PropertyCard from '../../components/PropertyCard';
 import { type Property } from '@/lib/properties';
 import { FaHeart } from "react-icons/fa";
@@ -86,7 +84,6 @@ export default function PropertyDetailsPage() {
         <>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-            <Header />
 
             <div className="py-12">
                 <div className="container mx-auto px-4">
@@ -302,7 +299,7 @@ export default function PropertyDetailsPage() {
                 </div>
             </div>
 
-            <Footer />
+
         </>
     );
 }

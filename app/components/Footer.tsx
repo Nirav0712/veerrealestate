@@ -175,13 +175,13 @@ export default function Footer() {
                     </div>
 
                     {/* Contact Info */}
-                    <div>
-                        <h4 className="text-xl font-semibold mb-6 text-center ">Contact Info</h4>
-                        <div className='flex items-start gap-10 text-white/80'>
+                    <div className="md:col-span-2 lg:col-span-1">
+                        <h4 className="text-xl font-semibold mb-6 text-center lg:text-left">Contact Info</h4>
+                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-10 text-white/80'>
                             <div>
-                                <h5 className="text-md font-semibold mb-4 pl-3">East</h5>
-                                <ul className="space-y-6">
-                                    <li className="flex items-start gap-3 text-white/80">
+                                <h5 className="text-md font-semibold mb-4 text-primary">East Ahmedabad</h5>
+                                <ul className="space-y-4">
+                                    <li className="flex items-start gap-3">
                                         <i className="fas fa-map-marker-alt text-primary mt-1"></i>
                                         <span>C-238, Sumel 7, Near- Soni ni Chali Cross Road, Odhav, Ahmedabad-382415</span>
                                     </li>
@@ -191,31 +191,31 @@ export default function Footer() {
                                             +91 93769 96179
                                         </a>
                                     </li>
-                                    <li className="flex items-center gap-3 m">
+                                    <li className="flex items-center gap-3">
                                         <i className="fas fa-phone text-primary"></i>
                                         <a href="tel:+91 97270 27052" className="text-white/80 hover:text-primary transition-colors">
-                                           +91 97270 27052
+                                            +91 97270 27052
                                         </a>
                                     </li>
                                     <li className="flex items-center gap-3">
                                         <i className="fas fa-envelope text-primary"></i>
-                                        <a href="mailto:info@veerrealestate.com" className="text-white/80 hover:text-primary transition-colors">
+                                        <a href="mailto:horseveer@gmail.com" className="text-white/80 hover:text-primary transition-colors">
                                             horseveer@gmail.com
                                         </a>
                                     </li>
                                 </ul>
                             </div>
-                            <div >
-                                  <h5 className="text-md font-semibold mb-4 pl-3">West</h5>
+                            <div>
+                                <h5 className="text-md font-semibold mb-4 text-primary">West Ahmedabad</h5>
                                 <ul className="space-y-4">
-                                    <li className="flex items-start gap-3 text-white/80">
+                                    <li className="flex items-start gap-3">
                                         <i className="fas fa-map-marker-alt text-primary mt-1"></i>
                                         <span> 431, Yash Arian complex, Near Swami Vivekanand Circle. Memnagar Ahmedabad 380052</span>
                                     </li>
                                     <li className="flex items-center gap-3">
                                         <i className="fas fa-phone text-primary"></i>
                                         <a href="tel:+91 88661 13391" className="text-white/80 hover:text-primary transition-colors">
-                                          +91 88661 13391
+                                            +91 88661 13391
                                         </a>
                                     </li>
                                     <li className="flex items-center gap-3">
@@ -226,31 +226,13 @@ export default function Footer() {
                                     </li>
                                     <li className="flex items-center gap-3">
                                         <i className="fas fa-envelope text-primary"></i>
-                                        <a href="mailto:info@veerrealestate.com" className="text-white/80 hover:text-primary transition-colors">
+                                        <a href="mailto:horseveer@gmail.com" className="text-white/80 hover:text-primary transition-colors">
                                             horseveer@gmail.com
                                         </a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
-                        {/* <ul className="space-y-3">
-                            <li className="flex items-start gap-3 text-white/80">
-                                <i className="fas fa-map-marker-alt text-primary mt-1"></i>
-                                <span>Phoenix Tower, Pune - 411016</span>
-                            </li>
-                            <li className="flex items-center gap-3">
-                                <i className="fas fa-phone text-primary"></i>
-                                <a href="tel:+912025678900" className="text-white/80 hover:text-primary transition-colors">
-                                    +91 00000 00000
-                                </a>
-                            </li>
-                            <li className="flex items-center gap-3">
-                                <i className="fas fa-envelope text-primary"></i>
-                                <a href="mailto:info@veerrealestate.com" className="text-white/80 hover:text-primary transition-colors">
-                                    info@veerrealestate.com
-                                </a>
-                            </li>
-                        </ul> */}
                     </div>
                 </div>
 

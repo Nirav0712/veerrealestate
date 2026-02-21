@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Header from './components/Header';
-import Footer from './components/Footer';
 import PropertyCard from './components/PropertyCard';
 import Loader from './components/Loader';
 import { formatPrice, type Property } from '@/lib/properties';
@@ -75,10 +73,8 @@ export default function HomePage() {
     <>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-      <Header />
-
       {/* Hero Section with Auto-Scrolling Background */}
-      <section className="relative h-200 flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[500px] md:h-[600px] lg:h-screen max-h-[800px] flex items-center justify-center overflow-hidden">
         {/* Background Image Carousel */}
         <div className="absolute inset-0">
           {heroImages.map((image, index) => (
@@ -101,10 +97,10 @@ export default function HomePage() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center text-white">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-lg">
               Find Your Dream Home
             </h1>
-            <p className="text-xl md:text-2xl mb-20 opacity-95 drop-shadow">
+            <p className="text-lg md:text-xl lg:text-2xl mb-8 md:mb-12 opacity-95 drop-shadow">
               Discover the perfect property from our extensive listings of homes, apartments, and commercial spaces
             </p>
 
@@ -141,7 +137,7 @@ export default function HomePage() {
 
               <form
                 onSubmit={handleSearch}
-                className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white/20 backdrop-blur-md p-6 rounded-xl border border-white/30 shadow-lg"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 bg-white/20 backdrop-blur-md p-4 md:p-6 rounded-xl border border-white/30 shadow-lg"
               >
                 {/* Property Type */}
                 <select
@@ -229,7 +225,7 @@ export default function HomePage() {
                 {/* Search Button */}
                 <button
                   type="submit"
-                  className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-md col-span-1 md:col-span-3"
+                  className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-md col-span-1 sm:col-span-2 lg:col-span-3"
                 >
                   Search
                 </button>
@@ -329,17 +325,17 @@ export default function HomePage() {
               </p>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-6 mb-8">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
                 {/* <div>
                   <div className="text-4xl font-bold text-secondary mb-1">10K</div>
                   <div className="text-sm text-gray-600">Homes Sold</div>
                 </div> */}
                 <div>
-                  <div className="text-4xl font-bold text-secondary mb-1">5K+</div>
+                  <div className="text-3xl md:text-4xl font-bold text-secondary mb-1">5K+</div>
                   <div className="text-sm text-gray-600">Happy Client</div>
                 </div>
-                <div>
-                  <div className="text-4xl font-bold text-secondary mb-1">98%</div>
+                <div className="col-span-1 sm:col-span-1">
+                  <div className="text-3xl md:text-4xl font-bold text-secondary mb-1">98%</div>
                   <div className="text-sm text-gray-600">Satisfaction Rate</div>
                 </div>
               </div>
@@ -696,8 +692,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      <Footer />
     </>
   );
 }

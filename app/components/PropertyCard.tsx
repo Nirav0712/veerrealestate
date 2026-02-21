@@ -117,19 +117,19 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                     </div>
 
                     {/* Features */}
-                    <div className="flex justify-between pt-4 border-t border-gray-200">
+                    <div className="flex flex-wrap justify-between gap-y-2 pt-4 border-t border-gray-200">
                         {property.bedrooms > 0 && (
                             <div className="flex items-center text-sm text-gray-600">
-                                <i className="fas fa-bed text-primary mr-2"></i>
+                                <i className="fas fa-bed text-primary mr-1.5 md:mr-2"></i>
                                 {property.bedrooms} Beds
                             </div>
                         )}
                         <div className="flex items-center text-sm text-gray-600">
-                            <i className="fas fa-bath text-primary mr-2"></i>
+                            <i className="fas fa-bath text-primary mr-1.5 md:mr-2"></i>
                             {property.bathrooms} Baths
                         </div>
                         <div className="flex items-center text-sm text-gray-600">
-                            <i className="fas fa-ruler-combined text-primary mr-2"></i>
+                            <i className="fas fa-ruler-combined text-primary mr-1.5 md:mr-2"></i>
                             {formatNumber(property.area)} sqft
                         </div>
                     </div>

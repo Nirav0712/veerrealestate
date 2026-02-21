@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 
 interface BlogPost {
     id: number;
@@ -144,7 +142,6 @@ export default function BlogPage() {
         <>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-            <Header />
 
             {/* Hero Section */}
             <section className="relative bg-linear-to-br from-secondary to-secondary-light text-white py-24">
@@ -274,7 +271,7 @@ export default function BlogPage() {
                 </div>
             </section>
 
-            <Footer />
+
         </>
     );
 }

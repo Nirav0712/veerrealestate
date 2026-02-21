@@ -4,8 +4,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import Header from "../../../components/Header";
-import Footer from "../../../components/Footer";
 import { projects, Project } from "@/lib/projects";
 import { FaHeart } from "react-icons/fa";
 
@@ -55,18 +53,15 @@ export default function WestProjectDetailsPage() {
   if (!project) {
     return (
       <>
-        <Header />
         <div className="py-32 text-center text-xl">
           Loading...
         </div>
-        <Footer />
       </>
     );
   }
 
   return (
     <>
-      <Header />
 
       <div className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -112,11 +107,10 @@ export default function WestProjectDetailsPage() {
 
                 <button
                   onClick={toggleFavorite}
-                  className={`absolute top-6 right-6 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition ${
-                    isFavorite
-                      ? "bg-red-500 text-white"
-                      : "bg-white text-gray-600"
-                  }`}
+                  className={`absolute top-6 right-6 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition ${isFavorite
+                    ? "bg-red-500 text-white"
+                    : "bg-white text-gray-600"
+                    }`}
                 >
                   <FaHeart className="text-lg" />
                 </button>
@@ -282,7 +276,7 @@ export default function WestProjectDetailsPage() {
         </div>
       </div>
 
-      <Footer />
+
     </>
   );
 }

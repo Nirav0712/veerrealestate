@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 
 export default function ContactPage() {
     const [formData, setFormData] = useState({
@@ -36,7 +34,6 @@ export default function ContactPage() {
         <>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-            <Header />
 
             {/* Hero Section */}
             <section className="relative bg-linear-to-br from-secondary to-secondary-light text-white py-24">
@@ -280,7 +277,7 @@ export default function ContactPage() {
                 </div>
             </section> */}
 
-            <Footer />
+
         </>
     );
 }

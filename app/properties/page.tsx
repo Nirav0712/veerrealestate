@@ -2,8 +2,6 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import PropertyCard from '../components/PropertyCard';
 import Loader from '../components/Loader';
 import { filterPropertiesHelper, type Property } from '@/lib/properties';
@@ -85,7 +83,6 @@ function PropertiesContent() {
 
     return (
         <>
-            <Header />
 
             {/* Page Header */}
             <div className="bg-linear-to-br from-secondary to-secondary-light text-white py-16">
@@ -259,7 +256,7 @@ function PropertiesContent() {
                 </div>
             </div>
 
-            <Footer />
+
         </>
     );
 }

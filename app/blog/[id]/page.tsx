@@ -3,8 +3,6 @@
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
 
 interface BlogPost {
     id: number;
@@ -561,7 +559,6 @@ export default function BlogPostPage() {
     if (!post) {
         return (
             <>
-                <Header />
                 <div className="min-h-screen flex items-center justify-center">
                     <div className="text-center">
                         <h1 className="text-4xl font-bold text-secondary mb-4">Blog Post Not Found</h1>
@@ -570,7 +567,6 @@ export default function BlogPostPage() {
                         </Link>
                     </div>
                 </div>
-                <Footer />
             </>
         );
     }
@@ -579,7 +575,6 @@ export default function BlogPostPage() {
         <>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-            <Header />
 
             {/* Hero Section */}
             <section className="relative h-96 bg-secondary">
@@ -708,7 +703,7 @@ export default function BlogPostPage() {
                 </div>
             </section>
 
-            <Footer />
+
         </>
     );
 }

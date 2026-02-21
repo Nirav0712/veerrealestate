@@ -1,106 +1,8 @@
-// 'use client';
-
-// import { useEffect, useState } from "react";
-// import { useParams, useRouter } from "next/navigation";
-// import Image from "next/image";
-// import Header from "../../components/Header";
-// import Footer from "../../components/Footer";
-// import { projects, Project } from "@/lib/projects";
-
-// export default function ProjectDetailsPage() {
-
-//   const params = useParams();
-//   const router = useRouter();
-//   const [project, setProject] = useState<Project | null>(null);
-
-//   useEffect(() => {
-
-//     if (!params.slug) return;
-
-//     const slug =
-//       typeof params.slug === "string"
-//         ? params.slug
-//         : params.slug[0];
-
-//     const foundProject = projects.find(
-//       (p) => p.slug === slug
-//     );
-
-//     if (!foundProject) {
-//       router.push("/projects");
-//       return;
-//     }
-
-//     setProject(foundProject);
-
-//   }, [params.slug, router]);
-
-//   if (!project) {
-//     return (
-//       <>
-//         <Header />
-//         <div className="py-32 text-center text-xl">
-//           Loading...
-//         </div>
-//         <Footer />
-//       </>
-//     );
-//   }
-
-//   return (
-//     <>
-//       <Header />
-
-//       <div className="py-12 bg-gray-100">
-//         <div className="container mx-auto px-4">
-
-//           <div className="relative h-96 md:h-[500px] rounded-2xl overflow-hidden mb-8">
-//             <Image
-//               src={project.image}
-//               alt={project.title}
-//               fill
-//               className="object-cover"
-//               priority
-//             />
-//           </div>
-
-//           <h1 className="text-4xl font-bold text-secondary mb-4">
-//             {project.title}
-//           </h1>
-
-//           <div className="text-3xl font-bold text-primary mb-6">
-//             {project.displayPrice}
-//           </div>
-
-//           <div className="flex items-center text-gray-600 mb-6">
-//             <i className="fas fa-map-marker-alt text-primary mr-2"></i>
-//             {project.location}
-//           </div>
-
-//           <div className="bg-white rounded-2xl shadow-sm p-8">
-//             <h2 className="text-2xl font-bold text-secondary mb-4">
-//               Project Description
-//             </h2>
-//             <p className="text-gray-600 leading-relaxed">
-//               {project.description}
-//             </p>
-//           </div>
-
-//         </div>
-//       </div>
-
-//       <Footer />    
-//     </>
-//   );
-// }
-
 'use client';
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import { projects, Project } from "@/lib/projects";
 import { FaHeart } from "react-icons/fa";
 
@@ -148,18 +50,15 @@ export default function ProjectDetailsPage() {
   if (!project) {
     return (
       <>
-        <Header />
         <div className="py-32 text-center text-xl">
           Loading...
         </div>
-        <Footer />
       </>
     );
   }
 
   return (
     <>
-      <Header />
 
       <div className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -203,11 +102,10 @@ export default function ProjectDetailsPage() {
 
                 <button
                   onClick={toggleFavorite}
-                  className={`absolute top-6 right-6 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition ${
-                    isFavorite
+                  className={`absolute top-6 right-6 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition ${isFavorite
                       ? "bg-red-500 text-white"
                       : "bg-white text-gray-600"
-                  }`}
+                    }`}
                 >
                   <FaHeart className="text-lg" />
                 </button>
@@ -386,7 +284,7 @@ export default function ProjectDetailsPage() {
         </div>
       </div>
 
-      <Footer />
+
     </>
   );
 }

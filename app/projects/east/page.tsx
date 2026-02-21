@@ -3,8 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import { projects } from "@/lib/projects";
 
 export default function EastProjectPage() {
@@ -75,7 +73,6 @@ export default function EastProjectPage() {
 
   return (
     <>
-      <Header />
 
       {/* Header Section */}
       <div className="bg-linear-to-r from-secondary to-secondary-light text-white py-16">
@@ -246,7 +243,7 @@ export default function EastProjectPage() {
         </div>
       </div>
 
-      <Footer />
+
     </>
   );
 }
