@@ -100,7 +100,7 @@ export default function Header() {
                     </nav>
 
                     {/* Mobile Menu */}
-                    <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-150 border-t py-4' : 'max-h-0'}`}>
+                    <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-[600px] border-t py-4' : 'max-h-0'}`}>
                         <ul className="flex flex-col gap-4">
                             <li>
                                 <Link

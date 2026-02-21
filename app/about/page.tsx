@@ -13,7 +13,7 @@ export default function AboutPage() {
                 <div className="container mx-auto px-4">
                     <div className="max-w-3xl mx-auto text-center">
                         <h1 className="text-5xl md:text-6xl font-bold mb-6">About Veer Real Estate</h1>
-                        <p className="text-xl md:text-2xl opacity-95">
+                        <p className="text-lg md:text-xl lg:text-2xl opacity-95">
                             Your trusted partner in finding the perfect property for over 15 years
                         </p>
                     </div>
@@ -84,7 +84,9 @@ export default function AboutPage() {
             <section className="py-20">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-12">
-                        <h2 className="text-4xl font-bold text-secondary mb-4">Our Core Values</h2>
+                        <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">
+                            Visit Our Office
+                        </h2>
                         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
                             The principles that guide everything we do
                         </p>

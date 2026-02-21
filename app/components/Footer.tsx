@@ -9,10 +9,10 @@ export default function Footer() {
                     {/* About Section */}
                     <div>
                         <h4 className="text-xl font-semibold mb-4">About Veer Real Estate</h4>
-                        <p className="text-white/80 mb-4 leading-relaxed align-justify">
+                        <p className="text-white/80 mb-4 leading-relaxed text-justify">
                             Your trusted partner in finding the perfect property in Ahmedabad. Discover Omkar Enclave, Ranip (West Ahmedabad) – premium 2 & 3 BHK residences thoughtfully designed for modern urban living with excellent connectivity and secure gated amenities.
                         </p>
-                        <span className="text-white-700 font-medium mb-2 block"><b>East Ahmedabad</b></span>
+                        <span className="text-white/70 font-medium mb-2 block"><b>East Ahmedabad</b></span>
                         <div className="flex gap-3">
                             <a
                                 href="https://www.facebook.com/people/Veer-Real-Estate-East-Ahmedabad/61571731020972/"
@@ -39,7 +39,7 @@ export default function Footer() {
                                 <i className="fab fa-google"></i>
                             </a>
                         </div>
-                        <span className="text-white-700 font-medium mb-2 block mt-5"><b>West Ahmedabad</b></span>
+                        <span className="text-white/70 font-medium mb-2 block mt-5"><b>West Ahmedabad</b></span>
                         <div className="flex gap-3">
                             <a
                                 href=" https://www.facebook.com/people/Veer-Real-Estate/61558935522154/"

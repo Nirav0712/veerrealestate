@@ -5,11 +5,11 @@ import { useState } from 'react';
 
 
 interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-  subject: string;
-  message: string;
+    name: string;
+    email: string;
+    phone: string;
+    subject: string;
+    message: string;
 }
 
 export default function ContactPage() {
@@ -17,50 +17,50 @@ export default function ContactPage() {
 
 
 
-//contact form backend
-const [formData, setFormData] = useState<FormData>({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
-  });
-
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-
-    const res = await fetch("/api/send-whatsapp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      alert("Message sent successfully!");
-      setFormData({
+    //contact form backend
+    const [formData, setFormData] = useState<FormData>({
         name: "",
         email: "",
         phone: "",
         subject: "",
         message: "",
-      });
-    } else {
-      alert("Failed to send message.");
-    }
+    });
 
-    setLoading(false);
-  };
+    const [loading, setLoading] = useState(false);
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setLoading(true);
+
+        const res = await fetch("/api/send-whatsapp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert("Message sent successfully!");
+            setFormData({
+                name: "",
+                email: "",
+                phone: "",
+                subject: "",
+                message: "",
+            });
+        } else {
+            alert("Failed to send message.");
+        }
+
+        setLoading(false);
+    };
 
 
 
@@ -129,14 +129,26 @@ const [formData, setFormData] = useState<FormData>({
                                     </div>
                                 </div>
 
-                                <div className="flex items-start gap-4">
-                                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
-                                        <i className="fas fa-phone text-primary text-xl"></i>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-semibold text-secondary mb-1">Phone</h3>
-                                        <p className="text-gray-600"><b>East Ahmedabad : </b>+91 93769 96179 <span className="block pt-1 pl-37">+91 97270 27052</span> </p>
-                                        <p className="text-gray-600 pt-2"><b>West Ahmedabad : </b>+91 88661 13391 <span className="block pt-1 pl-38">+91 90672 30240</span> </p>
+                                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                                    <i className="fas fa-phone text-primary text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-secondary mb-1">Phone</h3>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <p className="text-sm font-bold text-gray-700">East Ahmedabad:</p>
+                                            <div className="flex flex-col text-gray-600">
+                                                <a href="tel:+919376996179" className="hover:text-primary transition-colors">+91 93769 96179</a>
+                                                <a href="tel:+919727027052" className="hover:text-primary transition-colors">+91 97270 27052</a>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-gray-700">West Ahmedabad:</p>
+                                            <div className="flex flex-col text-gray-600">
+                                                <a href="tel:+918866113391" className="hover:text-primary transition-colors">+91 88661 13391</a>
+                                                <a href="tel:+919067230240" className="hover:text-primary transition-colors">+91 90672 30240</a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
