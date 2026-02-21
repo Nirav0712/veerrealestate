@@ -8,7 +8,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                     {/* About Section */}
                     <div>
-                        <h4 className="text-xl font-semibold mb-4">About Veer RealEstate</h4>
+                        <h4 className="text-xl font-semibold mb-4">About Veer Real Estate</h4>
                         <p className="text-white/80 mb-4 leading-relaxed align-justify">
                             Your trusted partner in finding the perfect property in Ahmedabad. Discover Omkar Enclave, Ranip (West Ahmedabad) – premium 2 & 3 BHK residences thoughtfully designed for modern urban living with excellent connectivity and secure gated amenities.
                         </p>
@@ -119,7 +119,7 @@ export default function Footer() {
                     {/* Property Types */}
                     <div>
                         <h4 className="text-xl font-semibold mb-4">Property Types</h4>
-                        <ul className="space-y-1">
+                        <ul className="space-y-2">
                             <li>
                                 <Link href="/properties?type=Villa" className="text-white/80 hover:text-primary transition-colors">
                                     Villas
@@ -170,7 +170,6 @@ export default function Footer() {
                                     Commercial Office
                                 </Link>
                             </li>
-
                         </ul>
                     </div>
 
@@ -239,7 +238,7 @@ export default function Footer() {
                 {/* Footer Bottom */}
                 <div className="border-t border-white/10 pt-6 text-center text-white/70 text-sm">
                     <p>
-                        &copy; 2024 Veer RealEstate. All rights reserved. | Designed with{' '}
+                        &copy; 2024 Veer RealEstate. All rights reserved.| Developed By <a href="https://thedigitalconnect.in/">The Digital Connect</a> | Designed with{' '}
                         <i className="fas fa-heart text-primary"></i> for Real Estate
                     </p>
                 </div>

@@ -2,33 +2,94 @@
 
 import { useState } from 'react';
 
+
+
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  subject: string;
+  message: string;
+}
+
 export default function ContactPage() {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
+
+
+
+
+//contact form backend
+const [formData, setFormData] = useState<FormData>({
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const res = await fetch("/api/send-whatsapp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
+    const data = await res.json();
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        alert('Thank you for contacting us! We\'ll get back to you soon.');
-        setFormData({
-            name: '',
-            email: '',
-            phone: '',
-            subject: '',
-            message: ''
-        });
-    };
+    if (data.success) {
+      alert("Message sent successfully!");
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
+    } else {
+      alert("Failed to send message.");
+    }
+
+    setLoading(false);
+  };
+
+
+
+    // const [formData, setFormData] = useState({
+    //     name: '',
+    //     email: '',
+    //     phone: '',
+    //     subject: '',
+    //     message: ''
+    // });
+
+    // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    //     setFormData({
+    //         ...formData,
+    //         [e.target.name]: e.target.value
+    //     });
+    // };
+
+    // const handleSubmit = (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     alert('Thank you for contacting us! We\'ll get back to you soon.');
+    //     setFormData({
+    //         name: '',
+    //         email: '',
+    //         phone: '',
+    //         subject: '',
+    //         message: ''
+    //     });
+    // };
 
     return (
         <>
@@ -63,7 +124,7 @@ export default function ContactPage() {
                                     <div>
                                         <h3 className="font-semibold text-secondary mb-1">Our Office</h3>
                                         <p className="text-gray-600"><b>East Ahmedabad :</b> C-238, Sumel 7, Near- Soni <br /> ni Chali Cross Road, Odhav, Ahmedabad-382415</p>
-                                        <p className="text-gray-600 pt-2"><b>West Ahmedabad :</b>431, Yash Arian complex, <br />Near Swami Vivekanand Circle, Memnagar<br /> Ahmedabad 380052</p>
+                                        <p className="text-gray-600 pt-2"><b>West Ahmedabad :</b> 431, Yash Arian complex, <br />Near Swami Vivekanand Circle, Memnagar<br /> Ahmedabad 380052</p>
 
                                     </div>
                                 </div>
@@ -222,11 +283,11 @@ export default function ContactPage() {
                                     </div>
 
                                     <button
-                                        type="submit"
+                                        type="submit" disabled={loading}
                                         className="w-full bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-primary-dark transition-colors text-lg"
                                     >
                                         <i className="fas fa-paper-plane mr-2"></i>
-                                        Send Message
+                                        {loading ? "Sending..." : "Send Message"}
                                     </button>
                                 </form>
                             </div>

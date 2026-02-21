@@ -27,7 +27,7 @@ export default function AboutPage() {
                         <div>
                             <h2 className="text-4xl font-bold text-secondary mb-6">Our Story</h2>
                             <p className="text-gray-600 leading-relaxed mb-4">
-                                Founded in 2008, Veer RealEstate has grown from a small local real estate agency to one of the most trusted
+                                Founded in 2012, Veer Real Estate has grown from a small local real estate agency to one of the most trusted
                                 property platforms in the country. Our journey began with a simple mission: to make property buying
                                 and renting accessible, transparent, and stress-free for everyone.
                             </p>
