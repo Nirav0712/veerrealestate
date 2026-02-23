@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import pool from "@/lib/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 export async function POST(req: Request) {
   try {
@@ -40,12 +41,22 @@ export async function POST(req: Request) {
       );
     }
 
+    // Generate unique session ID
+    const sessionId = crypto.randomUUID();
+
+    // Update session ID in database
+    await pool.query(
+      "UPDATE register SET sessionId = ? WHERE id = ?",
+      [sessionId, user.id]
+    );
+
     // Generate JWT
     const token = jwt.sign(
       {
         id: user.id,
         email: user.email,
         role: user.role,
+        sessionId: sessionId,
       },
       process.env.JWT_SECRET as string,
       { expiresIn: "1d" }
