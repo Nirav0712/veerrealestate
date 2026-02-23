@@ -167,19 +167,38 @@ export default function AboutPage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
                             {
-                                name: 'Vikram Malhotra',
-                                role: 'CEO & Founder',
-                                image: 'https://randomuser.me/api/portraits/men/51.jpg'
+                                name: 'SUDHIR PRAJAPATI',
+                                role: 'FOUNDER & CEO',
+                                image: '/images/team/sudhir.jpeg'
                             },
                             {
-                                name: 'Anjali Deshmukh',
-                                role: 'Head of Sales',
-                                image: 'https://randomuser.me/api/portraits/women/72.jpg'
+                                name: 'ABHAY PATEL ',
+                                role: 'TEAM LEADER (EAST)',
+                                image: '/images/team/abhay-patel.jpeg'
                             },
                             {
-                                name: 'Arjun Nair',
-                                role: 'Chief Operations Officer',
-                                image: 'https://randomuser.me/api/portraits/men/62.jpg'
+                                name: 'AJAY DUBEY ',
+                                role: 'TEAM LEADER (EAST AHMEDABAD)',
+                                image: '/images/team/ajay-dubey.jpeg'
+                            },
+                             {
+                                name: 'CHETAN PARMAR',
+                                role: 'TEAM LEADER (EAST AHMEDABAD)',
+                                image: '/images/team/chetan-parmar.jpeg'
+                            },
+                             {
+                                name: 'RAJESHWARI BARA',
+                                role: 'PRE TELE SALES EXUCUTIVE',
+                                image: '/images/team/rajeshwari.jpeg'
+                            },
+                                 {
+                                name: 'RAVI PRAJAPATI',
+                                role: 'TEAM LEADER (WEST AHMEDABAD)',
+                                image: '/images/team/ravi-prajapati.jpeg'
+                            }, {
+                                name: 'TANISHA MISTRY',
+                                role: 'PRE TELE SALES EXECUTIVE',
+                                image: '/images/team/tanisha-mishtry.jpeg'
                             }
                         ].map((member, index) => (
                             <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden text-center">
