@@ -164,13 +164,38 @@ export default function AboutPage() {
                         <h2 className="text-4xl font-bold text-secondary mb-4">Meet Our Team</h2>
                         <p className="text-xl text-gray-600">Dedicated professionals committed to your success</p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
                         {[
                             {
                                 name: 'SUDHIR PRAJAPATI',
                                 role: 'FOUNDER & CEO',
                                 image: '/images/team/sudhir.jpeg'
-                            },
+                            }
+                            
+                        ].map((member, index) => (
+                            <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden text-center">
+                                <div className="relative h-80 w-80 text-center items-center justify-center mx-auto">
+                                    <Image
+                                        src={member.image}
+                                        alt={member.name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                                <div className="p-6">
+                                    <h3 className="text-xl font-semibold text-secondary mb-1">{member.name}</h3>
+                                    <p className="text-gray-600">{member.role}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {[
+                            // {
+                            //     name: 'SUDHIR PRAJAPATI',
+                            //     role: 'FOUNDER & CEO',
+                            //     image: '/images/team/sudhir.jpeg'
+                            // },
                             {
                                 name: 'ABHAY PATEL ',
                                 role: 'TEAM LEADER (EAST)',
@@ -202,7 +227,7 @@ export default function AboutPage() {
                             }
                         ].map((member, index) => (
                             <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden text-center">
-                                <div className="relative h-72">
+                                <div className="relative h-80 w-80 text-center items-center justify-center mx-auto">
                                     <Image
                                         src={member.image}
                                         alt={member.name}

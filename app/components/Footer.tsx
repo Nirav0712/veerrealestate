@@ -75,7 +75,7 @@ export default function Footer() {
                     </div>
 
                     {/* Quick Links */}
-                    <div>
+                    <div className="text-left items-left justify-left pl-0 lg:pl-20">
                         <h4 className="text-xl font-semibold mb-4">Quick Links</h4>
                         <ul className="space-y-6">
                             <li>
@@ -174,63 +174,109 @@ export default function Footer() {
                     </div>
 
                     {/* Contact Info */}
+
+
                     <div className="md:col-span-2 lg:col-span-1">
-                        <h4 className="text-xl font-semibold mb-6 text-center lg:text-left">Contact Info</h4>
-                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-10 text-white/80'>
-                            <div>
-                                <h5 className="text-md font-semibold mb-4 text-primary">East Ahmedabad</h5>
-                                <ul className="space-y-4">
-                                    <li className="flex items-start gap-3">
-                                        <i className="fas fa-map-marker-alt text-primary mt-1"></i>
-                                        <span>C-238, Sumel 7, Near- Soni ni Chali Cross Road, Odhav, Ahmedabad-382415</span>
+                        <h4 className="text-xl font-semibold mb-8 text-center lg:text-left">
+                            Contact Info
+                        </h4>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 text-white/80">
+
+                            {/* East Ahmedabad */}
+                            <div className="space-y-5">
+                                <h5 className="text-lg font-semibold text-primary border-b border-white/20 pb-2">
+                                    East Ahmedabad
+                                </h5>
+
+                                <ul className="space-y-4 text-sm leading-relaxed">
+                                    <li className="flex gap-3">
+                                        <i className="fas fa-map-marker-alt text-primary mt-1 shrink-0"></i>
+                                        <span>
+                                            C-238, Sumel 7, Near Soni ni Chali Cross Road,
+                                            Odhav, Ahmedabad - 382415
+                                        </span>
                                     </li>
-                                    <li className="flex items-center gap-3">
-                                        <i className="fas fa-phone text-primary"></i>
-                                        <a href="tel:+91 93769 96179" className="text-white/80 hover:text-primary transition-colors">
+
+                                    <li className="flex gap-3 items-center">
+                                        <i className="fas fa-phone text-primary shrink-0"></i>
+                                        <a
+                                            href="tel:+919376996179"
+                                            className="hover:text-primary transition-colors"
+                                        >
                                             +91 93769 96179
                                         </a>
                                     </li>
-                                    <li className="flex items-center gap-3">
-                                        <i className="fas fa-phone text-primary"></i>
-                                        <a href="tel:+91 97270 27052" className="text-white/80 hover:text-primary transition-colors">
+
+                                    <li className="flex gap-3 items-center">
+                                        <i className="fas fa-phone text-primary shrink-0"></i>
+                                        <a
+                                            href="tel:+919727027052"
+                                            className="hover:text-primary transition-colors"
+                                        >
                                             +91 97270 27052
                                         </a>
                                     </li>
-                                    <li className="flex items-center gap-3">
-                                        <i className="fas fa-envelope text-primary"></i>
-                                        <a href="mailto:horseveer@gmail.com" className="text-white/80 hover:text-primary transition-colors">
+
+                                    <li className="flex gap-3 items-center">
+                                        <i className="fas fa-envelope text-primary shrink-0"></i>
+                                        <a
+                                            href="mailto:horseveer@gmail.com"
+                                            className="hover:text-primary transition-colors break-all"
+                                        >
                                             horseveer@gmail.com
                                         </a>
                                     </li>
                                 </ul>
                             </div>
-                            <div>
-                                <h5 className="text-md font-semibold mb-4 text-primary">West Ahmedabad</h5>
-                                <ul className="space-y-4">
-                                    <li className="flex items-start gap-3">
-                                        <i className="fas fa-map-marker-alt text-primary mt-1"></i>
-                                        <span> 431, Yash Arian complex, Near Swami Vivekanand Circle. Memnagar Ahmedabad 380052</span>
+
+                            {/* West Ahmedabad */}
+                            <div className="space-y-5">
+                                <h5 className="text-lg font-semibold text-primary border-b border-white/20 pb-2">
+                                    West Ahmedabad
+                                </h5>
+
+                                <ul className="space-y-4 text-sm leading-relaxed">
+                                    <li className="flex gap-3">
+                                        <i className="fas fa-map-marker-alt text-primary mt-1 shrink-0"></i>
+                                        <span>
+                                            431, Yash Arian Complex, Near Swami Vivekanand Circle,
+                                            Memnagar, Ahmedabad - 380052
+                                        </span>
                                     </li>
-                                    <li className="flex items-center gap-3">
-                                        <i className="fas fa-phone text-primary"></i>
-                                        <a href="tel:+91 88661 13391" className="text-white/80 hover:text-primary transition-colors">
+
+                                    <li className="flex gap-3 items-center">
+                                        <i className="fas fa-phone text-primary shrink-0"></i>
+                                        <a
+                                            href="tel:+918866113391"
+                                            className="hover:text-primary transition-colors"
+                                        >
                                             +91 88661 13391
                                         </a>
                                     </li>
-                                    <li className="flex items-center gap-3">
-                                        <i className="fas fa-phone text-primary"></i>
-                                        <a href="tel:+91 90672 30240" className="text-white/80 hover:text-primary transition-colors">
+
+                                    <li className="flex gap-3 items-center">
+                                        <i className="fas fa-phone text-primary shrink-0"></i>
+                                        <a
+                                            href="tel:+919067230240"
+                                            className="hover:text-primary transition-colors"
+                                        >
                                             +91 90672 30240
                                         </a>
                                     </li>
-                                    <li className="flex items-center gap-3">
-                                        <i className="fas fa-envelope text-primary"></i>
-                                        <a href="mailto:horseveer@gmail.com" className="text-white/80 hover:text-primary transition-colors">
+
+                                    <li className="flex gap-3 items-center">
+                                        <i className="fas fa-envelope text-primary shrink-0"></i>
+                                        <a
+                                            href="mailto:horseveer@gmail.com"
+                                            className="hover:text-primary transition-colors break-all"
+                                        >
                                             horseveer@gmail.com
                                         </a>
                                     </li>
                                 </ul>
                             </div>
+
                         </div>
                     </div>
                 </div>

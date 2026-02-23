@@ -15,9 +15,6 @@ interface FormData {
 export default function ContactPage() {
 
 
-
-
-    //contact form backend
     const [formData, setFormData] = useState<FormData>({
         name: "",
         email: "",
@@ -34,62 +31,31 @@ export default function ContactPage() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
 
-        const res = await fetch("/api/send-whatsapp", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-        });
+        const phoneNumber = "919727027052";
+        const message = `*New Contact Form Message*%0A%0A` +
+            `*Name:* ${formData.name}%0A` +
+            `*Email:* ${formData.email}%0A` +
+            `*Phone:* ${formData.phone}%0A` +
+            `*Subject:* ${formData.subject}%0A` +
+            `*Message:* ${formData.message}`;
 
-        const data = await res.json();
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 
-        if (data.success) {
-            alert("Message sent successfully!");
-            setFormData({
-                name: "",
-                email: "",
-                phone: "",
-                subject: "",
-                message: "",
-            });
-        } else {
-            alert("Failed to send message.");
-        }
+        window.open(whatsappUrl, '_blank');
 
         setLoading(false);
+        setFormData({
+            name: "",
+            email: "",
+            phone: "",
+            subject: "",
+            message: "",
+        });
     };
-
-
-
-    // const [formData, setFormData] = useState({
-    //     name: '',
-    //     email: '',
-    //     phone: '',
-    //     subject: '',
-    //     message: ''
-    // });
-
-    // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    //     setFormData({
-    //         ...formData,
-    //         [e.target.name]: e.target.value
-    //     });
-    // };
-
-    // const handleSubmit = (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     alert('Thank you for contacting us! We\'ll get back to you soon.');
-    //     setFormData({
-    //         name: '',
-    //         email: '',
-    //         phone: '',
-    //         subject: '',
-    //         message: ''
-    //     });
-    // };
 
     return (
         <>
@@ -134,10 +100,10 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <h3 className="font-semibold text-secondary mb-1">Phone</h3>
-                                    <div className="space-y-4">
+                                    {/* <div className="space-y-4">
                                         <div>
                                             <p className="text-sm font-bold text-gray-700">East Ahmedabad:</p>
-                                            <div className="flex flex-col text-gray-600">
+                                            <div className="flex flex-col text-gray-600 ">
                                                 <a href="tel:+919376996179" className="hover:text-primary transition-colors">+91 93769 96179</a>
                                                 <a href="tel:+919727027052" className="hover:text-primary transition-colors">+91 97270 27052</a>
                                             </div>
@@ -149,6 +115,51 @@ export default function ContactPage() {
                                                 <a href="tel:+919067230240" className="hover:text-primary transition-colors">+91 90672 30240</a>
                                             </div>
                                         </div>
+                                    </div> */}
+                                    <div className="space-y-6 md:space-y-0 md:grid md:grid-cols-2 md:gap-8">
+
+                                        {/* East Ahmedabad */}
+                                        <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                                            <p className="text-sm font-semibold text-gray-800 mb-2">
+                                                East Ahmedabad:
+                                            </p>
+                                            <div className="flex flex-col space-y-1 text-gray-600">
+                                                <a
+                                                    href="tel:+919376996179"
+                                                    className="hover:text-primary transition-colors"
+                                                >
+                                                    +91 93769 96179
+                                                </a>
+                                                <a
+                                                    href="tel:+919727027052"
+                                                    className="hover:text-primary transition-colors"
+                                                >
+                                                    +91 97270 27052
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        {/* West Ahmedabad */}
+                                        <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                                            <p className="text-sm font-semibold text-gray-800 mb-2">
+                                                West Ahmedabad:
+                                            </p>
+                                            <div className="flex flex-col space-y-1 text-gray-600">
+                                                <a
+                                                    href="tel:+918866113391"
+                                                    className="hover:text-primary transition-colors"
+                                                >
+                                                    +91 88661 13391
+                                                </a>
+                                                <a
+                                                    href="tel:+919067230240"
+                                                    className="hover:text-primary transition-colors"
+                                                >
+                                                    +91 90672 30240
+                                                </a>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
 
