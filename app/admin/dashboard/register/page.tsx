@@ -68,6 +68,11 @@ export default function Register() {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
+        <img
+          src="/images/veer-logo.png"
+          alt="Logo"
+          className="text-center mx-auto mb-6 items-center text-align-center h-22 w-32"
+        />
         <h2 style={styles.title}>Create Account 🚀</h2>
         <p style={styles.subtitle}>Your ideal property is just one step away.</p>
 

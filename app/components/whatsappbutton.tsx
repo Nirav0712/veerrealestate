@@ -9,7 +9,7 @@ interface WhatsAppButtonProps {
 const WhatsAppButton = ({ phoneNumber }: WhatsAppButtonProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  const whatsappMessage = `Hello! I'm interested in your event planning services. Can you please provide more information?`;
+  const whatsappMessage = `Hello! I'm interested in buying/renting a property. Could you please share available options and pricing details?`;
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();

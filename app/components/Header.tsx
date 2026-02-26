@@ -16,7 +16,7 @@ export default function Header() {
                         {/* Logo */}
                         <Link href="/" className="text-2xl font-bold text-secondary">
                             {/* Veer<span className="text-primary">RealEstate</span> */}
-                            <img src="/veer-logo.png" alt="veer-logo" className="w-32" />
+                            <img src="/images/veer-logo.png" alt="veer-logo" className="w-40" />
                         </Link>
                         {/* Desktop Menu */}
                         <ul className="hidden lg:flex items-center gap-8">
@@ -82,12 +82,12 @@ export default function Header() {
                             >
                                 Search Properties
                             </Link>
-                            <Link
+                            {/* <Link
                                 href="/login"
                                 className="bg-primary text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-md"
                             >
                                 Login
-                            </Link>
+                            </Link> */}
                         </div>
 
                         {/* Mobile Menu Toggle */}

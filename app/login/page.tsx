@@ -56,9 +56,9 @@ export default function Login(): JSX.Element {
     <div style={styles.container}>
       <div style={styles.card}>
         <img
-          src="/veer-logo.png"
+          src="/images/veer-logo.png"
           alt="Logo"
-          style={{ height: "50px", margin: "10px 0", paddingLeft: "70px" }}
+          className="text-center mx-auto mb-6 items-center text-align-center h-22 w-32"
         />
 
         <h2 style={styles.title}>Welcome Back</h2>

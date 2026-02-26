@@ -85,10 +85,10 @@ export default function AboutPage() {
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">
-                            Visit Our Office
+                            Core Values
                         </h2>
                         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                            The principles that guide everything we do
+                            Our Values, Your Confidence
                         </p>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">

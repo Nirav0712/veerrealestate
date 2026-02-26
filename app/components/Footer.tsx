@@ -8,11 +8,20 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                     {/* About Section */}
                     <div>
-                        <h4 className="text-xl font-semibold mb-4">About Veer Real Estate</h4>
-                        <p className="text-white/80 mb-4 leading-relaxed text-justify">
+                        {/* <h4 className="text-xl font-semibold mb-4">About Veer Real Estate</h4> */}
+                        <div className="bg-white/30 backdrop-blur-xl p-2 rounded-2xl 
+                border border-white/40 shadow-xl 
+                inline-block">
+                            <img
+                                src="/images/veer-logo.png"
+                                alt="Veer Real Estate Logo"
+                                className="w-50 h-30 object-contain"
+                            />
+                        </div>
+                        {/* <p className="text-white/80 mb-4 leading-relaxed text-justify">
                             Your trusted partner in finding the perfect property in Ahmedabad. Discover Omkar Enclave, Ranip (West Ahmedabad) – premium 2 & 3 BHK residences thoughtfully designed for modern urban living with excellent connectivity and secure gated amenities.
-                        </p>
-                        <span className="text-white/70 font-medium mb-2 block"><b>East Ahmedabad</b></span>
+                        </p> */}
+                        <span className="text-white/70 font-medium mb-2 block mt-5"><b>East Ahmedabad</b></span>
                         <div className="flex gap-3">
                             <a
                                 href="https://www.facebook.com/people/Veer-Real-Estate-East-Ahmedabad/61571731020972/"
@@ -119,12 +128,7 @@ export default function Footer() {
                     {/* Property Types */}
                     <div>
                         <h4 className="text-xl font-semibold mb-4">Property Types</h4>
-                        <ul className="space-y-2">
-                            <li>
-                                <Link href="/properties?type=Villa" className="text-white/80 hover:text-primary transition-colors">
-                                    Villas
-                                </Link>
-                            </li>
+                        <ul className="space-y-4">
                             <li>
                                 <Link href="/properties?type=Apartment" className="text-white/80 hover:text-primary transition-colors">
                                     Apartments
@@ -136,23 +140,13 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/properties?type=Condo" className="text-white/80 hover:text-primary transition-colors">
-                                    Condos
-                                </Link>
-                            </li>
-                            <li>
                                 <Link href="/properties?type=Land" className="text-white/80 hover:text-primary transition-colors">
-                                    Land & Plots
+                                    Lands
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/properties?type=House" className="text-white/80 hover:text-primary transition-colors">
-                                    Houses
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/properties?type=Banglow" className="text-white/80 hover:text-primary transition-colors">
-                                    Banglow
+                                <Link href="/properties?type=Bunglow" className="text-white/80 hover:text-primary transition-colors">
+                                    Bunglow
                                 </Link>
                             </li>
                             <li>
@@ -184,7 +178,7 @@ export default function Footer() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 text-white/80">
 
                             {/* East Ahmedabad */}
-                            <div className="space-y-5">
+                            <div className="space-y-3">
                                 <h5 className="text-lg font-semibold text-primary border-b border-white/20 pb-2">
                                     East Ahmedabad
                                 </h5>
@@ -231,7 +225,7 @@ export default function Footer() {
                             </div>
 
                             {/* West Ahmedabad */}
-                            <div className="space-y-5">
+                            <div className="space-y-2">
                                 <h5 className="text-lg font-semibold text-primary border-b border-white/20 pb-2">
                                     West Ahmedabad
                                 </h5>

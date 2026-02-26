@@ -6,6 +6,8 @@ import Image from 'next/image';
 import PropertyCard from './components/PropertyCard';
 import Loader from './components/Loader';
 import { formatPrice, type Property } from '@/lib/properties';
+import { ArrowRight } from "lucide-react";
+import GoogleReviews from './components/GoogleReviews';
 
 export default function HomePage() {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -147,10 +149,10 @@ export default function HomePage() {
                   <option value="">Property Types</option>
                   <option value="Land">Land</option>
                   <option value="Plot">Plot</option>
-                  <option value="Villa">Villa</option>
-                  <option value="House">House</option>
-                  <option value="Condo">Condo</option>
-                  <option value="Banglow">Banglow</option>
+                  {/* <option value="Villa">Villa</option> */}
+                  {/* <option value="House">House</option> */}
+                  {/* <option value="Condo">Condo</option> */}
+                  <option value="Banglow">Bunglow</option>
                   <option value="Apartment">Apartment</option>
                   <option value="Industrial">Industrial</option>
                   <option value="Commercial">Commercial Shops</option>
@@ -158,7 +160,15 @@ export default function HomePage() {
                 </select>
 
                 {/* Location */}
-                <select
+                <input
+                  type="text"
+                  name="location"
+                  placeholder="Enter Location"
+                  className="px-4 py-3 bg-white/80 rounded-lg 
+             focus:outline-none focus:ring-2 
+             focus:ring-primary text-black w-full  placeholder:text-black"
+                />
+                {/* <select
                   name="location"
                   className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
                 >
@@ -166,7 +176,7 @@ export default function HomePage() {
                   {Array.from(new Set(properties.map(p => p.location))).sort().map((location, index) => (
                     <option key={index} value={location}>{location}</option>
                   ))}
-                </select>
+                </select> */}
 
                 {/* BHK */}
                 <select
@@ -182,7 +192,15 @@ export default function HomePage() {
                 </select>
 
                 {/* Min Budget */}
-                <select
+                <input
+                  type="number"
+                  name="minBudget"
+                  placeholder="Enter Min Budget"
+                  className="px-4 py-3 bg-white/80 rounded-lg 
+             focus:outline-none focus:ring-2 
+             focus:ring-primary text-black w-full  placeholder:text-black"
+                />
+                {/* <select
                   name="minBudget"
                   className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
                 >
@@ -194,10 +212,18 @@ export default function HomePage() {
                     .map((price, index) => (
                       <option key={index} value={price}>{formatPrice(price)}</option>
                     ))}
-                </select>
+                </select> */}
 
                 {/* Max Budget */}
-                <select
+                <input
+                  type="number"
+                  name="maxBudget"
+                  placeholder="Enter Max Budget"
+                  className="px-4 py-3 bg-white/80 rounded-lg 
+             focus:outline-none focus:ring-2 
+             focus:ring-primary text-black w-full  placeholder:text-black"
+                />
+                {/* <select
                   name="maxBudget"
                   className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
                 >
@@ -209,7 +235,7 @@ export default function HomePage() {
                     .map((price, index) => (
                       <option key={index} value={price}>{formatPrice(price)}</option>
                     ))}
-                </select>
+                </select> */}
 
                 {/* Transaction */}
                 <select
@@ -258,56 +284,78 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Side - Property Images */}
             <div className="relative">
-              <div className="grid grid-cols-2 gap-4">
-                {/* Main large image */}
-                <div className="col-span-2 relative h-80 rounded-3xl overflow-hidden shadow-xl">
-                  <Image
-                    src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&q=80"
-                    alt="Luxury Property"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+              {/* <div className="grid grid-cols-1 gap-4"> */}
+              {/* Main large image */}
+              <div className="col-span-2 relative h-80 rounded-3xl overflow-hidden shadow-xl">
+                <Image
+                  src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&q=80"
+                  alt="Luxury Property"
+                  fill
+                  className="object-cover"
+                />
+              </div>
 
-                {/* Top small image with customer badge */}
+
+              {/* Small Property Image */}
+              <div className='grid grid-cols-1 gap-4 mt-6 '>
                 <div className="relative">
-                  <div className="relative h-48 rounded-3xl overflow-hidden shadow-lg">
-                    <Image
-                      src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=80"
-                      alt="Property 1"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+                  <div className="flex gap-4 items-start">
 
-                  {/* Happy Customer Badge */}
-                  <div className="absolute -bottom-4 -right-4 bg-white rounded-2xl p-4 shadow-xl">
-                    <div className="text-center mb-2">
-                      <p className="text-sm font-semibold text-secondary">Our Happy Customer</p>
+                    {/* Small Image */}
+                    <div className="relative h-68 w-120 rounded-3xl overflow-hidden shadow-lg">
+                      <Image
+                        src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=80"
+                        alt="Property 1"
+                        fill
+                        className="object-cover"
+                      />
                     </div>
-                    <div className="flex -space-x-2">
-                      {[
-                        'https://randomuser.me/api/portraits/women/32.jpg',
-                        'https://randomuser.me/api/portraits/men/45.jpg',
-                        'https://randomuser.me/api/portraits/women/68.jpg',
-                        'https://randomuser.me/api/portraits/men/52.jpg'
-                      ].map((img, i) => (
-                        <Image
-                          key={i}
-                          src={img}
-                          alt={`Customer ${i + 1}`}
-                          width={30}
-                          height={25}
-                          className="rounded-full border-2 border-white"
-                        />
-                      ))}
-                      <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center shrink-0 text-secondary text-xs font-bold border-2 border-white">
-                        5k+
+
+                    {/* Logo Beside Image */}
+                    <div className="flex items-center justify-center bg-white rounded-2xl shadow-lg p-4">
+                      <Image
+                        src="/images/veer-logo.png"
+                        alt="Veer Logo"
+                        width={240}
+                        height={220}
+                        className="object-contain"
+                      />
+                    </div>
+
+                    {/* Happy Customer Badge */}
+                    <div className="absolute top-43  left-80 bg-white rounded-2xl p-4 shadow-xl">
+                      <div className="text-center mb-2">
+                        <p className="text-sm font-semibold text-secondary">Our Happy Customer</p>
+                      </div>
+                      <div className="flex -space-x-2">
+                        {[
+                          'https://randomuser.me/api/portraits/men/41.jpg',
+                          'https://randomuser.me/api/portraits/men/39.jpg',
+                          'https://randomuser.me/api/portraits/women/63.jpg',
+                          'https://randomuser.me/api/portraits/men/85.jpg',
+                          // 'https://randomuser.me/api/portraits/women/62.jpg',
+
+                        ].map((img, i) => (
+                          <Image
+                            key={i}
+                            src={img}
+                            alt={`Customer ${i + 1}`}
+                            width={45}
+                            height={35}
+                            className="rounded-full border-2 border-white"
+                          />
+                        ))}
+                        <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center shrink-0 text-secondary text-xs font-bold border-2 border-white">
+                          3k+
+                        </div>
                       </div>
                     </div>
+
                   </div>
+
                 </div>
               </div>
+
             </div>
 
             {/* Right Side - Content */}
@@ -319,35 +367,80 @@ export default function HomePage() {
                 Embrace the Elegance<br />Our Exclusive Property
               </h2>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                At Veer Real Estate, we're redefining the way people find, sell, and invest in properties.
-                Our mission is to simplify real estate by providing innovative solutions, expert guidance,
-                and personalized service.
+                Veer Real Estate, founded by Harshad and Sudhir Prajapati in 2012, quickly earned a strong reputation in Ahmedabad. With over 12 years of experience, they offer diverse real estate solutions, from commercial spaces to luxury homes and budget apartments. Known for their commitment to meeting clients' needs, they've sold over 1,500 flats and served 2,200+ satisfied customers, establishing themselves as a trusted name in the Ahmedabad real estate market.
               </p>
+              <ul className="text-gray-600 mb-8 space-y-3">
+                <li className="flex items-center gap-3 leading-relaxed">
+                  <ArrowRight className="text-gray-600 w-4 h-4 shrink-0" />
+                  <span>Quality real estate services</span>
+                </li>
+
+                <li className="flex items-center gap-3 leading-relaxed">
+                  <ArrowRight className="text-gray-600 w-4 h-4 shrink-0" />
+                  <span>100% Satisfaction guarantee</span>
+                </li>
+
+                <li className="flex items-center gap-3 leading-relaxed">
+                  <ArrowRight className="text-gray-600 w-4 h-4 shrink-0" />
+                  <span>Highly professional team</span>
+                </li>
+
+                <li className="flex items-center gap-3 leading-relaxed">
+                  <ArrowRight className="text-gray-600 w-4 h-4 shrink-0" />
+                  <span>Dealing always on time</span>
+                </li>
+              </ul>
+
 
               {/* Stats */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
-                {/* <div>
+              {/* <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
+                <div>
                   <div className="text-4xl font-bold text-secondary mb-1">10K</div>
                   <div className="text-sm text-gray-600">Homes Sold</div>
-                </div> */}
+                </div>
                 <div>
-                  <div className="text-3xl md:text-4xl font-bold text-secondary mb-1">5K+</div>
+                  <div className="text-3xl md:text-4xl font-bold text-secondary mb-1">3K+</div>
                   <div className="text-sm text-gray-600">Happy Client</div>
                 </div>
                 <div className="col-span-1 sm:col-span-1">
                   <div className="text-3xl md:text-4xl font-bold text-secondary mb-1">98%</div>
                   <div className="text-sm text-gray-600">Satisfaction Rate</div>
                 </div>
-              </div>
+              </div> */}
 
               {/* CTA Button */}
               <Link
-                href="/properties"
+                href="/about"
                 className="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-lg"
               >
-                See All Properties
+                More About Us
                 <i className="fas fa-arrow-right"></i>
               </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      {/* Stats Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center"'>
+              <div className="text-5xl font-bold text-primary mb-2">98%</div>
+              <div className="text-gray-600">Satisfaction Rate</div>
+            </div>
+            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center"'>
+              <div className="text-5xl font-bold text-primary mb-2">5K+</div>
+              <div className="text-gray-600">Happy Customers</div>
+            </div>
+            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center"'>
+              <div className="text-5xl font-bold text-primary mb-2">100+</div>
+              <div className="text-gray-600">Projects</div>
+            </div>
+            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center"'>
+              <div className="text-5xl font-bold text-primary mb-2">15+</div>
+              <div className="text-gray-600">Years Experience</div>
             </div>
           </div>
         </div>
@@ -445,7 +538,7 @@ export default function HomePage() {
 
           {/* Property Type Tabs */}
           <div className="flex flex-wrap justify-center gap-4 mb-12">
-            {['all', 'Villa', 'Apartment', 'House', 'Condo', 'Commercial', 'Industrial', 'Plot'].map((type) => (
+            {['all', 'Bunglow', 'Apartment', 'Commercial', 'Industrial', 'Plot', 'Land'].map((type) => (
               <button
                 key={type}
                 onClick={() => setActiveTab(type)}
@@ -486,29 +579,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 text-center">
-            {/* <div>
-              <div className="text-5xl font-bold text-primary mb-2">10K+</div>
-              <div className="text-gray-600">Properties Sold</div>
-            </div> */}
-            <div>
-              <div className="text-5xl font-bold text-primary mb-2">5K+</div>
-              <div className="text-gray-600">Happy Customers</div>
-            </div>
-            <div>
-              <div className="text-5xl font-bold text-primary mb-2">100+</div>
-              <div className="text-gray-600">Projects</div>
-            </div>
-            <div>
-              <div className="text-5xl font-bold text-primary mb-2">15+</div>
-              <div className="text-gray-600">Years Experience</div>
-            </div>
-          </div>
-        </div>
-      </section>
+
       {/* Popular Cities */}
       {/* <section className="py-20">
         <div className="container mx-auto px-4">
@@ -539,7 +610,7 @@ export default function HomePage() {
       </section> */}
 
       {/* Property Types */}
-      <section className="py-20 bg-gray-50">
+      {/* <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-secondary mb-4">Property Types</h2>
@@ -568,12 +639,124 @@ export default function HomePage() {
             ))}
           </div>
         </div>
+      </section> */}
+
+
+
+
+
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-secondary mb-4">BRAND PROMISE:</h2>
+            <p className="text-xl text-gray-600">100% Dream Accomplishment</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <div className="bg-white p-8 rounded-xl shadow-sm text-center">
+              <div className="text-6xl text-primary mb-6">
+                <i className="fas fa-bullseye"></i>
+              </div>
+              <h3 className="text-2xl font-semibold text-secondary mb-4">Big Harry Audicious Goal (Mission)</h3>
+              <p className="text-gray-600 leading-relaxed">
+                To ensure no one will be homeless, to turn dreams into reality through innovative solutions, and to bring lasting satisfaction to 1 million families and having 5000 skilled and professionals team by 15th August, 2047
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-xl shadow-sm text-center">
+              <div className="text-6xl text-primary mb-6">
+                <i className="fas fa-home"></i>
+              </div>
+              <h3 className="text-2xl font-semibold text-secondary mb-4">Core Purporse :</h3>
+              <p className="text-gray-600 leading-relaxed">
+                We are a trusted, one stop solutions provider with a skilled and dedicated team by delivering high-quality, innovative, and sustainable customized solutions to accomplish dreams of our clients since 2012
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Values */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">
+              Core Values
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Our Values, Your Confidence
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+
+            {/* Integrity */}
+            <div className="bg-white p-8 rounded-xl shadow-sm text-center">
+              <div className="w-20 h-20 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
+                <i className="fas fa-handshake text-4xl text-primary"></i>
+              </div>
+              <h3 className="text-2xl font-semibold text-secondary mb-4">Integrity</h3>
+              <p className="text-gray-600 leading-relaxed">
+                We uphold the highest standards of honesty and ethics, ensuring every interaction is built on trust,
+                accountability, and long-term commitment.
+              </p>
+            </div>
+
+            {/* Resourceful */}
+            <div className="bg-white p-8 rounded-xl shadow-sm text-center">
+              <div className="w-20 h-20 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
+                <i className="fas fa-lightbulb text-4xl text-primary"></i>
+              </div>
+              <h3 className="text-2xl font-semibold text-secondary mb-4">Resourceful</h3>
+              <p className="text-gray-600 leading-relaxed">
+                We approach every challenge with creativity and adaptability, finding smart solutions that deliver
+                value and exceed expectations.
+              </p>
+            </div>
+
+            {/* Transparency */}
+            <div className="bg-white p-8 rounded-xl shadow-sm text-center">
+              <div className="w-20 h-20 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
+                <i className="fas fa-eye text-4xl text-primary"></i>
+              </div>
+              <h3 className="text-2xl font-semibold text-secondary mb-4">Transparency</h3>
+              <p className="text-gray-600 leading-relaxed">
+                We communicate openly and clearly, providing honest guidance and complete clarity at every stage
+                of the process.
+              </p>
+            </div>
+
+            {/* Service Excellence */}
+            <div className="bg-white p-8 rounded-xl shadow-sm text-center">
+              <div className="w-20 h-20 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
+                <i className="fas fa-award text-4xl text-primary"></i>
+              </div>
+              <h3 className="text-2xl font-semibold text-secondary mb-4">Service Excellence</h3>
+              <p className="text-gray-600 leading-relaxed">
+                We strive for excellence in every interaction, delivering exceptional service that consistently
+                exceeds client expectations.
+              </p>
+            </div>
+
+            {/* Knowledge */}
+            <div className="bg-white p-8 rounded-xl shadow-sm text-center">
+              <div className="w-20 h-20 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
+                <i className="fas fa-book-open text-4xl text-primary"></i>
+              </div>
+              <h3 className="text-2xl font-semibold text-secondary mb-4">Knowledge</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Our deep industry expertise and market understanding empower clients to make confident,
+                informed decisions.
+              </p>
+            </div>
+
+          </div>
+        </div>
       </section>
 
 
-
       {/* How It Works */}
-      <section className="py-20 bg-gray-50">
+      {/* <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-secondary mb-4">How It Works</h2>
@@ -612,11 +795,11 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
 
       {/* Why Choose Us */}
-      <section className="py-20">
+      {/* <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-secondary mb-4">Why Choose Veer Real Estate?</h2>
@@ -640,7 +823,7 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Testimonials */}
       <section className="py-20">
@@ -692,6 +875,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      
+      <GoogleReviews />
     </>
   );
 }
