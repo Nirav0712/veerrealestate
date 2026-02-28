@@ -9,13 +9,11 @@ export default function Footer() {
                     {/* About Section */}
                     <div>
                         {/* <h4 className="text-xl font-semibold mb-4">About Veer Real Estate</h4> */}
-                        <div className="bg-white/30 backdrop-blur-xl p-2 rounded-2xl 
-                border border-white/40 shadow-xl 
-                inline-block">
+                        <div className="p-2 inline-block rounded-2xl">
                             <img
                                 src="/images/veer-logo2.png"
                                 alt="Veer Real Estate Logo"
-                                className="w-50 h-30 object-contain"
+                                className="w-50 h-30 object-contain rounded-2xl"
                             />
                         </div>
                         {/* <p className="text-white/80 mb-4 leading-relaxed text-justify">

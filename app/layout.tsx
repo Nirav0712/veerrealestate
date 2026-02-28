@@ -23,13 +23,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="antialiased">
         <ClientLayout>
           {children}
           <WhatsAppButton phoneNumber="+919727027052" />
         </ClientLayout>
-        
       </body>
     </html>
   );
 }
+
