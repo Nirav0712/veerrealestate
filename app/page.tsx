@@ -833,7 +833,7 @@ export default function HomePage() {
             <p className="text-xl text-gray-600">Real stories from satisfied property owners and renters</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
                 name: 'Rajesh Kumar',
@@ -872,11 +872,12 @@ export default function HomePage() {
                 <div className="text-sm text-gray-500">{testimonial.role}</div>
               </div>
             ))}
-          </div>
+          </div> */}
+          <GoogleReviews />
         </div>
       </section>
-      
-      <GoogleReviews />
+
+
     </>
   );
 }
