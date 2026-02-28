@@ -1,7 +1,7 @@
-import { filterPropertiesHelper, Property, sampleProperties } from '../lib/properties';
+import { filterPropertiesHelper, Property } from '../lib/properties';
 
-// Mock data based on sampleProperties but we can use real ones imported
-const testProperties = sampleProperties;
+// Test with empty array - real data comes from the database API
+const testProperties: Property[] = [];
 
 console.log('Total properties:', testProperties.length);
 

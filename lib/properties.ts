@@ -41,11 +41,11 @@ export const getProperties = (): Property[] => {
                 });
             } catch (e) {
                 console.error("Error parsing stored properties:", e);
-                return sampleProperties;
+                return [];
             }
         }
     }
-    return sampleProperties;
+    return [];
 };
 
 export const getPropertyById = (id: number | string): Property | undefined => {

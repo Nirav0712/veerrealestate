@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import PropertyCard from '../../components/PropertyCard';
 import { type Property, getPropertyFallbackImage } from '@/lib/properties';
-import { FaHeart } from "react-icons/fa";
+import { FaHeart, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import Loader from '@/app/components/Loader';
 
 export default function PropertyDetailsPage() {
@@ -14,6 +14,11 @@ export default function PropertyDetailsPage() {
     const [property, setProperty] = useState<Property | null>(null);
     const [similarProperties, setSimilarProperties] = useState<Property[]>([]);
     const [isFavorite, setIsFavorite] = useState(false);
+
+    // Gallery state
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isAutoScrolling, setIsAutoScrolling] = useState(true);
+    const autoScrollRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -31,7 +36,6 @@ export default function PropertyDetailsPage() {
                 setProperty(prop);
 
                 // Fetch all properties for "Similar Properties"
-                // Optimization: In a real app, strict filtering should happen on server
                 const resAll = await fetch('/api/properties');
                 if (resAll.ok) {
                     const allProps: Property[] = await resAll.json();
@@ -53,6 +57,49 @@ export default function PropertyDetailsPage() {
         fetchData();
     }, [params.id, router]);
 
+    // Auto-scroll logic
+    const images = property?.images && property.images.length > 0
+        ? property.images
+        : [getPropertyFallbackImage(property?.type || '')];
+
+    const goToNext = useCallback(() => {
+        setCurrentImageIndex(prev => (prev + 1) % images.length);
+    }, [images.length]);
+
+    const goToPrev = useCallback(() => {
+        setCurrentImageIndex(prev => (prev - 1 + images.length) % images.length);
+    }, [images.length]);
+
+    // Reset auto-scroll timer
+    const resetAutoScroll = useCallback(() => {
+        if (autoScrollRef.current) clearInterval(autoScrollRef.current);
+        if (isAutoScrolling && images.length > 1) {
+            autoScrollRef.current = setInterval(goToNext, 4000);
+        }
+    }, [goToNext, isAutoScrolling, images.length]);
+
+    useEffect(() => {
+        if (images.length > 1) {
+            autoScrollRef.current = setInterval(goToNext, 4000);
+        }
+        return () => { if (autoScrollRef.current) clearInterval(autoScrollRef.current); };
+    }, [goToNext, images.length]);
+
+    const handlePrev = () => {
+        goToPrev();
+        resetAutoScroll();
+    };
+
+    const handleNext = () => {
+        goToNext();
+        resetAutoScroll();
+    };
+
+    const handleDotClick = (index: number) => {
+        setCurrentImageIndex(index);
+        resetAutoScroll();
+    };
+
     const toggleFavorite = () => {
         const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
         let newFavorites;
@@ -69,11 +116,9 @@ export default function PropertyDetailsPage() {
     };
 
     const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 0,
-        }).format(price);
+        if (price >= 10000000) return `₹${(price / 10000000).toFixed(2)} Cr`;
+        if (price >= 100000) return `₹${(price / 100000).toFixed(2)} L`;
+        return `₹${price.toLocaleString('en-IN')}`;
     };
 
     if (!property) {
@@ -83,7 +128,6 @@ export default function PropertyDetailsPage() {
     return (
         <>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
 
             <div className="py-12">
                 <div className="container mx-auto px-4">
@@ -99,40 +143,119 @@ export default function PropertyDetailsPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Main Content */}
                         <div className="lg:col-span-2">
-                            {/* Image */}
-                            <div className="relative h-96 md:h-125 rounded-2xl overflow-hidden mb-8">
-                                <Image
-                                    src={property.images?.[0] || getPropertyFallbackImage(property.type)}
-                                    alt={property.title}
-                                    fill
-                                    className="object-cover"
-                                    priority
-                                />
-                                <div className="absolute top-6 left-6 flex gap-2">
+
+                            {/* ── Auto-Scroll Image Gallery ── */}
+                            <div className="relative rounded-2xl overflow-hidden mb-4 bg-black" style={{ height: '420px' }}>
+
+                                {/* Images */}
+                                {images.map((src, index) => (
+                                    <div
+                                        key={index}
+                                        className={`absolute inset-0 transition-opacity duration-700 ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
+                                    >
+                                        <Image
+                                            src={src}
+                                            alt={`${property.title} - Image ${index + 1}`}
+                                            fill
+                                            className="object-cover"
+                                            priority={index === 0}
+                                        />
+                                    </div>
+                                ))}
+
+                                {/* Dark gradient overlays */}
+                                <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-black/20 pointer-events-none z-10" />
+
+                                {/* Status badges */}
+                                <div className="absolute top-5 left-5 flex gap-2 z-20">
                                     {property.featured && (
                                         <span className="bg-primary text-secondary px-4 py-2 rounded-lg text-sm font-semibold uppercase tracking-wide shadow-lg">
                                             Featured
                                         </span>
                                     )}
-                                    <span className={`${property.status === 'For Sale' ? 'bg-green-500' : 'bg-blue-500'
-                                        } text-white px-4 py-2 rounded-lg text-sm font-semibold uppercase tracking-wide shadow-lg`}>
+                                    <span className={`${property.status === 'For Sale' ? 'bg-green-500' : 'bg-blue-500'} text-white px-4 py-2 rounded-lg text-sm font-semibold uppercase tracking-wide shadow-lg`}>
                                         {property.status}
                                     </span>
                                 </div>
+
+                                {/* Favorite button */}
                                 <button
                                     onClick={toggleFavorite}
-                                    className={`absolute top-6 right-6 w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-lg ${isFavorite
+                                    className={`absolute top-5 right-5 w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-lg z-20 ${isFavorite
                                         ? 'bg-red-500 text-white'
                                         : 'bg-white text-gray-600 hover:bg-primary hover:text-secondary'
                                         }`}
                                 >
-                                    {/* <i className="fas fa-heart text-lg"></i> */}
-                                    <FaHeart
-                                        className={`text-xl transition ${isFavorite ? "text-red-500" : "text-gray-400"
-                                            }`}
-                                    />
+                                    <FaHeart className={`text-xl transition ${isFavorite ? 'text-white' : 'text-gray-400'}`} />
                                 </button>
+
+                                {/* Prev / Next arrows — only show if multiple images */}
+                                {images.length > 1 && (
+                                    <>
+                                        <button
+                                            onClick={handlePrev}
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
+                                            aria-label="Previous image"
+                                        >
+                                            <FaChevronLeft className="text-secondary text-sm" />
+                                        </button>
+                                        <button
+                                            onClick={handleNext}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
+                                            aria-label="Next image"
+                                        >
+                                            <FaChevronRight className="text-secondary text-sm" />
+                                        </button>
+                                    </>
+                                )}
+
+                                {/* Image counter */}
+                                {images.length > 1 && (
+                                    <div className="absolute bottom-14 right-5 z-20 bg-black/60 text-white text-xs px-3 py-1 rounded-full">
+                                        {currentImageIndex + 1} / {images.length}
+                                    </div>
+                                )}
+
+                                {/* Dot indicators */}
+                                {images.length > 1 && (
+                                    <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                                        {images.map((_, index) => (
+                                            <button
+                                                key={index}
+                                                onClick={() => handleDotClick(index)}
+                                                aria-label={`Go to image ${index + 1}`}
+                                                className={`transition-all duration-300 rounded-full ${index === currentImageIndex
+                                                    ? 'bg-primary w-6 h-2.5'
+                                                    : 'bg-white/60 hover:bg-white/90 w-2.5 h-2.5'
+                                                    }`}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
                             </div>
+
+                            {/* Thumbnail strip — only if multiple images */}
+                            {images.length > 1 && (
+                                <div className="flex gap-2 mb-8 overflow-x-auto pb-1">
+                                    {images.map((src, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => handleDotClick(index)}
+                                            className={`relative shrink-0 w-20 h-16 rounded-lg overflow-hidden transition-all duration-200 ${index === currentImageIndex
+                                                ? 'ring-2 ring-primary ring-offset-1 scale-105'
+                                                : 'opacity-60 hover:opacity-100'
+                                                }`}
+                                        >
+                                            <Image
+                                                src={src}
+                                                alt={`Thumbnail ${index + 1}`}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
 
                             {/* Property Info */}
                             <div className="bg-white rounded-2xl shadow-sm p-8 mb-8">
@@ -168,7 +291,7 @@ export default function PropertyDetailsPage() {
                                     <div className="text-center">
                                         <i className="fas fa-ruler-combined text-3xl text-primary mb-2"></i>
                                         <div className="font-semibold text-secondary">{property.area.toLocaleString()}</div>
-                                        <div className="text-sm text-gray-600">Sq Ft</div>
+                                        <div className="text-sm text-gray-600">{property.areaUnit || 'sqft'}</div>
                                     </div>
                                     {property.parking && property.parking > 0 && (
                                         <div className="text-center">
@@ -205,8 +328,14 @@ export default function PropertyDetailsPage() {
                                         )}
                                         <div className="flex justify-between py-3 border-b border-gray-200">
                                             <span className="text-gray-600">Area:</span>
-                                            <span className="font-semibold text-secondary">{property.area.toLocaleString()} sqft</span>
+                                            <span className="font-semibold text-secondary">{property.area.toLocaleString()} {property.areaUnit || 'sqft'}</span>
                                         </div>
+                                        {property.transaction && (
+                                            <div className="flex justify-between py-3 border-b border-gray-200">
+                                                <span className="text-gray-600">Transaction:</span>
+                                                <span className="font-semibold text-secondary capitalize">{property.transaction}</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -298,8 +427,6 @@ export default function PropertyDetailsPage() {
                     )}
                 </div>
             </div>
-
-
         </>
     );
 }
