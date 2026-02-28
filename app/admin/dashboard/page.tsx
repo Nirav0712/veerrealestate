@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { type Property, formatPrice } from '@/lib/properties';
+import { type Property, formatPrice, getPropertyFallbackImage } from '@/lib/properties';
 // import router from "next/router";
 
 export default function AdminDashboard() {
@@ -24,8 +24,9 @@ export default function AdminDashboard() {
         bedrooms: 0,
         bathrooms: 0,
         area: 0,
+        areaUnit: 'sqft',
         featured: false,
-        image: '',
+        images: [],
         description: '',
         yearBuilt: new Date().getFullYear(),
         parking: 0,
@@ -128,8 +129,9 @@ export default function AdminDashboard() {
             bedrooms: 0,
             bathrooms: 0,
             area: 0,
+            areaUnit: 'sqft',
             featured: false,
-            image: '',
+            images: [],
             description: '',
             yearBuilt: new Date().getFullYear(),
             parking: 0,
@@ -145,49 +147,56 @@ export default function AdminDashboard() {
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return;
 
-        const file = e.target.files[0];
+        const currentImagesCount = formData.images?.length || 0;
+        const remainingSlots = 5 - currentImagesCount;
 
-        // 5MB Limit Check
-        if (file.size > 5 * 1024 * 1024) {
-            alert('File size exceeds 5MB limit. Please upload a smaller image.');
+        if (remainingSlots <= 0) {
+            alert('Maximum 5 images allowed');
             return;
         }
 
-        const formData = new FormData();
-        formData.append('file', file);
-
+        const files = Array.from(e.target.files).slice(0, remainingSlots);
         setIsUploading(true);
 
         try {
-            // Replace with your actual Hostinger Upload PHP script URL
             const uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_API_URL || 'http://localhost/upload.php';
+            const newImageUrls: string[] = [];
 
-            const res = await fetch(uploadUrl, {
-                method: 'POST',
-                body: formData,
-            });
+            for (const file of files) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`File ${file.name} exceeds 5MB limit`);
+                    continue;
+                }
 
-            if (!res.ok) {
-                // Handle HTTP errors (404, 500, etc.)
-                throw new Error(`Server responded with ${res.status} ${res.statusText}`);
+                const uploadFormData = new FormData();
+                uploadFormData.append('file', file);
+
+                const res = await fetch(uploadUrl, {
+                    method: 'POST',
+                    body: uploadFormData,
+                });
+
+                if (!res.ok) throw new Error(`Upload failed for ${file.name}`);
+
+                const data = await res.json();
+                if (data.success) {
+                    newImageUrls.push(data.url);
+                } else {
+                    alert('Upload failed: ' + data.message);
+                }
             }
 
-            const data = await res.json();
-
-            if (data.success) {
-                setFormData(prev => ({ ...prev, image: data.url }));
-            } else {
-                alert('Upload failed: ' + data.message);
+            if (newImageUrls.length > 0) {
+                setFormData(prev => ({
+                    ...prev,
+                    images: [...(prev.images || []), ...newImageUrls]
+                }));
             }
         } catch (error: any) {
-            console.error('Error uploading image:', error);
-            // Specific handling for "Failed to fetch" which usually means network/CORS/URL issues
-            if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-                alert('Connection Failed: Could not reach the upload server.\n\n1. Check if NEXT_PUBLIC_UPLOAD_API_URL is set correctly in .env\n2. Ensure your Hostinger script is deployed and accessible.\n3. Check CORS settings.');
-            } else {
-                alert('Error uploading image: ' + (error.message || 'Unknown error'));
-            }
+            console.error('Error uploading images:', error);
+            alert('Error uploading images: ' + (error.message || 'Unknown error'));
         } finally {
+            setIsUploading(true); // Wait, this should be false, let me fix it in next step or now
             setIsUploading(false);
         }
     };
@@ -323,7 +332,7 @@ export default function AdminDashboard() {
                                             <td className="px-6 py-4">
                                                 <div className="relative w-20 h-20 rounded-lg overflow-hidden">
                                                     <Image
-                                                        src={property.image}
+                                                        src={property.images?.[0] || getPropertyFallbackImage(property.type)}
                                                         alt={property.title}
                                                         fill
                                                         className="object-cover"
@@ -445,12 +454,13 @@ export default function AdminDashboard() {
                                         onChange={handleInputChange}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                                     >
-                                        <option value="Villa">Villa</option>
                                         <option value="Apartment">Apartment</option>
-                                        <option value="House">House</option>
-                                        <option value="Condo">Condo</option>
+                                        <option value="Commercial">Commercial Shops</option>
+                                        <option value="Commercial">Commercial Office</option>
+                                        <option value="Industrial">Industrial</option>
+                                        <option value="Banglow">Bunglow</option>
                                         <option value="Land">Land</option>
-                                        <option value="Retail">Retail</option>
+                                        <option value="Plot">Plot</option>
                                     </select>
                                 </div>
 
@@ -491,16 +501,29 @@ export default function AdminDashboard() {
                                     />
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Area (sqft)</label>
-                                    <input
-                                        type="number"
-                                        name="area"
-                                        value={formData.area}
-                                        onChange={handleInputChange}
-                                        min="0"
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                                    />
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Size</label>
+                                    <div className="flex">
+                                        <input
+                                            type="number"
+                                            name="area"
+                                            value={formData.area}
+                                            onChange={handleInputChange}
+                                            min="0"
+                                            className="flex-1 px-4 py-3 border border-gray-300 rounded-l-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                            placeholder="Enter size"
+                                        />
+                                        <select
+                                            name="areaUnit"
+                                            value={formData.areaUnit || 'sqft'}
+                                            onChange={handleInputChange}
+                                            className="w-32 px-4 py-3 border border-l-0 border-gray-300 rounded-r-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 bg-gray-50"
+                                        >
+                                            <option value="sqft">sqft</option>
+                                            <option value="sqyard">sqyard</option>
+                                            <option value="sqmeter">sqmeter</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div>
@@ -527,57 +550,59 @@ export default function AdminDashboard() {
                                 </div>
 
                                 <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Property Image</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Property Images ({formData.images?.length || 0}/5)
+                                    </label>
 
-                                    {/* File Input */}
-                                    <div className="flex items-center gap-4 mb-4">
-                                        <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}>
-                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                {isUploading ? (
-                                                    <i className="fas fa-spinner fa-spin text-2xl text-primary mb-2"></i>
-                                                ) : (
-                                                    <i className="fas fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
+                                    {/* Previews Grid */}
+                                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
+                                        {(formData.images || []).map((url, index) => (
+                                            <div key={index} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 group">
+                                                <Image
+                                                    src={url}
+                                                    alt={`Preview ${index + 1}`}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setFormData(prev => ({
+                                                        ...prev,
+                                                        images: prev.images?.filter((_, i) => i !== index)
+                                                    }))}
+                                                    className="absolute top-1 right-1 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 shadow-md"
+                                                >
+                                                    <i className="fas fa-times text-xs"></i>
+                                                </button>
+                                                {index === 0 && (
+                                                    <div className="absolute bottom-0 left-0 right-0 bg-primary/80 text-white text-[10px] text-center py-0.5">
+                                                        Main Image
+                                                    </div>
                                                 )}
-                                                <p className="text-sm text-gray-500">
-                                                    {isUploading ? 'Uploading...' : 'Click to upload image'}
-                                                </p>
                                             </div>
-                                            <input
-                                                type="file"
-                                                className="hidden"
-                                                accept="image/*"
-                                                onChange={handleImageUpload}
-                                                disabled={isUploading}
-                                            />
-                                        </label>
+                                        ))}
+
+                                        {/* Upload Button */}
+                                        {(formData.images?.length || 0) < 5 && (
+                                            <label className={`aspect-square flex flex-col items-center justify-center border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                                                <div className="flex flex-col items-center justify-center">
+                                                    {isUploading ? (
+                                                        <i className="fas fa-spinner fa-spin text-xl text-primary"></i>
+                                                    ) : (
+                                                        <i className="fas fa-plus text-xl text-gray-400"></i>
+                                                    )}
+                                                </div>
+                                                <input
+                                                    type="file"
+                                                    className="hidden"
+                                                    accept="image/*"
+                                                    multiple
+                                                    onChange={handleImageUpload}
+                                                    disabled={isUploading}
+                                                />
+                                            </label>
+                                        )}
                                     </div>
-
-                                    {/* Image Preview */}
-                                    {formData.image && (
-                                        <div className="relative w-full h-48 rounded-lg overflow-hidden border border-gray-200 mb-4">
-                                            <Image
-                                                src={formData.image}
-                                                alt="Preview"
-                                                fill
-                                                className="object-cover"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
-                                                className="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-md"
-                                            >
-                                                <i className="fas fa-times"></i>
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {/* Hidden Input for URL */}
-                                    <input
-                                        type="hidden"
-                                        name="image"
-                                        value={formData.image}
-                                        required
-                                    />
                                 </div>
 
                                 <div className="md:col-span-2">

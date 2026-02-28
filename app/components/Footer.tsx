@@ -13,7 +13,7 @@ export default function Footer() {
                 border border-white/40 shadow-xl 
                 inline-block">
                             <img
-                                src="/images/veer-logo.png"
+                                src="/images/veer-logo2.png"
                                 alt="Veer Real Estate Logo"
                                 className="w-50 h-30 object-contain"
                             />

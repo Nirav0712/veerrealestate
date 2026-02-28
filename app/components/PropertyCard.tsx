@@ -3,23 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { formatPrice } from '@/lib/properties';
+import { type Property, formatPrice, getPropertyFallbackImage } from '@/lib/properties';
 import { FaHeart } from 'react-icons/fa';
-
-interface Property {
-    id: number;
-    title: string;
-    price: number;
-    location: string;
-    type: string;
-    status: string;
-    bedrooms: number;
-    bathrooms: number;
-    area: number;
-    featured: boolean;
-    image: string;
-    description?: string;
-}
 
 interface PropertyCardProps {
     property: Property;
@@ -62,7 +47,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                 {/* Image */}
                 <div className="relative h-64 overflow-hidden">
                     <Image
-                        src={property.image}
+                        src={property.images?.[0] || getPropertyFallbackImage(property.type)}
                         alt={property.title}
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-500"

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import PropertyCard from '../../components/PropertyCard';
-import { type Property } from '@/lib/properties';
+import { type Property, getPropertyFallbackImage } from '@/lib/properties';
 import { FaHeart } from "react-icons/fa";
 import Loader from '@/app/components/Loader';
 
@@ -102,7 +102,7 @@ export default function PropertyDetailsPage() {
                             {/* Image */}
                             <div className="relative h-96 md:h-125 rounded-2xl overflow-hidden mb-8">
                                 <Image
-                                    src={property.image}
+                                    src={property.images?.[0] || getPropertyFallbackImage(property.type)}
                                     alt={property.title}
                                     fill
                                     className="object-cover"

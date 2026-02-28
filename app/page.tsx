@@ -147,16 +147,13 @@ export default function HomePage() {
                   className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
                 >
                   <option value="">Property Types</option>
-                  <option value="Land">Land</option>
-                  <option value="Plot">Plot</option>
-                  {/* <option value="Villa">Villa</option> */}
-                  {/* <option value="House">House</option> */}
-                  {/* <option value="Condo">Condo</option> */}
-                  <option value="Banglow">Bunglow</option>
                   <option value="Apartment">Apartment</option>
-                  <option value="Industrial">Industrial</option>
                   <option value="Commercial">Commercial Shops</option>
                   <option value="Commercial">Commercial Office</option>
+                  <option value="Industrial">Industrial</option>
+                  <option value="Banglow">Bunglow</option>
+                  <option value="Land">Land</option>
+                  <option value="Plot">Plot</option>
                 </select>
 
                 {/* Location */}
@@ -367,7 +364,12 @@ export default function HomePage() {
                 Embrace the Elegance<br />Our Exclusive Property
               </h2>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                Veer Real Estate, founded by Harshad and Sudhir Prajapati in 2012, quickly earned a strong reputation in Ahmedabad. With over 12 years of experience, they offer diverse real estate solutions, from commercial spaces to luxury homes and budget apartments. Known for their commitment to meeting clients' needs, they've sold over 1,500 flats and served 2,200+ satisfied customers, establishing themselves as a trusted name in the Ahmedabad real estate market.
+                Established in 2012 by visionary entrepreneurs Harshad Prajapati and Sudhir Prajapati, Veer Real Estate has emerged as one of Ahmedabad's most trusted and fast-growing real estate consultancy firms. Built on strong values of integrity, transparency, and customer commitment, the company has consistently delivered excellence in the dynamic real estate market. <br /> <br />
+                Veer Real Estate offers a complete spectrum of property solutions — from premium commercial spaces and luxury residences to affordable and budget-friendly homes, catering to diverse customer needs and investment goals. <br /> <br />
+
+                Understanding that a property is not just a transaction but a lifetime decision, the team focuses on personalized guidance, market expertise, and long-term client relationships. Their client-first approach has led to the successful sale of 1,500+ residential units and the trust of 2,200+ happy customers. <br /> <br />
+
+                Today, Veer Real Estate stands as a symbol of reliability and professionalism in Ahmedabad's real estate landscape, helping families find their dream homes and investors secure valuable opportunitie
               </p>
               <ul className="text-gray-600 mb-8 space-y-3">
                 <li className="flex items-center gap-3 leading-relaxed">
@@ -660,7 +662,13 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-semibold text-secondary mb-4">Big Harry Audicious Goal (Mission)</h3>
               <p className="text-gray-600 leading-relaxed">
-                To ensure no one will be homeless, to turn dreams into reality through innovative solutions, and to bring lasting satisfaction to 1 million families and having 5000 skilled and professionals team by 15th August, 2047
+                Our mission is to create a future where no family remains without a home, transforming aspirations into reality through innovative real estate solutions and unwavering commitment to customer satisfaction. <br /><br />
+
+                By 15th August 2047, Veer Real Estate envisions positively impacting the lives of 1 million families by helping them achieve their dream of homeownership, while building a strong network of 5,000 skilled and dedicated professionals who share our passion for excellence, integrity, and service. <br /><br />
+
+                We aim not only to build properties, but to build communities, create opportunities, and deliver lasting happiness for generations to come. <br /><br />
+
+                “Turning Dreams into Addresses, and Houses into Homes.”
               </p>
             </div>
 
@@ -670,7 +678,11 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-semibold text-secondary mb-4">Core Purporse :</h3>
               <p className="text-gray-600 leading-relaxed">
-                We are a trusted, one stop solutions provider with a skilled and dedicated team by delivering high-quality, innovative, and sustainable customized solutions to accomplish dreams of our clients since 2012
+                Since 2012, Veer Real Estate has been committed to serving as a trusted one-stop real estate solutions provider, supported by a skilled, passionate, and dedicated team. <br /><br />
+
+                Our core purpose is to deliver high-quality, innovative, and sustainable customized solutions that transform our clients' aspirations into reality. By understanding individual needs and providing personalized guidance, we strive to make every property journey seamless, reliable, and rewarding. <br /><br />
+
+                We believe in building long-term relationships founded on trust, transparency, and excellence, helping our clients accomplish their dreams with confidence.
               </p>
             </div>
           </div>
@@ -697,8 +709,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-semibold text-secondary mb-4">Integrity</h3>
               <p className="text-gray-600 leading-relaxed">
-                We uphold the highest standards of honesty and ethics, ensuring every interaction is built on trust,
-                accountability, and long-term commitment.
+                We uphold the highest standards of honesty, ethics, and professionalism in everything we do. Every interaction is built on trust, accountability, and a strong commitment to lasting relationships.
               </p>
             </div>
 
@@ -709,8 +720,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-semibold text-secondary mb-4">Resourceful</h3>
               <p className="text-gray-600 leading-relaxed">
-                We approach every challenge with creativity and adaptability, finding smart solutions that deliver
-                value and exceed expectations.
+                We embrace creativity and adaptability in every situation. By developing smart and effective solutions, we overcome challenges and consistently deliver value that exceeds expectations.
               </p>
             </div>
 
@@ -721,8 +731,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-semibold text-secondary mb-4">Transparency</h3>
               <p className="text-gray-600 leading-relaxed">
-                We communicate openly and clearly, providing honest guidance and complete clarity at every stage
-                of the process.
+                We believe in open, honest, and clear communication. Our clients receive accurate information, genuine guidance, and complete clarity at every stage of the real estate journey.
               </p>
             </div>
 
@@ -733,8 +742,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-semibold text-secondary mb-4">Service Excellence</h3>
               <p className="text-gray-600 leading-relaxed">
-                We strive for excellence in every interaction, delivering exceptional service that consistently
-                exceeds client expectations.
+                Excellence drives our actions. We aim to deliver exceptional service experiences through responsiveness, professionalism, and attention to detail, ensuring complete client satisfaction.
               </p>
             </div>
 
@@ -745,8 +753,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-semibold text-secondary mb-4">Knowledge</h3>
               <p className="text-gray-600 leading-relaxed">
-                Our deep industry expertise and market understanding empower clients to make confident,
-                informed decisions.
+                Our deep industry expertise and strong understanding of market trends empower clients to make confident, informed, and future-focused property decisions.
               </p>
             </div>
 

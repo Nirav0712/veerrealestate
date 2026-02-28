@@ -61,7 +61,7 @@ export default function Login(): JSX.Element {
           className="text-center mx-auto mb-6 items-center text-align-center h-22 w-32"
         />
 
-        <h2 style={styles.title}>Welcome Back</h2>
+        <h2 style={styles.title}>Welcome</h2>
         <p style={styles.subtitle}>Login to your account</p>
 
         <form onSubmit={handleSubmit}>
