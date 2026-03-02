@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  eslint: {
+    // ESLint is run separately; skip during `next build` to avoid
+    // eslint-config-next v15 + ESLint v9 flat config incompatibility on Vercel.
+    ignoreDuringBuilds: true,
+  },
 
   images: {
     remotePatterns: [
