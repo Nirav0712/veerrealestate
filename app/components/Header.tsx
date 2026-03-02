@@ -26,7 +26,7 @@ export default function Header() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/about" className="text-secondary hover:text-primary font-medium transition-colors">
+                                <Link href="/about-us" className="text-secondary hover:text-primary font-medium transition-colors">
                                     About
                                 </Link>
                             </li>

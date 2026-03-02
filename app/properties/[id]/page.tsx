@@ -397,17 +397,17 @@ export default function PropertyDetailsPage() {
                             <div className="bg-white rounded-2xl shadow-sm p-6">
                                 <h3 className="text-xl font-bold text-secondary mb-4">Share Property</h3>
                                 <div className="flex gap-3">
-                                    <button className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                                    <button onClick={() => window.open(`https://www.facebook.com/people/Veer-Real-Estate/61558935522154/`, '_blank')} className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
                                         <i className="fab fa-facebook-f"></i>
                                     </button>
-                                    <button className="flex-1 bg-blue-400 text-white py-3 rounded-lg hover:bg-blue-500 transition-colors">
-                                        <i className="fab fa-twitter"></i>
+                                    <button onClick={() => window.open(`https://www.youtube.com/@VeerRealEstate`, '_blank')} className="flex-1 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors">
+                                        <i className="fab fa-youtube"></i>
                                     </button>
-                                    <button className="flex-1 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors">
-                                        <i className="fab fa-whatsapp"></i>
+                                    <button onClick={() => window.open(`https://www.instagram.com/veer.real_estate/`, '_blank')} className="flex-1 bg-pink-600 text-white py-3 rounded-lg hover:bg-pink-700 transition-colors">
+                                        <i className="fab fa-instagram"></i>
                                     </button>
-                                    <button className="flex-1 bg-gray-600 text-white py-3 rounded-lg hover:bg-gray-700 transition-colors">
-                                        <i className="fas fa-link"></i>
+                                    <button onClick={() => window.open(`https://g.page/r/CcSCOVV14JRdEAI/review`, '_blank')} className="flex-1 bg-gray-600 text-white py-3 rounded-lg hover:bg-gray-700 transition-colors">
+                                        <i className="fab fa-google"></i>
                                     </button>
                                 </div>
                             </div>

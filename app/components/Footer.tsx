@@ -49,7 +49,7 @@ export default function Footer() {
                         <span className="text-white/70 font-medium mb-2 block mt-5"><b>West Ahmedabad</b></span>
                         <div className="flex gap-3">
                             <a
-                                href=" https://www.facebook.com/people/Veer-Real-Estate/61558935522154/"
+                                href="https://www.facebook.com/people/Veer-Real-Estate/61558935522154/"
                                 className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
                             >
                                 <i className="fab fa-facebook-f"></i>
@@ -91,7 +91,7 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/about" className="text-white/80 hover:text-primary transition-colors">
+                                <Link href="/about-us" className="text-white/80 hover:text-primary transition-colors">
                                     About Us
                                 </Link>
                             </li>
