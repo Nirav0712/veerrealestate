@@ -78,7 +78,7 @@ export default function Header() {
                         <div className="hidden lg:flex items-center gap-4">
                             <Link
                                 href="/properties"
-                                className="bg-primary text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-md"
+                                className=" text-secondary border border-secondary px-6 py-2.5 rounded-lg font-medium hover:bg-secondary hover:text-white transition-all hover:-translate-y-0.5 hover:shadow-md"
                             >
                                 Search Properties
                             </Link>
@@ -173,7 +173,7 @@ export default function Header() {
                             <li className="flex flex-col gap-3 mt-2">
                                 <Link
                                     href="/properties"
-                                    className="block bg-primary text-white px-6 py-2.5 rounded-lg font-medium text-center hover:bg-primary-dark transition-colors"
+                                    className="block bg-primary text-white px-6 py-2.5 rounded-lg font-medium text-center hover:bg-blue-600 transition-colors "
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
                                     Search Properties

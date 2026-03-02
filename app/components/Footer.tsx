@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
     return (
@@ -9,72 +10,93 @@ export default function Footer() {
                     {/* About Section */}
                     <div>
                         {/* <h4 className="text-xl font-semibold mb-4">About Veer Real Estate</h4> */}
-                        <div className="p-2 inline-block rounded-2xl">
-                            <img
-                                src="/images/veer-logo2.png"
-                                alt="Veer Real Estate Logo"
-                                className="w-50 h-30 object-contain rounded-2xl"
+                        <div className="pt-2 pb-2 inline-block rounded-2xl bg-white" >
+                            <Image
+                                src="/images/veer-logo.png"
+                                alt="Veer Logo"
+                                width={250}
+                                height={250}
+                                className="object-contain"
                             />
                         </div>
+
                         {/* <p className="text-white/80 mb-4 leading-relaxed text-justify">
                             Your trusted partner in finding the perfect property in Ahmedabad. Discover Omkar Enclave, Ranip (West Ahmedabad) – premium 2 & 3 BHK residences thoughtfully designed for modern urban living with excellent connectivity and secure gated amenities.
                         </p> */}
                         <span className="text-white/70 font-medium mb-2 block mt-5"><b>East Ahmedabad</b></span>
                         <div className="flex gap-3">
+                            {/* Facebook */}
                             <a
                                 href="https://www.facebook.com/people/Veer-Real-Estate-East-Ahmedabad/61571731020972/"
-                                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
+                                target="_blank" rel="noopener noreferrer"
+                                className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ backgroundColor: '#1877F2', color: '#fff' }}
                             >
                                 <i className="fab fa-facebook-f"></i>
                             </a>
+                            {/* YouTube */}
                             <a
-                                href=" https://www.youtube.com/@VeerRealEstate"
-                                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
+                                href="https://www.youtube.com/@VeerRealEstate"
+                                target="_blank" rel="noopener noreferrer"
+                                className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ backgroundColor: '#FF0000', color: '#fff' }}
                             >
                                 <i className="fab fa-youtube"></i>
                             </a>
+                            {/* Instagram */}
                             <a
-                                href=" https://www.instagram.com/veerrealestateeastahmedabad/?hl=en"
-                                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
+                                href="https://www.instagram.com/veerrealestateeastahmedabad/?hl=en"
+                                target="_blank" rel="noopener noreferrer"
+                                className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ background: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%)', color: '#fff' }}
                             >
                                 <i className="fab fa-instagram"></i>
                             </a>
+                            {/* Google */}
                             <a
-                                href=" https://g.page/r/CcSCOVV14JRdEAI/review"
-                                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
+                                href="https://g.page/r/CcSCOVV14JRdEAI/review"
+                                target="_blank" rel="noopener noreferrer"
+                                className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ backgroundColor: '#fff', color: '#4285F4' }}
                             >
                                 <i className="fab fa-google"></i>
                             </a>
                         </div>
                         <span className="text-white/70 font-medium mb-2 block mt-5"><b>West Ahmedabad</b></span>
                         <div className="flex gap-3">
+                            {/* Facebook */}
                             <a
                                 href="https://www.facebook.com/people/Veer-Real-Estate/61558935522154/"
-                                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
+                                target="_blank" rel="noopener noreferrer"
+                                className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ backgroundColor: '#1877F2', color: '#fff' }}
                             >
                                 <i className="fab fa-facebook-f"></i>
                             </a>
+                            {/* YouTube */}
                             <a
-                                href=" https://www.youtube.com/@VeerRealEstate"
-                                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
+                                href="https://www.youtube.com/@VeerRealEstate"
+                                target="_blank" rel="noopener noreferrer"
+                                className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ backgroundColor: '#FF0000', color: '#fff' }}
                             >
                                 <i className="fab fa-youtube"></i>
                             </a>
+                            {/* Instagram */}
                             <a
-                                href=" https://www.instagram.com/veer.real_estate/"
-                                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
+                                href="https://www.instagram.com/veer.real_estate/"
+                                target="_blank" rel="noopener noreferrer"
+                                className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ background: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%)', color: '#fff' }}
                             >
                                 <i className="fab fa-instagram"></i>
                             </a>
+                            {/* Google */}
                             <a
                                 href="https://g.page/r/CcSCOVV14JRdEAI/review"
-                                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
+                                target="_blank" rel="noopener noreferrer"
+                                className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ backgroundColor: '#fff', color: '#4285F4' }}
                             >
                                 <i className="fab fa-google"></i>
                             </a>
+                            {/* LinkedIn */}
                             <a
-                                href=" https://www.linkedin.com/company/veer-real-estate-ahmedabad/?viewAsMember=true"
-                                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-secondary transition-all"
+                                href="https://www.linkedin.com/company/veer-real-estate-ahmedabad/?viewAsMember=true"
+                                target="_blank" rel="noopener noreferrer"
+                                className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ backgroundColor: '#0A66C2', color: '#fff' }}
                             >
                                 <i className="fab fa-linkedin-in"></i>
                             </a>
@@ -214,7 +236,7 @@ export default function Footer() {
                                         <i className="fas fa-envelope text-primary shrink-0"></i>
                                         <a
                                             href="mailto:horseveer@gmail.com"
-                                            className="hover:text-primary transition-colors break-all"
+                                            className="hover:text-primary transition-colors whitespace-nowrap"
                                         >
                                             horseveer@gmail.com
                                         </a>
@@ -261,7 +283,7 @@ export default function Footer() {
                                         <i className="fas fa-envelope text-primary shrink-0"></i>
                                         <a
                                             href="mailto:horseveer@gmail.com"
-                                            className="hover:text-primary transition-colors break-all"
+                                            className="hover:text-primary transition-colors whitespace-nowrap"
                                         >
                                             horseveer@gmail.com
                                         </a>
@@ -276,7 +298,7 @@ export default function Footer() {
                 {/* Footer Bottom */}
                 <div className="border-t border-white/10 pt-6 text-center text-white/70 text-sm">
                     <p>
-                        &copy; 2024 Veer RealEstate. All rights reserved.| Developed By <a href="https://thedigitalconnect.in/">The Digital Connect</a> | Designed with{' '}
+                        &copy; 2026 Veer RealEstate. All rights reserved.| Developed By <a href="https://thedigitalconnect.in/">The Digital Connect</a> | Designed with{' '}
                         <i className="fas fa-heart text-primary"></i> for Real Estate
                     </p>
                 </div>

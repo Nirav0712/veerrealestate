@@ -144,14 +144,14 @@ export default function HomePage() {
                 {/* Property Type */}
                 <select
                   name="type"
-                  className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
+                  className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-500"
                 >
                   <option value="">Property Types</option>
                   <option value="Apartment">Apartment</option>
                   <option value="Commercial">Commercial Shops</option>
                   <option value="Commercial">Commercial Office</option>
                   <option value="Industrial">Industrial</option>
-                  <option value="Banglow">Bunglow</option>
+                  <option value="Banglow">Bunglows</option>
                   <option value="Land">Land</option>
                   <option value="Plot">Plot</option>
                 </select>
@@ -163,7 +163,7 @@ export default function HomePage() {
                   placeholder="Enter Location"
                   className="px-4 py-3 bg-white/80 rounded-lg 
              focus:outline-none focus:ring-2 
-             focus:ring-primary text-black w-full  placeholder:text-black"
+             focus:ring-primary text-black w-full  placeholder:text-gray-500"
                 />
                 {/* <select
                   name="location"
@@ -178,7 +178,7 @@ export default function HomePage() {
                 {/* BHK */}
                 <select
                   name="bhk"
-                  className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
+                  className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-500"
                 >
                   <option value="">BHK</option>
                   <option value="1">1 BHK</option>
@@ -195,7 +195,7 @@ export default function HomePage() {
                   placeholder="Enter Min Budget"
                   className="px-4 py-3 bg-white/80 rounded-lg 
              focus:outline-none focus:ring-2 
-             focus:ring-primary text-black w-full  placeholder:text-black"
+             focus:ring-primary text-black w-full  placeholder:text-gray-500"
                 />
                 {/* <select
                   name="minBudget"
@@ -218,7 +218,7 @@ export default function HomePage() {
                   placeholder="Enter Max Budget"
                   className="px-4 py-3 bg-white/80 rounded-lg 
              focus:outline-none focus:ring-2 
-             focus:ring-primary text-black w-full  placeholder:text-black"
+             focus:ring-primary text-black w-full  placeholder:text-gray-500"
                 />
                 {/* <select
                   name="maxBudget"
@@ -237,7 +237,7 @@ export default function HomePage() {
                 {/* Transaction */}
                 <select
                   name="transaction"
-                  className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
+                  className="px-4 py-3 bg-white/80 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-500"
                 >
                   <option value="">Transaction</option>
                   <option value="new">New Property</option>
@@ -248,7 +248,7 @@ export default function HomePage() {
                 {/* Search Button */}
                 <button
                   type="submit"
-                  className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-md col-span-1 sm:col-span-2 lg:col-span-3"
+                  className="bg-secondary text-white px-6 py-3 rounded-lg font-semibold transition-all hover:-translate-y-0.5 hover:shadow-md col-span-1 sm:col-span-2 lg:col-span-3 hover:bg-white hover:text-black"
                 >
                   Search
                 </button>
@@ -413,7 +413,8 @@ export default function HomePage() {
               {/* CTA Button */}
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-lg"
+                className=" text-secondary border border-secondary px-6 py-2.5 rounded-lg font-semibold hover:bg-secondary hover:text-white transition-all hover:-translate-y-0.5 hover:shadow-md"
+              // className="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-lg"
               >
                 More About Us
                 <i className="fas fa-arrow-right"></i>
@@ -428,112 +429,32 @@ export default function HomePage() {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center"'>
-              <div className="text-5xl font-bold text-primary mb-2">98%</div>
+            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center border-2 border-secondary hover:scale-110 transition-transform duration-300 cursor-pointer mx-auto'>
+              <div className="text-5xl font-bold text-secondary mb-2">98%</div>
               <div className="text-gray-600">Satisfaction Rate</div>
             </div>
-            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center"'>
-              <div className="text-5xl font-bold text-primary mb-2">5K+</div>
+            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center border-2 border-secondary hover:scale-110 transition-transform duration-300 cursor-pointer mx-auto'>
+              <div className="text-5xl font-bold text-secondary mb-2">5K+</div>
               <div className="text-gray-600">Happy Customers</div>
             </div>
-            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center"'>
-              <div className="text-5xl font-bold text-primary mb-2">100+</div>
+            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center border-2 border-secondary hover:scale-110 transition-transform duration-300 cursor-pointer mx-auto'>
+              <div className="text-5xl font-bold text-secondary mb-2">100+</div>
               <div className="text-gray-600">Projects</div>
             </div>
-            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center"'>
-              <div className="text-5xl font-bold text-primary mb-2">15+</div>
+            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center border-2 border-secondary hover:scale-110 transition-transform duration-300 cursor-pointer mx-auto'>
+              <div className="text-5xl font-bold text-secondary mb-2">15+</div>
               <div className="text-gray-600">Years Experience</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Search Section */}
-      {/* <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="text-3xl font-bold text-secondary text-center mb-8">Find Your Perfect Property</h2>
-
-            <div className="bg-gray-50 rounded-xl p-6 shadow-lg">
-              <div className="flex gap-4 mb-6 border-b-2 border-gray-200">
-                <button
-                  onClick={() => setSearchStatus('For Sale')}
-                  className={`px-6 py-3 font-medium transition-colors relative ${searchStatus === 'For Sale'
-                    ? 'text-primary'
-                    : 'text-gray-600 hover:text-primary'
-                    }`}
-                >
-                  For Sale
-                  {searchStatus === 'For Sale' && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-                  )}
-                </button>
-                <button
-                  onClick={() => setSearchStatus('For Rent')}
-                  className={`px-6 py-3 font-medium transition-colors relative ${searchStatus === 'For Rent'
-                    ? 'text-primary'
-                    : 'text-gray-600 hover:text-primary'
-                    }`}
-                >
-                  For Rent
-                  {searchStatus === 'For Rent' && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-                  )}
-                </button>
-              </div>
-
-              <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <input
-                  type="text"
-                  name="location"
-                  placeholder="Location or keyword"
-                  className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-gray-900"
-                />
-
-                <select
-                  name="type"
-                  className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-gray-900"
-                >
-                  <option value="all">All Types</option>
-                  <option value="Villa">Villa</option>
-                  <option value="Apartment">Apartment</option>
-                  <option value="House">House</option>
-                  <option value="Condo">Condo</option>
-                  <option value="Land">Land</option>
-                </select>
-
-                <select
-                  name="bedrooms"
-                  className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-gray-900"
-                >
-                  <option value="all">Bedrooms</option>
-                  <option value="1">1+</option>
-                  <option value="2">2+</option>
-                  <option value="3">3+</option>
-                  <option value="4">4+</option>
-                  <option value="5">5+</option>
-                </select>
-
-                <button
-                  type="submit"
-                  className="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-all hover:-translate-y-0.5 hover:shadow-md flex items-center justify-center gap-2"
-                >
-                  <i className="fas fa-search"></i>
-                  Search
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section> */}
-
-
       {/* Featured Properties */}
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-secondary mb-4">Featured Properties</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2x2 mx-auto">
               Handpicked selection of our finest properties available for sale and rent
             </p>
           </div>
@@ -546,7 +467,7 @@ export default function HomePage() {
                 onClick={() => setActiveTab(type)}
                 className={`px-6 py-2.5 rounded-lg font-medium transition-colors ${activeTab === type
                   ? 'bg-primary text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                  : 'bg-white text-gray-700 hover:bg-secondary hover:text-white border border-gray-300'
                   }`}
               >
                 {type === 'all' ? 'All' : `${type}s`}
@@ -580,72 +501,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-
-      {/* Popular Cities */}
-      {/* <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-secondary mb-4">Explore Properties by City</h2>
-            <p className="text-xl text-gray-600">Premium real estate across India's top metro cities</p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {[
-              { name: 'Mumbai', count: '2,500+ Properties', icon: 'fa-building' },
-              { name: 'Bangalore', count: '1,800+ Properties', icon: 'fa-laptop' },
-              { name: 'Delhi NCR', count: '3,200+ Properties', icon: 'fa-landmark' },
-              { name: 'Pune', count: '1,200+ Properties', icon: 'fa-graduation-cap' },
-              { name: 'Goa', count: '450+ Properties', icon: 'fa-umbrella-beach' },
-              { name: 'Hyderabad', count: '900+ Properties', icon: 'fa-city' }
-            ].map((city, index) => (
-              <div key={index} className="bg-white p-6 rounded-xl shadow-sm text-center hover:shadow-md transition-all hover:-translate-y-1 cursor-pointer">
-                <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-                  <i className={`fas ${city.icon} text-3xl text-primary`}></i>
-                </div>
-                <h3 className="text-lg font-semibold text-secondary mb-2">{city.name}</h3>
-                <p className="text-sm text-gray-600">{city.count}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
-      {/* Property Types */}
-      {/* <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-secondary mb-4">Property Types</h2>
-            <p className="text-xl text-gray-600">Find the perfect property type for your needs</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { type: 'Luxury Villas', desc: 'Exclusive villas with premium amenities', icon: 'fa-home', color: 'from-blue-500 to-blue-600' },
-              { type: 'Apartments', desc: 'Modern apartments in prime locations', icon: 'fa-building', color: 'from-green-500 to-green-600' },
-              { type: 'Commercial', desc: 'Office spaces and retail properties', icon: 'fa-briefcase', color: 'from-purple-500 to-purple-600' },
-              { type: 'Land/Plots', desc: 'Residential and commercial land', icon: 'fa-map', color: 'from-orange-500 to-orange-600' }
-            ].map((item, index) => (
-              <div key={index} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all hover:-translate-y-1">
-                <div className={`h-32 bg-linear-to-br ${item.color} flex items-center justify-center`}>
-                  <i className={`fas ${item.icon} text-6xl text-white`}></i>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-secondary mb-2">{item.type}</h3>
-                  <p className="text-gray-600">{item.desc}</p>
-                  <button onClick={() => window.location.href = '/properties'} className="mt-4 text-primary font-medium hover:text-primary-dark transition-colors">
-                    View Properties <i className="fas fa-arrow-right ml-2"></i>
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
-
-
-
 
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
