@@ -229,13 +229,13 @@ export default function AdminDashboard() {
                 {/* Sidebar */}
                 <aside className="w-64 bg-secondary text-white p-6 sticky top-0 h-screen overflow-y-auto">
                     <div className="text-2xl font-bold mb-8 text-center pb-6 border-b border-white/10">
-                        Veer<span className="text-primary">RealEstate</span>
+                        Veer<span className="text-primary"> Real Estate</span>
                     </div>
 
                     <nav>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="/admin/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary text-secondary font-medium text-white">
+                                <Link href="/admin/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary text-secondary font-medium">
                                     <i className="fas fa-tachometer-alt w-5"></i>
                                     Dashboard
                                 </Link>
