@@ -235,13 +235,13 @@ export default function AdminDashboard() {
                     <nav>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="/admin/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary text-secondary font-medium">
+                                <Link href="/admin/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary text-secondary font-medium text-white">
                                     <i className="fas fa-tachometer-alt w-5"></i>
                                     Dashboard
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-primary hover:text-secondary transition-colors">
+                                <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-lg text-white hover:bg-primary  transition-colors">
                                     <i className="fas fa-globe w-5"></i>
                                     View Website
                                 </Link>
@@ -249,7 +249,7 @@ export default function AdminDashboard() {
                             <li>
                                 <button
                                     onClick={handleLogout}
-                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-red-500 hover:text-white transition-colors text-left"
+                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white hover:bg-red-500 hover:text-white transition-colors text-left"
                                 >
                                     <i className="fas fa-sign-out-alt w-5"></i>
                                     Logout
