@@ -5,6 +5,70 @@ import Image from "next/image";
 import Link from "next/link";
 import { projects } from "@/lib/projects";
 
+// Small carousel component for up to 3 images per card
+function ProjectImageCarousel({ project }: { project: (typeof projects)[number] }) {
+  const images = project.images && project.images.length > 0
+    ? project.images.slice(0, 3)
+    : [project.image];
+  const [current, setCurrent] = useState(0);
+
+  const prev = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setCurrent((c) => (c - 1 + images.length) % images.length);
+  };
+  const next = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setCurrent((c) => (c + 1) % images.length);
+  };
+
+  return (
+    <div className="relative h-56 overflow-hidden rounded-t-xl bg-gray-100">
+      <Image
+        src={images[current]}
+        alt={project.title}
+        fill
+        className="object-cover transition-opacity duration-300"
+      />
+
+      {images.length > 1 && (
+        <>
+          {/* Prev button */}
+          <button
+            onClick={prev}
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-7 h-7 flex items-center justify-center z-10 transition"
+            aria-label="Previous image"
+          >
+            &#8249;
+          </button>
+          {/* Next button */}
+          <button
+            onClick={next}
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-7 h-7 flex items-center justify-center z-10 transition"
+            aria-label="Next image"
+          >
+            &#8250;
+          </button>
+          {/* Dot indicators */}
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={(e) => { e.preventDefault(); setCurrent(i); }}
+                className={`w-2 h-2 rounded-full transition ${i === current ? "bg-white" : "bg-white/50"}`}
+                aria-label={`Go to image ${i + 1}`}
+              />
+            ))}
+          </div>
+          {/* Image counter */}
+          <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded-full z-10">
+            {current + 1}/{images.length}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function EastProjectPage() {
 
   const [filters, setFilters] = useState({
@@ -201,14 +265,7 @@ export default function EastProjectPage() {
                     key={project.id}
                     className="bg-white rounded-xl shadow-sm hover:shadow-lg transition "
                   >
-                    <div className="relative h-56">
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
+                    <ProjectImageCarousel project={project} />
 
                     <div className="p-4">
                       <p className="text-red-600 font-bold">

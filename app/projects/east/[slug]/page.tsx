@@ -7,6 +7,83 @@ import Image from "next/image";
 import { projects, Project } from "@/lib/projects";
 import { FaHeart } from "react-icons/fa";
 
+// Full-height carousel for the detail page
+function DetailImageCarousel({ project }: { project: Project }) {
+  const images = project.images && project.images.length > 0
+    ? project.images.slice(0, 3)
+    : [project.image];
+  const [current, setCurrent] = useState(0);
+
+  const prev = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setCurrent((c) => (c - 1 + images.length) % images.length);
+  };
+  const next = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setCurrent((c) => (c + 1) % images.length);
+  };
+
+  return (
+    <div className="relative h-96 md:h-125 rounded-2xl overflow-hidden mb-8 bg-gray-100">
+      <Image
+        src={images[current]}
+        alt={project.title}
+        fill
+        className="object-cover transition-opacity duration-300"
+        priority
+      />
+
+      {/* Badges overlay */}
+      <div className="absolute top-6 left-6 flex gap-2 z-10">
+        {project.featured && (
+          <span className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold uppercase shadow-lg">
+            Featured
+          </span>
+        )}
+        <span className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-semibold uppercase shadow-lg">
+          {project.status}
+        </span>
+      </div>
+
+      {images.length > 1 && (
+        <>
+          {/* Prev */}
+          <button
+            onClick={prev}
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-10 h-10 flex items-center justify-center z-10 text-xl transition"
+            aria-label="Previous image"
+          >
+            &#8249;
+          </button>
+          {/* Next */}
+          <button
+            onClick={next}
+            className="absolute right-16 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-10 h-10 flex items-center justify-center z-10 text-xl transition"
+            aria-label="Next image"
+          >
+            &#8250;
+          </button>
+          {/* Dots */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={(e) => { e.preventDefault(); setCurrent(i); }}
+                className={`w-2.5 h-2.5 rounded-full transition ${i === current ? "bg-white" : "bg-white/50"}`}
+                aria-label={`Go to image ${i + 1}`}
+              />
+            ))}
+          </div>
+          {/* Counter */}
+          <div className="absolute bottom-4 right-16 bg-black/50 text-white text-xs px-2.5 py-1 rounded-full z-10">
+            {current + 1} / {images.length}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function WestProjectDetailsPage() {
 
   const params = useParams();
@@ -70,7 +147,7 @@ export default function WestProjectDetailsPage() {
           <div className="flex items-center gap-2 text-sm text-gray-600 mb-8">
             <a href="/" className="hover:text-primary">Home</a>
             <span>/</span>
-            <a href="/projects/west" className="hover:text-primary">
+            <a href="/projects/east" className="hover:text-primary">
               East Projects
             </a>
             <span>/</span>
@@ -84,30 +161,12 @@ export default function WestProjectDetailsPage() {
             {/* MAIN CONTENT */}
             <div className="lg:col-span-2">
 
-              {/* Image */}
-              <div className="relative h-96 md:h-125 rounded-2xl overflow-hidden mb-8">
-                <Image
-                  src={project.image}
-                  alt={project.title}
-                  fill
-                  className="object-cover"
-                  priority
-                />
-
-                <div className="absolute top-6 left-6 flex gap-2">
-                  {project.featured && (
-                    <span className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold uppercase shadow-lg">
-                      Featured
-                    </span>
-                  )}
-                  <span className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-semibold uppercase shadow-lg">
-                    {project.status}
-                  </span>
-                </div>
-
+              {/* Carousel + Heart */}
+              <div className="relative">
+                <DetailImageCarousel project={project} />
                 <button
                   onClick={toggleFavorite}
-                  className={`absolute top-6 right-6 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition ${isFavorite
+                  className={`absolute top-6 right-6 w-12 h-12 rounded-full flex items-center justify-center shadow-lg z-20 transition ${isFavorite
                     ? "bg-red-500 text-white"
                     : "bg-white text-gray-600"
                     }`}
@@ -115,6 +174,7 @@ export default function WestProjectDetailsPage() {
                   <FaHeart className="text-lg" />
                 </button>
               </div>
+
 
               {/* Info Section */}
               <div className="bg-white rounded-2xl shadow-sm p-8 mb-8">

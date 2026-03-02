@@ -5,6 +5,7 @@ export type Project = {
   price: number;
   displayPrice: string;
   image: string;
+  images?: string[];  // up to 3 images for the card carousel
   status: string;
   bedrooms: number;
   location: string;
@@ -23,6 +24,7 @@ export const projects: Project[] = [
     price: 260000,
     displayPrice: "₹ 26 Lakh",
     image: "/images/east/AARADHANA_2.jpeg",
+    images: ["/images/east/AARADHANA_2.jpeg"],
     status: "For Sale",
     bedrooms: 2,
     location: "Ahmedabad",
@@ -39,6 +41,7 @@ export const projects: Project[] = [
     price: 12000000,
     displayPrice: "₹ 1.20 Cr",
     image: "/images/east/Anusthan.jpeg",
+    images: ["/images/east/Anusthan.jpeg"],
     status: "For Sale",
     bedrooms: 4,
     location: "Ahmedabad",
@@ -55,6 +58,7 @@ export const projects: Project[] = [
     price: 2065000,
     displayPrice: "₹ 20.65 Lakh Onwards",
     image: "/images/east/Avalon-DHS.jpeg",
+    images: ["/images/east/Avalon-DHS.jpeg"],
     status: "Ready Possession",
     bedrooms: 2,
     location: "Vatva, Ahmedabad",
@@ -71,6 +75,7 @@ export const projects: Project[] = [
     price: 3265000,
     displayPrice: "₹ 32.65 Lakh Onwards",
     image: "/images/east/Eleven.jpeg",
+    images: ["/images/east/Eleven.jpeg"],
     status: "For Sale",
     bedrooms: 2,
     location: "New Vatva, Ahmedabad",
@@ -87,6 +92,7 @@ export const projects: Project[] = [
     price: 3699000,
     displayPrice: "₹ 36.99 Lakh Onwards",
     image: "/images/east/sahajanand-exotica.jpeg",
+    images: ["/images/east/sahajanand-exotica.jpeg"],
     status: "Ready Possession",
     bedrooms: 2 & 3,
     location: "Ghodasar, South East Ahmedabad",
@@ -103,6 +109,7 @@ export const projects: Project[] = [
     price: 2751000,
     displayPrice: "₹ 27.51 Lakh Onwards",
     image: "/images/east/Sahajanand-harmony.jpeg",
+    images: ["/images/east/Sahajanand-harmony.jpeg"],
     status: "Ready Possession",
     bedrooms: 2,
     location: "New Vatva, Ahmedabad",
@@ -119,6 +126,7 @@ export const projects: Project[] = [
     price: 0,
     displayPrice: "Price On Request",
     image: "/images/east/Swara.jpeg",
+    images: ["/images/east/Swara.jpeg"],
     status: "For Sale",
     bedrooms: 4,
     location: "Narol-Aslali, Ahmedabad",
@@ -135,6 +143,7 @@ export const projects: Project[] = [
     price: 2051000,
     displayPrice: "₹ 20.51 Lakh* Onwards",
     image: "/images/east/sona-sidhhi.jpeg",
+    images: ["/images/east/sona-sidhhi.jpeg"],
     status: "For Sale",
     bedrooms: 1,
     location: "New Vatva, Ahmedabad",
@@ -151,6 +160,7 @@ export const projects: Project[] = [
     price: 2025000,
     displayPrice: "₹ 20.25 Lakh* Onwards",
     image: "/images/east/Sanrise-home.jpeg",
+    images: ["/images/east/Sanrise-home.jpeg"],
     status: "For Sale",
     bedrooms: 1,
     location: "New Vatva, Ahmedabad",
@@ -167,6 +177,7 @@ export const projects: Project[] = [
     price: 7000000,
     displayPrice: "₹ 70 Lakh* Onwards",
     image: "/images/west/omkar.jpeg",
+    images: ["/images/west/omkar.jpeg", "/images/west/omkar.jpeg", "/images/west/omkar.jpeg"],
     status: "For Sale",
     bedrooms: 3,
     location: "Ranip, Ahmedabad",
@@ -183,6 +194,7 @@ export const projects: Project[] = [
     price: 7000000,
     displayPrice: "₹ 70 Lakh* Onwards",
     image: "/images/west/subh-green.jpeg",
+    images: ["/images/west/subh-green.jpeg", "/images/west/omkar.jpeg", "/images/west/subh-green.jpeg"],
     status: "For Sale",
     bedrooms: 3,
     location: "Zundal, Ahmedabad",
