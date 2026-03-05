@@ -294,60 +294,56 @@ export default function HomePage() {
 
 
               {/* Small Property Image */}
-              <div className='grid grid-cols-1 gap-4 mt-6 '>
-                <div className="relative">
-                  <div className="flex gap-4 items-start">
+              <div className="mt-6">
+                {/* Mobile: stack vertically | sm+: flex row */}
+                <div className="relative flex flex-col sm:flex-row gap-4 items-start">
 
-                    {/* Small Image */}
-                    <div className="relative h-68 w-120 rounded-3xl overflow-hidden shadow-lg">
-                      <Image
-                        src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=80"
-                        alt="Property 1"
-                        fill
-                        className="object-cover"
-                      />
+                  {/* Small Image */}
+                  <div className="relative w-full sm:w-auto sm:flex-1 h-48 sm:h-52 rounded-3xl overflow-hidden shadow-lg">
+                    <Image
+                      src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=80"
+                      alt="Property 1"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+
+                  {/* Logo Beside Image */}
+                  <div className="flex items-center justify-center bg-white rounded-2xl shadow-lg p-4 self-center sm:self-start shrink-0">
+                    <Image
+                      src="/images/veer-logo.png"
+                      alt="Veer Logo"
+                      width={160}
+                      height={140}
+                      className="object-contain w-32 sm:w-44 md:w-52"
+                    />
+                  </div>
+
+                  {/* Happy Customer Badge — inline on mobile, absolute on sm+ */}
+                  <div className="sm:absolute sm:top-36 sm:left-64 md:top-44 md:left-72 bg-white rounded-2xl p-4 shadow-xl self-center sm:self-auto w-full sm:w-auto">
+                    <div className="text-center mb-2">
+                      <p className="text-sm font-semibold text-secondary">Our Happy Customer</p>
                     </div>
-
-                    {/* Logo Beside Image */}
-                    <div className="flex items-center justify-center bg-white rounded-2xl shadow-lg p-4">
-                      <Image
-                        src="/images/veer-logo.png"
-                        alt="Veer Logo"
-                        width={240}
-                        height={220}
-                        className="object-contain"
-                      />
-                    </div>
-
-                    {/* Happy Customer Badge */}
-                    <div className="absolute top-43  left-80 bg-white rounded-2xl p-4 shadow-xl">
-                      <div className="text-center mb-2">
-                        <p className="text-sm font-semibold text-secondary">Our Happy Customer</p>
-                      </div>
-                      <div className="flex -space-x-2">
-                        {[
-                          'https://randomuser.me/api/portraits/men/41.jpg',
-                          'https://randomuser.me/api/portraits/men/39.jpg',
-                          'https://randomuser.me/api/portraits/women/63.jpg',
-                          'https://randomuser.me/api/portraits/men/85.jpg',
-                          // 'https://randomuser.me/api/portraits/women/62.jpg',
-
-                        ].map((img, i) => (
-                          <Image
-                            key={i}
-                            src={img}
-                            alt={`Customer ${i + 1}`}
-                            width={45}
-                            height={35}
-                            className="rounded-full border-2 border-white"
-                          />
-                        ))}
-                        <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center shrink-0 text-secondary text-xs font-bold border-2 border-white">
-                          3k+
-                        </div>
+                    <div className="flex justify-center -space-x-2">
+                      {[
+                        'https://randomuser.me/api/portraits/men/41.jpg',
+                        'https://randomuser.me/api/portraits/men/39.jpg',
+                        'https://randomuser.me/api/portraits/women/63.jpg',
+                        'https://randomuser.me/api/portraits/men/85.jpg',
+                      ].map((img, i) => (
+                        <Image
+                          key={i}
+                          src={img}
+                          alt={`Customer ${i + 1}`}
+                          width={40}
+                          height={40}
+                          className="rounded-full border-2 border-white"
+                        />
+                      ))}
+                      <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center shrink-0 text-secondary text-xs font-bold border-2 border-white">
+                        3k+
                       </div>
                     </div>
-
                   </div>
 
                 </div>

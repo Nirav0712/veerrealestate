@@ -113,7 +113,7 @@ export default function Header() {
                             </li>
                             <li>
                                 <Link
-                                    href="/about"
+                                    href="/about-us"
                                     className="block text-secondary hover:text-primary font-medium transition-colors"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
@@ -178,13 +178,13 @@ export default function Header() {
                                 >
                                     Search Properties
                                 </Link>
-                                <Link
+                                {/* <Link
                                     href="/login"
                                     className="block border-2 border-primary text-primary px-6 py-2.5 rounded-lg font-medium text-center hover:bg-primary hover:text-white transition-colors"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
                                     Login
-                                </Link>
+                                </Link> */}
                             </li>
                         </ul>
                     </div>

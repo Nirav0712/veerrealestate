@@ -171,9 +171,9 @@ export default function AboutPage() {
                                 role: 'FOUNDER & CEO',
                                 image: '/images/team/sudhir.jpeg'
                             }
-                            
+
                         ].map((member, index) => (
-                            <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden text-center">
+                            <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden text-center mb-10">
                                 <div className="relative h-80 w-80 text-center items-center justify-center mx-auto">
                                     <Image
                                         src={member.image}
@@ -206,17 +206,17 @@ export default function AboutPage() {
                                 role: 'TEAM LEADER (EAST AHMEDABAD)',
                                 image: '/images/team/ajay-dubey.jpeg'
                             },
-                             {
+                            {
                                 name: 'CHETAN PARMAR',
                                 role: 'TEAM LEADER (EAST AHMEDABAD)',
                                 image: '/images/team/chetan-parmar.jpeg'
                             },
-                             {
+                            {
                                 name: 'RAJESHWARI BARA',
                                 role: 'PRE TELE SALES EXUCUTIVE',
                                 image: '/images/team/rajeshwari.jpeg'
                             },
-                                 {
+                            {
                                 name: 'RAVI PRAJAPATI',
                                 role: 'TEAM LEADER (WEST AHMEDABAD)',
                                 image: '/images/team/ravi-prajapati.jpeg'
@@ -224,6 +224,16 @@ export default function AboutPage() {
                                 name: 'TANISHA MISTRY',
                                 role: 'PRE TELE SALES EXECUTIVE',
                                 image: '/images/team/tanisha-mishtry.jpeg'
+                            },
+                            {
+                                name: 'YOGITA RAWAL',
+                                role: 'PRE TELE SALES EXECUTIVE (WEST AHMEDABAD)',
+                                image: '/images/team/yogita-rawal.jpeg'
+                            },
+                            {
+                                name: 'PAYAL PANSURIYA',
+                                role: 'PRE TELE SALES EXECUTIVE',
+                                image: '/images/team/payal.jpeg'
                             }
                         ].map((member, index) => (
                             <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden text-center">
