@@ -188,7 +188,7 @@ export default function ContactPage() {
                             </div>
 
                             {/* Social Media */}
-                            <div className="mt-8">
+                            {/* <div className="mt-8">
                                 <h3 className="font-semibold text-secondary mb-4">Follow Us</h3>
                                 <span className="text-gray-700 font-medium"><b>East Ahmedabad</b></span>
                                 <div className="flex gap-3 pt-2">
@@ -226,6 +226,29 @@ export default function ContactPage() {
                                     </a>
 
                                 </div>
+                            </div> */}
+                            <div className="space-y-4 w-full pt-2">
+                                <h3 className="font-semibold text-secondary mb-4">Follow Us</h3>
+                                <div>
+                                    <span className="text-black font-medium mb-2 block">East Ahmedabad</span>
+                                    <div className="flex justify-center md:justify-start gap-3">
+                                        <SocialLink href="https://www.facebook.com/people/Veer-Real-Estate-East-Ahmedabad/61571731020972/" icon="fab fa-facebook-f" bgColor="#1877F2" />
+                                        <SocialLink href="https://www.youtube.com/@VeerRealEstate" icon="fab fa-youtube" bgColor="#FF0000" />
+                                        <SocialLink href="https://www.instagram.com/veerrealestateeastahmedabad/?hl=en" icon="fab fa-instagram" bgColor="radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%)" />
+                                        <SocialLink href="https://g.page/r/CcSCOVV14JRdEAI/review" icon="fab fa-google" bgColor="#fff" iconColor="#4285F4" />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <span className="text-black font-medium mb-2 block">West Ahmedabad</span>
+                                    <div className="flex justify-center md:justify-start gap-3">
+                                        <SocialLink href="https://www.facebook.com/people/Veer-Real-Estate/61558935522154/" icon="fab fa-facebook-f" bgColor="#1877F2" />
+                                        <SocialLink href="https://www.youtube.com/@VeerRealEstate" icon="fab fa-youtube" bgColor="#FF0000" />
+                                        <SocialLink href="https://www.instagram.com/veer.real_estate/" icon="fab fa-instagram" bgColor="radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%)" />
+                                        <SocialLink href="https://g.page/r/CcSCOVV14JRdEAI/review" icon="fab fa-google" bgColor="#fff" iconColor="#4285F4" />
+                                        <SocialLink href="https://www.linkedin.com/company/veer-real-estate-ahmedabad/?viewAsMember=true" icon="fab fa-linkedin-in" bgColor="#0A66C2" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -236,7 +259,7 @@ export default function ContactPage() {
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Your Name *</label>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Your Name <span className="text-red-500">*</span></label>
                                             <input
                                                 type="text"
                                                 name="name"
@@ -248,7 +271,7 @@ export default function ContactPage() {
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Your Email *</label>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Your Email <span className="text-red-500">*</span></label>
                                             <input
                                                 type="email"
                                                 name="email"
@@ -274,7 +297,7 @@ export default function ContactPage() {
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Subject <span className="text-red-500">*</span></label>
                                             <select
                                                 name="subject"
                                                 value={formData.subject}
@@ -293,7 +316,7 @@ export default function ContactPage() {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Message <span className="text-red-500">*</span> </label>
                                         <textarea
                                             name="message"
                                             value={formData.message}
@@ -307,7 +330,7 @@ export default function ContactPage() {
 
                                     <button
                                         type="submit" disabled={loading}
-                                        className="w-full bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-primary-dark transition-colors text-lg"
+                                        className="w-full bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-secondary transition-colors text-lg"
                                     >
                                         <i className="fas fa-paper-plane mr-2"></i>
                                         {loading ? "Sending..." : "Send Message"}
@@ -364,4 +387,19 @@ export default function ContactPage() {
 
         </>
     );
+
+
+    function SocialLink({ href, icon, bgColor, iconColor = "#fff" }: { href: string; icon: string; bgColor: string; iconColor?: string }) {
+        return (
+            <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-lg"
+                style={{ background: bgColor, color: iconColor }}
+            >
+                <i className={icon}></i>
+            </a>
+        );
+    }
 }

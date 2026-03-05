@@ -135,24 +135,24 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
 function ContactSection({ title, address, phones, email }: { title: string; address: string; phones: string[]; email: string }) {
     return (
         <div className="space-y-3">
-            <h5 className="text-lg font-semibold text-primary border-b border-white/20 pb-2 text-center md:text-left">
+            <h5 className="text-lg font-semibold text-white border-b border-white/20 pb-2 text-center md:text-left">
                 {title}
             </h5>
             <ul className="space-y-4 text-sm leading-relaxed">
                 <li className="flex gap-3 justify-center md:justify-start text-center md:text-left">
-                    <i className="fas fa-map-marker-alt text-primary mt-1 shrink-0"></i>
+                    <i className="fas fa-map-marker-alt mt-1 shrink-0 text-white"></i>
                     <span>{address}</span>
                 </li>
                 {phones.map((phone, idx) => (
                     <li key={idx} className="flex gap-3 items-center justify-center md:justify-start">
-                        <i className="fas fa-phone text-primary shrink-0"></i>
+                        <i className="fas fa-phone shrink-0 text-white"></i>
                         <a href={`tel:${phone.replace(/\s/g, '')}`} className="hover:text-primary transition-colors">
                             {phone}
                         </a>
                     </li>
                 ))}
                 <li className="flex gap-3 items-center justify-center md:justify-start">
-                    <i className="fas fa-envelope text-primary shrink-0"></i>
+                    <i className="fas fa-envelope shrink-0 text-white"></i>
                     <a href={`mailto:${email}`} className="hover:text-primary transition-colors break-all">
                         {email}
                     </a>
