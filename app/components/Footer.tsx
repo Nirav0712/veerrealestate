@@ -75,15 +75,15 @@ export default function Footer() {
 
                     {/* Contact Info */}
                     <div className="md:col-span-2 lg:col-span-1">
-                        <h4 className="text-xl font-semibold mb-8 text-center md:text-left">
+                        {/* <h4 className="text-xl font-semibold mb-8 text-center md:text-left">
                             Contact Info
-                        </h4>
+                        </h4> */}
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-10 text-white/80">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-5 text-white/80">
                             {/* East Ahmedabad */}
                             <ContactSection
                                 title="East Ahmedabad"
-                                address="C-238, Sumel 7, Near Soni ni Chali Cross Road, Odhav, Ahmedabad - 382415"
+                                address="C-238, Sumel 7, Odhav, Ahmedabad - 382415"
                                 phones={["+91 93769 96179", "+91 97270 27052"]}
                                 email="horseveer@gmail.com"
                             />
@@ -91,8 +91,15 @@ export default function Footer() {
                             {/* West Ahmedabad */}
                             <ContactSection
                                 title="West Ahmedabad"
-                                address="431, Yash Arian Complex, Near Swami Vivekanand Circle, Memnagar, Ahmedabad - 380052"
+                                address="431, Yash Arian Complex, Memnagar, Ahmedabad - 380052"
                                 phones={["+91 88661 13391", "+91 90672 30240"]}
+                                email="horseveer@gmail.com"
+                            />
+                            {/* Bopal Branch */}
+                            <ContactSection
+                                title="Bopal Branch"
+                                address="1120, STC, Opp. Saraswati Hospital, Ambli, Ahmedabad - 380058"
+                                phones={["+91 81601 53208"]}
                                 email="horseveer@gmail.com"
                             />
                         </div>
@@ -146,20 +153,32 @@ function ContactSection({ title, address, phones, email }: { title: string; addr
                     <i className="fas fa-map-marker-alt mt-1 shrink-0 text-white"></i>
                     <span>{address}</span>
                 </li>
-                {phones.map((phone, idx) => (
-                    <li key={idx} className="flex gap-3 items-center justify-center md:justify-start">
-                        <i className="fas fa-phone shrink-0 text-white"></i>
-                        <a href={`tel:${phone.replace(/\s/g, '')}`} className="hover:text-primary transition-colors">
-                            {phone}
-                        </a>
-                    </li>
-                ))}
-                <li className="flex gap-3 items-center justify-center md:justify-start">
+                <li className="flex items-start gap-3">
+    <i className="fas fa-phone shrink-0 text-white mt-1"></i>
+
+    <div className="flex items-center gap-2 flex-wrap">
+        {phones.map((phone, idx) => (
+            <span key={idx}>
+                <a
+                    href={`tel:${phone.replace(/\s/g, "")}`}
+                    className="hover:text-primary transition-colors"
+                >
+                    {phone}
+                </a>
+
+                {idx < phones.length - 1 && (
+                    <span className="mx-2 text-white/50">|</span>
+                )}
+            </span>
+        ))}
+    </div>
+</li>
+                {/* <li className="flex gap-3 items-center justify-center md:justify-start">
                     <i className="fas fa-envelope shrink-0 text-white"></i>
                     <a href={`mailto:${email}`} className="hover:text-primary transition-colors break-all">
                         {email}
                     </a>
-                </li>
+                </li> */}
             </ul>
         </div>
     );
