@@ -97,10 +97,10 @@ export default function ContactPage() {
                                         <i className="fas fa-map-marker-alt text-primary"></i>
                                     </div>
                                     <div className="text-sm sm:text-base text-gray-600">
-                                        <b>East Ahmedabad:</b><br />
-                                        C-238, Sumel 7, Odhav<br /><br />
+                                        {/* <b>East Ahmedabad:</b><br />
+                                        C-238, Sumel 7, Odhav<br /><br /> */}
 
-                                        <b>West Ahmedabad:</b><br />
+                                        <b>Ahmedabad:</b><br />
                                         Yash Arian Complex, Memnagar
                                     </div>
                                 </div>
@@ -116,20 +116,33 @@ export default function ContactPage() {
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                                            <div className="bg-gray-50 p-3 rounded-lg text-sm">
+                                            {/* <div className="bg-gray-50 p-3 rounded-lg text-sm">
                                                 <b>East Ahmedabad</b>
                                                 <div className="mt-1 flex flex-col">
                                                     <a href="tel:+919376996179">+91 93769 96179</a>
                                                     <a href="tel:+919727027052">+91 97270 27052</a>
                                                 </div>
-                                            </div>
+                                            </div> */}
 
-                                            <div className="bg-gray-50 p-3 rounded-lg text-sm">
-                                                <b>West Ahmedabad</b>
-                                                <div className="mt-1 flex flex-col">
-                                                    <a href="tel:+918866113391">+91 88661 13391</a>
-                                                    <a href="tel:+919067230240">+91 90672 30240</a>
-                                                </div>
+                                            <div className="bg-gray-50 p-1 rounded-lg text-sm">
+                                                <b>Ahmedabad</b>
+                                              <div className="mt-1 flex items-center whitespace-nowrap text-sm">
+    <a
+        href="tel:+918866113391"
+        className="hover:text-primary"
+    >
+        +91 88661 13391
+    </a>
+
+    <span className="mx-2">|</span>
+
+    <a
+        href="tel:+919067230240"
+        className="hover:text-primary"
+    >
+        +91 90672 30240
+    </a>
+</div>
                                             </div>
 
                                         </div>
