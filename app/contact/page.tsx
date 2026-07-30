@@ -1,9 +1,8 @@
 "use client";
 import Link from 'next/link';
 import Image from 'next/image';
-
 import { useState } from "react";
-
+import ReCAPTCHA from "react-google-recaptcha";
 interface FormData {
     name: string;
     email: string;
@@ -13,6 +12,11 @@ interface FormData {
 }
 
 export default function ContactPage() {
+
+    const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+    const [termsAccepted, setTermsAccepted] = useState(false);
+    const [marketingAccepted, setMarketingAccepted] = useState(false);
+
     const [formData, setFormData] = useState<FormData>({
         name: "",
         email: "",
@@ -26,11 +30,25 @@ export default function ContactPage() {
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (!termsAccepted) {
+            alert("Please accept the Terms & Privacy Policy.");
+            return;
+        }
+
+        if (!marketingAccepted) {
+            alert("Please accept the communication consent.");
+            return;
+        }
+
         setLoading(true);
 
         const phoneNumber = "919727027052";
@@ -254,12 +272,60 @@ export default function ContactPage() {
                                         className="input"
                                     />
 
-                                    <button
+                                   <div className="mb-4 text-sm text-gray-600">
+  <label className="flex items-start gap-2 mb-3 cursor-pointer">
+    <input
+      type="checkbox"
+      checked={termsAccepted}
+      onChange={(e) => setTermsAccepted(e.target.checked)}
+      className="mt-1 h-4 w-4 accent-primary"
+      required
+    />
+    <span>
+      I agree to the{" "}
+      <Link href="/terms" className="text-blue-600 hover:underline">
+        Terms
+      </Link>{" "}
+      and{" "}
+      <Link href="/privacy-policy" className="text-blue-600 hover:underline">
+        Privacy Policy
+      </Link>
+    </span>
+  </label>
+
+  <label className="flex items-start gap-2 cursor-pointer">
+    <input
+      type="checkbox"
+      checked={marketingAccepted}
+      onChange={(e) => setMarketingAccepted(e.target.checked)}
+      className="mt-1 h-4 w-4 accent-primary"
+      required
+    />
+    <span>
+      I would like to receive communication via SMS, RCS SMS, Email &
+      WhatsApp services for offers, updates & transactions.
+    </span>
+  </label>
+</div>
+  <ReCAPTCHA
+  sitekey="6Ld-smwtAAAAACpHfqzximAkOuosxs6XQnejz2Ki"
+  onChange={(token: string | null) => setCaptchaToken(token)}
+/>
+
+
+<button
+  disabled={loading}
+  className="w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary transition"
+>
+  {loading ? "Sending..." : "Send via WhatsApp"}
+</button>
+
+                                    {/* <button
                                         disabled={loading}
                                         className="w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary transition"
                                     >
                                         {loading ? "Sending..." : "Send via WhatsApp"}
-                                    </button>
+                                    </button> */}
 
                                 </form>
                             </div>
