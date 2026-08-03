@@ -24,6 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
+          <meta
+    name="google-site-verification"
+    content="MAzcA3AguIYWeVSbX2ynaRkn8iK9pwVyiPqCEwoKGCE"
+  />
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
