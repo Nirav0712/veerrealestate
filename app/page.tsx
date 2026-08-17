@@ -102,10 +102,19 @@ export default function HomePage() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center text-white">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-lg">
-              Find Your Dream Home
+              Your Trusted Partner in <br /> Real Estate
             </h1>
             <p className="text-lg md:text-xl lg:text-2xl mb-8 md:mb-12 opacity-95 drop-shadow">
-              Discover the perfect property from our extensive listings of homes, apartments, and commercial spaces
+              Find the Right Property. Make the Right Decision. Build Your Future.
+        <br />
+        <br />
+              Since 2012, Veer Real Estate has been helping homebuyers, property owners and investors make confident real estate decisions across Ahmedabad.
+<br />
+{/* <br />
+Whether you are looking for your dream home, a commercial property, a rental property or a smart investment opportunity, our experienced team provides verified property options, honest guidance and end-to-end support.
+<br />
+Buy • Sell • Rent • Invest */}
+
             </p>
 
             {/* Search Widget with Glassmorphism Effect */}
@@ -396,15 +405,21 @@ export default function HomePage() {
                 <span className="text-primary font-semibold">About Veer Real Estate</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-secondary mb-6 leading-tight">
-                Embrace the Elegance<br />Our Exclusive Property
+                Trusted Real Estate <br />Broker in Ahmedabad
               </h2>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                Established in 2012 by visionary entrepreneurs Harshad Prajapati and Sudhir Prajapati, Veer Real Estate has emerged as one of Ahmedabad's most trusted and fast-growing real estate consultancy firms. Built on strong values of integrity, transparency, and customer commitment, the company has consistently delivered excellence in the dynamic real estate market. <br /> <br />
-                Veer Real Estate offers a complete spectrum of property solutions — from premium commercial spaces and luxury residences to affordable and budget-friendly homes, catering to diverse customer needs and investment goals. <br /> <br />
+                More Than Property. We Build Trust.
+                <br />
+<br />
+Buying or investing in real estate is one of the biggest financial decisions you make.
+<br />
+<br />
+At Veer Real Estate, we believe you deserve more than a list of properties. You deserve the right guidance, transparent information and professional support at every stage of your property journey.
+<br />
+<br />
+Since 2012, we have built our reputation as a trusted Property Dealer in Ahmedabad, serving individuals, families and investors with a customer-first approach.
+From understanding your requirements and shortlisting suitable properties to site visits, negotiation and documentation, our team stays with you throughout the process.
 
-                Understanding that a property is not just a transaction but a lifetime decision, the team focuses on personalized guidance, market expertise, and long-term client relationships. Their client-first approach has led to the successful sale of 1,500+ residential units and the trust of 2,200+ happy customers. <br /> <br />
-
-                Today, Veer Real Estate stands as a symbol of reliability and professionalism in Ahmedabad's real estate landscape, helping families find their dream homes and investors secure valuable opportunitie
               </p>
               <ul className="text-gray-600 mb-8 space-y-3">
                 <li className="flex items-center gap-3 leading-relaxed">
@@ -461,29 +476,66 @@ export default function HomePage() {
 
 
       {/* Stats Section */}
-      <section className="py-8 md:py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center border-2 border-secondary hover:scale-110 transition-transform duration-300 cursor-pointer mx-auto'>
-              <div className="text-5xl font-bold text-secondary mb-2">98%</div>
-              <div className="text-gray-600">Satisfaction Rate</div>
-            </div>
-            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center border-2 border-secondary hover:scale-110 transition-transform duration-300 cursor-pointer mx-auto'>
-              <div className="text-5xl font-bold text-secondary mb-2">5K+</div>
-              <div className="text-gray-600">Happy Customers</div>
-            </div>
-            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center border-2 border-secondary hover:scale-110 transition-transform duration-300 cursor-pointer mx-auto'>
-              <div className="text-5xl font-bold text-secondary mb-2">100+</div>
-              <div className="text-gray-600">Projects</div>
-            </div>
-            <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center border-2 border-secondary hover:scale-110 transition-transform duration-300 cursor-pointer mx-auto'>
-              <div className="text-5xl font-bold text-secondary mb-2">15+</div>
-              <div className="text-gray-600">Years Experience</div>
-            </div>
-          </div>
-        </div>
-      </section>
+   <section className="py-8 md:py-16 bg-gray-50">
+  <div className="container mx-auto px-4">
+    
+    <div className="text-center mb-8 md:mb-12">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#003D7A]">
+        Our Promise
+      </h2>
+      <p className="mt-2 text-base sm:text-lg md:text-xl text-gray-600">
+        Right Property. Right Guidance. Right Decision.
+      </p>
+    </div>
 
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      
+      <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center border-2 border-secondary hover:scale-110 transition-transform duration-300 cursor-pointer mx-auto'>
+        <div className="text-5xl font-bold text-secondary mb-2">98%</div>
+        <div className="text-gray-600">Satisfaction Rate</div>
+      </div>
+
+      <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center border-2 border-secondary hover:scale-110 transition-transform duration-300 cursor-pointer mx-auto'>
+        <div className="text-5xl font-bold text-secondary mb-2">5K+</div>
+        <div className="text-gray-600">Happy Customers</div>
+      </div>
+
+      <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center border-2 border-secondary hover:scale-110 transition-transform duration-300 cursor-pointer mx-auto'>
+        <div className="text-5xl font-bold text-secondary mb-2">100+</div>
+        <div className="text-gray-600">Projects</div>
+      </div>
+
+      <div className='w-40 h-40 rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center border-2 border-secondary hover:scale-110 transition-transform duration-300 cursor-pointer mx-auto'>
+        <div className="text-5xl font-bold text-secondary mb-2">15+</div>
+        <div className="text-gray-600">Years Experience</div>
+      </div>
+
+    </div>
+
+    {/* Content below 4 boxes */}
+    <div className="max-w-4xl mx-auto text-center mt-12 md:mt-16">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#003D7A]">
+        Smart Real Estate Investing Starts Here
+      </h2>
+
+      <p className="mt-5 text-base sm:text-lg leading-relaxed text-gray-600">
+        Successful Real Estate Investing requires market knowledge, location
+        analysis, and future growth potential. At Veer Real Estate, we help
+        investors identify high-potential Investment Property opportunities
+        that align with their financial goals.
+      </p>
+
+      <p className="mt-4 text-base sm:text-lg leading-relaxed text-gray-600">
+        Our advisors analyze factors such as infrastructure development,
+        connectivity, rental demand, appreciation trends, and market pricing
+        before recommending any investment. Whether you're purchasing your
+        first investment property or expanding your portfolio, our experienced
+        consultants are here to guide you every step of the way.
+      </p>
+    </div>
+
+  </div>
+</section>
       {/* Featured Properties */}
       <section className="py-10 md:py-20">
         <div className="container mx-auto px-4">
@@ -541,7 +593,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-secondary mb-4">BRAND PROMISE</h2>
-            <p className="text-xl text-gray-600">100% Dream Accomplishment</p>
+            <p className="text-xl text-gray-600">Turning Property Dreams into Reality Since 2012</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -550,15 +602,18 @@ export default function HomePage() {
               <div className="text-6xl text-primary mb-6">
                 <i className="fas fa-bullseye"></i>
               </div>
-              <h3 className="text-2xl font-semibold text-secondary mb-4">Big Hairry Audicious Goal (Mission)</h3>
+              <h3 className="text-2xl font-semibold text-secondary mb-4">Our (Mission)</h3>
               <p className="text-gray-600 leading-relaxed">
-                Our mission is to create a future where no family remains without a home, transforming aspirations into reality through innovative real estate solutions and unwavering commitment to customer satisfaction. <br /><br />
+                {/* Making Every Real Estate Journey Simpler, Safer & More Transparent. <br /><br /> */}
 
-                By 15th August 2047, Veer Real Estate envisions positively impacting the lives of 1 million families by helping them achieve their dream of homeownership, while building a strong network of 5,000 skilled and dedicated professionals who share our passion for excellence, integrity, and service. <br /><br />
+                Our mission is to simplify the real estate experience through: <br /><br />
 
-                We aim not only to build properties, but to build communities, create opportunities, and deliver lasting happiness for generations to come. <br /><br />
+               Honest Advice • Verified Property Solutions • Personalized Guidance • Professional Service <br /><br />
 
-                “Turning Dreams into Addresses, and Houses into Homes.”
+                We aim to help families, homeowners and investors make confident property decisions while building long-term relationships based on trust, transparency and integrity.
+Every recommendation we make is guided by one simple principle:
+Your Long-Term Satisfaction Matters More Than One Transaction.
+
               </p>
             </div>
 
@@ -566,13 +621,13 @@ export default function HomePage() {
               <div className="text-6xl text-primary mb-6">
                 <i className="fas fa-home"></i>
               </div>
-              <h3 className="text-2xl font-semibold text-secondary mb-4">Core Purporse</h3>
+              <h3 className="text-2xl font-semibold text-secondary mb-4">Our Core Purporse</h3>
               <p className="text-gray-600 leading-relaxed">
-                Since 2012, Veer Real Estate has been committed to serving as a trusted one-stop real estate solutions provider, supported by a skilled, passionate, and dedicated team. <br /><br />
+                Turning Property Dreams Into Reality Since 2012 <br /><br />
 
-                Our core purpose is to deliver high-quality, innovative, and sustainable customized solutions that transform our clients' aspirations into reality. By understanding individual needs and providing personalized guidance, we strive to make every property journey seamless, reliable, and rewarding. <br /><br />
+               Our purpose is to provide reliable, transparent and end-to-end real estate solutions tailored to every client's unique needs. <br /><br />
 
-                We believe in building long-term relationships founded on trust, transparency, and excellence, helping our clients accomplish their dreams with confidence.
+               Whether you are searching for an affordable home, a premium property, a commercial space or an investment opportunity, our experienced team is committed to helping you find the right solution.
               </p>
             </div>
           </div>
@@ -589,7 +644,7 @@ export default function HomePage() {
               Core Values
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Our Values, Your Confidence
+              Driven by Values. Focused on Your Future.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
@@ -698,11 +753,11 @@ export default function HomePage() {
 
 
       {/* Why Choose Us */}
-      {/* <section className="py-20">
+      <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-secondary mb-4">Why Choose Veer Real Estate?</h2>
-            <p className="text-xl text-gray-600">India's most trusted real estate platform</p>
+            <p className="text-xl text-gray-600">Your Property Journey, Simplified.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -722,7 +777,7 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section> */}
+      </section>
 
       {/* Testimonials */}
       <section className="py-10 md:py-20">

@@ -14,7 +14,7 @@ export default function AboutPage() {
                     <div className="max-w-3xl mx-auto text-center">
                         <h1 className="text-5xl md:text-6xl font-bold mb-6">About Veer Real Estate</h1>
                         <p className="text-lg md:text-xl lg:text-xl opacity-95">
-                            Your trusted partner in finding the perfect property for over 15 years
+                            Trusted Real Estate Broker in Ahmedabad
                         </p>
                     </div>
                 </div>
