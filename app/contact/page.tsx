@@ -342,8 +342,7 @@ export default function ContactPage() {
                     <div className="h-64 sm:h-80 md:h-96 rounded-2xl overflow-hidden shadow-lg">
                         <iframe
 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4577.525186990727!2d72.77251827597257!3d21.186300582347595!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be04da4d7fae1c5%3A0xfbbe068d7712bc4e!2sVeer%20Real%20Estate!5e1!3m2!1sen!2sin!4v1773926142586!5m2!1sen!2sin"
-
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3671.217236267724!2d72.53583687600862!3d23.052496015209492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e856a804a4f6b%3A0x5d94e075553982c4!2sVeer%20Real%20Estate!5e0!3m2!1sen!2sin!4v1788493973064!5m2!1sen!2sin"
                             width="100%"
                             height="100%"
                             style={{ border: 0 }}
