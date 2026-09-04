@@ -3,24 +3,31 @@ export const runtime = 'nodejs';
 import { NextResponse } from "next/server";
 
 export async function GET() {
-    const placeId = process.env.GOOGLE_PLACE_ID || "YOUR_PLACE_ID";
-    const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+    const placeId = process.env.GOOGLE_PLACE_ID;
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 
-    if (!apiKey) {
-        return NextResponse.json({ error: "Google Places API Key is missing. Please add GOOGLE_PLACES_API_KEY to your .env file." }, { status: 500 });
+    if (!apiKey || !placeId) {
+        return NextResponse.json({ error: "Missing Google Places API configuration." }, { status: 500 });
     }
 
-    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,reviews&key=${apiKey}`;
+    const url = `https://places.googleapis.com/v1/places/${placeId}`;
 
     try {
-        const res = await fetch(url);
+        const res = await fetch(url, {
+            headers: {
+                "X-Goog-Api-Key": apiKey,
+                "X-Goog-FieldMask": "displayName,rating,userRatingCount,reviews,googleMapsUri"
+            },
+            next: { revalidate: 3600 }
+        });
+
         const data = await res.json();
 
-        if (data.status !== "OK") {
-            return NextResponse.json({ error: data.error_message || "Failed to fetch from Google API" }, { status: 500 });
+        if (data.error) {
+            return NextResponse.json({ error: data.error.message || "Failed to fetch from Google API" }, { status: 500 });
         }
 
-        return NextResponse.json(data.result);
+        return NextResponse.json(data);
     } catch (error) {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
