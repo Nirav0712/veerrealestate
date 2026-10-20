@@ -51,6 +51,12 @@ export default function Footer() {
                         <ul className="space-y-4">
                             <FooterLink href="/">Home</FooterLink>
                             <FooterLink href="/about-us">About Us</FooterLink>
+                            <FooterLink href="/builder-consultation">
+                                <span className="text-[#F1B33B] font-semibold flex items-center gap-1.5">
+                                    <span>Builder Consultation</span>
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#F1B33B]/20 text-[#F1B33B] uppercase font-bold tracking-wider">New</span>
+                                </span>
+                            </FooterLink>
                             <FooterLink href="/properties">Properties</FooterLink>
                             <FooterLink href="/projects/east">East Projects</FooterLink>
                             <FooterLink href="/projects/west">West Projects</FooterLink>
@@ -106,12 +112,47 @@ export default function Footer() {
                     </div>
                 </div>
 
+                {/* Builder Consultation Special Banner */}
+                <div className="border-t border-white/10 pt-8 pb-4">
+                    <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-[#031326] via-[#09223f] to-[#031326] border border-[#E8AA38]/30 shadow-xl flex flex-col md:flex-row items-center justify-between gap-5 text-center md:text-left transition-all hover:border-[#E8AA38]/60">
+                        <div className="flex items-center gap-4 flex-col sm:flex-row">
+                            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#E8AA38] shrink-0 shadow-md relative bg-[#041221]">
+                                <Image
+                                    src="/images/sudhir-about-final.jpg"
+                                    alt="Sudhir Prajapati"
+                                    fill
+                                    sizes="56px"
+                                    className="object-cover object-top"
+                                />
+                            </div>
+                            <div>
+                                <div className="inline-block px-2.5 py-0.5 rounded-full bg-[#E8AA38]/15 border border-[#E8AA38]/30 text-[#E8AA38] text-[11px] font-bold uppercase tracking-wider mb-1">
+                                    For Builders &amp; Developers
+                                </div>
+                                <h4 className="text-lg sm:text-xl font-bold text-white">
+                                    Builder Bhai — Let’s Build a Stronger Real Estate Business
+                                </h4>
+                                <p className="text-white/70 text-xs sm:text-sm mt-0.5">
+                                    Get expert project positioning, marketing strategy, site visits &amp; sales consultation with Sudhir Prajapati.
+                                </p>
+                            </div>
+                        </div>
+                        <Link
+                            href="/builder-consultation"
+                            className="shrink-0 w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#F9C354] via-[#F1B33B] to-[#D89423] hover:from-[#fcd37a] hover:to-[#e59d28] text-slate-950 font-bold text-sm uppercase tracking-wider shadow-lg shadow-[#E8AA38]/20 transition-all transform hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2"
+                        >
+                            <span>Book Consultation</span>
+                            <i className="fas fa-arrow-right text-xs"></i>
+                        </Link>
+                    </div>
+                </div>
+
                 {/* Footer Bottom */}
-                {/* <div className="border-t border-white/10 pt-6 text-center text-white/70 text-xs md:text-sm">
+                <div className="border-t border-white/10 pt-6 text-center text-white/70 text-xs md:text-sm">
                     <p>
-                        &copy; 2026 Veer Real Estate. All rights reserved. | Developed By <a href="https://thedigitalconnect.in/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">The Digital Connect</a> | Designed with <i className="fas fa-heart text-primary"></i> for Real Estate
+                        &copy; 2026 Veer Real Estate. All rights reserved. | <Link href="/builder-consultation" className="text-[#E8AA38] hover:underline font-semibold">Builder Bhai Consultation</Link>
                     </p>
-                </div> */}
+                </div>
             </div>
         </footer>
     );

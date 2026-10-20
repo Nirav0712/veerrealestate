@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
     const placeId = process.env.GOOGLE_PLACE_ID;
-    const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+    const apiKey = process.env.GOOGLE_PLACES_API_KEY || process.env.GOOGLE_MAPS_API_KEY;
 
     // Diagnostic validation: check API Key
     if (!apiKey) {
