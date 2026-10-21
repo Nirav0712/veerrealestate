@@ -36,7 +36,7 @@ export default function ContactPage() {
         });
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!termsAccepted) {
@@ -50,6 +50,24 @@ export default function ContactPage() {
         }
 
         setLoading(true);
+
+        try {
+            await fetch('/api/inquiries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    phone: formData.phone,
+                    subject: formData.subject,
+                    message: formData.message,
+                    leadType: 'contact',
+                    source: 'Contact Page Form',
+                }),
+            });
+        } catch (err) {
+            console.error('Inquiry persistence error:', err);
+        }
 
         const phoneNumber = "919727027052";
 

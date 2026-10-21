@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import jwt from 'jsonwebtoken';
+import { JWT_SECRET } from '@/lib/auth';
 import pool from '@/lib/db';
 
 export default async function AdminLayout({
@@ -17,7 +18,7 @@ export default async function AdminLayout({
 
     let isValid = false;
     try {
-        const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
+        const decoded: any = jwt.verify(token, JWT_SECRET);
         const { id, sessionId } = decoded;
 
         // Check if sessionId matches the one in database

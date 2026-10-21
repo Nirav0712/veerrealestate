@@ -37,13 +37,21 @@ export default function Header() {
                             </li>
                             <li className="relative group">
                                 <Link
-                                    href="#"
+                                    href="/projects"
                                     className="text-secondary hover:text-primary font-medium transition-colors"
                                 >
                                     Projects
                                 </Link>
                                 {/* Dropdown */}
-                                <ul className="absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md opacity-0 translate-y-2 invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-300 z-50">
+                                <ul className="absolute left-0 top-full mt-2 w-52 bg-white shadow-lg rounded-md opacity-0 translate-y-2 invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-300 z-50">
+                                    <li>
+                                        <Link
+                                            href="/projects"
+                                            className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-primary font-medium border-b border-gray-100"
+                                        >
+                                            All Projects
+                                        </Link>
+                                    </li>
                                     <li>
                                         <Link
                                             href="/projects/east"
@@ -132,6 +140,15 @@ export default function Header() {
                             <li className="border-b border-gray-100 pb-2">
                                 <div className="text-secondary font-medium mb-2">Projects</div>
                                 <ul className="pl-4 flex flex-col gap-2">
+                                    <li>
+                                        <Link
+                                            href="/projects"
+                                            className="block text-primary font-medium transition-colors"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            All Projects
+                                        </Link>
+                                    </li>
                                     <li>
                                         <Link
                                             href="/projects/east"

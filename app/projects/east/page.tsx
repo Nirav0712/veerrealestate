@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { projects } from "@/lib/projects";
@@ -79,10 +79,38 @@ export default function EastProjectPage() {
     location: "",
   });
 
-  // Only EAST projects
-  const eastProjects = projects.filter(
-    (project) => project.zone === "East"
+  // Live database backed projects with fallback
+  const [eastProjects, setEastProjects] = useState(() =>
+    projects.filter((project) => project.zone === "East")
   );
+
+  useEffect(() => {
+    fetch('/api/projects?zone=East')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((dbData) => {
+        if (Array.isArray(dbData) && dbData.length > 0) {
+          const mapped = dbData.map((p: any) => ({
+            id: p.id,
+            title: p.name || p.title,
+            slug: p.slug,
+            price: Number(p.priceMin) || Number(p.price) || 0,
+            displayPrice: p.displayPrice || (p.priceMin ? `₹ ${(p.priceMin / 100000).toFixed(2)} Lakh` : 'On Request'),
+            image: p.coverImage || (Array.isArray(p.galleryImages) && p.galleryImages[0]) || '/images/east/AARADHANA_2.jpeg',
+            images: Array.isArray(p.galleryImages) && p.galleryImages.length > 0 ? p.galleryImages : [p.coverImage || '/images/east/AARADHANA_2.jpeg'],
+            status: p.status || 'For Sale',
+            bedrooms: parseInt(p.configurations) || 2,
+            location: p.locationName || p.location || 'East Ahmedabad',
+            PlotArea: p.landArea || '1200 sqft',
+            address: p.fullAddress || p.locationName || 'East Ahmedabad',
+            featured: Boolean(p.featured),
+            description: p.description || '',
+            zone: 'East' as const,
+          }));
+          setEastProjects(mapped);
+        }
+      })
+      .catch((err) => console.error('Error fetching east projects from DB:', err));
+  }, []);
 
   const handleFilterChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

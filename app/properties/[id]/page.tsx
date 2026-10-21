@@ -7,6 +7,7 @@ import PropertyCard from '../../components/PropertyCard';
 import { type Property, getPropertyFallbackImage } from '@/lib/properties';
 import { FaHeart, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import Loader from '@/app/components/Loader';
+import { generatePropertyJsonLd } from '@/lib/seo';
 
 export default function PropertyDetailsPage() {
     const params = useParams();
@@ -15,10 +16,57 @@ export default function PropertyDetailsPage() {
     const [similarProperties, setSimilarProperties] = useState<Property[]>([]);
     const [isFavorite, setIsFavorite] = useState(false);
 
+    // Inquiry form state
+    const [inquiryName, setInquiryName] = useState('');
+    const [inquiryEmail, setInquiryEmail] = useState('');
+    const [inquiryPhone, setInquiryPhone] = useState('');
+    const [inquiryMessage, setInquiryMessage] = useState('');
+    const [inquiryLoading, setInquiryLoading] = useState(false);
+    const [inquirySuccess, setInquirySuccess] = useState(false);
+    const [inquiryError, setInquiryError] = useState<string | null>(null);
+
     // Gallery state
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isAutoScrolling, setIsAutoScrolling] = useState(true);
     const autoScrollRef = useRef<NodeJS.Timeout | null>(null);
+
+    const handleInquirySubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!property) return;
+
+        setInquiryLoading(true);
+        setInquiryError(null);
+
+        try {
+            const res = await fetch('/api/inquiries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: inquiryName,
+                    email: inquiryEmail,
+                    phone: inquiryPhone,
+                    message: inquiryMessage || `Interested in property: ${property.title}`,
+                    leadType: 'property',
+                    propertyId: property.id,
+                    propertyTitle: property.title,
+                    source: `Property Detail: ${property.title}`,
+                }),
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to submit inquiry');
+
+            setInquirySuccess(true);
+            setInquiryName('');
+            setInquiryEmail('');
+            setInquiryPhone('');
+            setInquiryMessage('');
+        } catch (err: any) {
+            setInquiryError(err.message || 'Submission error. Please try again.');
+        } finally {
+            setInquiryLoading(false);
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -128,6 +176,12 @@ export default function PropertyDetailsPage() {
     return (
         <>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(generatePropertyJsonLd(property)),
+                }}
+            />
 
             <div className="py-6 md:py-12">
                 <div className="container mx-auto px-4">
@@ -358,37 +412,70 @@ export default function PropertyDetailsPage() {
                         <div className="lg:col-span-1">
                             {/* Contact Form */}
                             <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 sticky top-24">
-                                <h3 className="text-xl font-bold text-secondary mb-6">Request Information</h3>
-                                <form className="space-y-4">
-                                    <input
-                                        type="text"
-                                        placeholder="Your Name"
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                                    />
-                                    <input
-                                        type="email"
-                                        placeholder="Your Email"
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                                    />
-                                    <input
-                                        type="tel"
-                                        placeholder="Phone Number"
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                                    />
-                                    <textarea
-                                        rows={4}
-                                        placeholder="Message"
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                                        defaultValue={`I'm interested in ${property.title}`}
-                                    ></textarea>
-                                    <button
-                                        type="submit"
-                                        className="w-full cursor-pointer bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors"
-                                    >
-                                        <i className="fas fa-paper-plane mr-2"></i>
-                                        Send Message
-                                    </button>
-                                </form>
+                                <h3 className="text-xl font-bold text-secondary mb-4">Request Information</h3>
+
+                                {inquirySuccess ? (
+                                    <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-center space-y-3">
+                                        <div className="text-3xl">✅</div>
+                                        <div className="font-bold text-sm">Inquiry Received!</div>
+                                        <p className="text-xs text-emerald-700">
+                                            Our real estate advisor has received your request for <b>{property.title}</b> and will reach out to you shortly.
+                                        </p>
+                                        <button
+                                            type="button"
+                                            onClick={() => setInquirySuccess(false)}
+                                            className="text-xs font-semibold text-emerald-800 underline"
+                                        >
+                                            Send another inquiry
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <form onSubmit={handleInquirySubmit} className="space-y-4">
+                                        {inquiryError && (
+                                            <div className="p-3 bg-red-50 text-red-700 rounded-lg text-xs font-medium border border-red-200">
+                                                {inquiryError}
+                                            </div>
+                                        )}
+                                        <input
+                                            type="text"
+                                            required
+                                            value={inquiryName}
+                                            onChange={(e) => setInquiryName(e.target.value)}
+                                            placeholder="Your Name *"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"
+                                        />
+                                        <input
+                                            type="tel"
+                                            required
+                                            value={inquiryPhone}
+                                            onChange={(e) => setInquiryPhone(e.target.value)}
+                                            placeholder="Phone Number *"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"
+                                        />
+                                        <input
+                                            type="email"
+                                            value={inquiryEmail}
+                                            onChange={(e) => setInquiryEmail(e.target.value)}
+                                            placeholder="Your Email (Optional)"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"
+                                        />
+                                        <textarea
+                                            rows={3}
+                                            value={inquiryMessage}
+                                            onChange={(e) => setInquiryMessage(e.target.value)}
+                                            placeholder={`I'm interested in ${property.title}`}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"
+                                        ></textarea>
+                                        <button
+                                            type="submit"
+                                            disabled={inquiryLoading}
+                                            className="w-full cursor-pointer bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors disabled:opacity-50 text-sm flex items-center justify-center gap-2"
+                                        >
+                                            <i className="fas fa-paper-plane"></i>
+                                            {inquiryLoading ? 'Submitting...' : 'Send Inquiry'}
+                                        </button>
+                                    </form>
+                                )}
                             </div>
 
                             {/* Share */}

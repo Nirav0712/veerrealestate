@@ -67,27 +67,46 @@ export default function BuilderConsultationPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMessage("");
 
-    const phoneNumber = "919727027052";
-    const message =
-      `*New Builder Consultation Request*%0A%0A` +
-      `*Full Name:* ${encodeURIComponent(formData.fullName)}%0A` +
-      `*Phone / WhatsApp:* ${encodeURIComponent(formData.phone)}%0A` +
-      `*Builder / Company:* ${encodeURIComponent(formData.companyName)}%0A` +
-      `*Project Location:* ${encodeURIComponent(formData.projectLocation)}%0A` +
-      `*Current Project Stage:* ${encodeURIComponent(formData.projectStage || "Not Specified")}%0A` +
-      `*Main Challenge:* ${encodeURIComponent(formData.mainChallenge || "Not Specified")}`;
+    try {
+      const res = await fetch("/api/builder-leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to submit request.");
+      }
 
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
-
-    setTimeout(() => {
-      setLoading(false);
       setSubmitted(true);
+
+      const phoneNumber = "919727027052";
+      const message =
+        `*New Builder Consultation Request*%0A%0A` +
+        `*Full Name:* ${encodeURIComponent(formData.fullName)}%0A` +
+        `*Phone / WhatsApp:* ${encodeURIComponent(formData.phone)}%0A` +
+        `*Builder / Company:* ${encodeURIComponent(formData.companyName)}%0A` +
+        `*Project Location:* ${encodeURIComponent(formData.projectLocation)}%0A` +
+        `*Current Project Stage:* ${encodeURIComponent(formData.projectStage || "Not Specified")}%0A` +
+        `*Main Challenge:* ${encodeURIComponent(formData.mainChallenge || "Not Specified")}`;
+
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
       window.open(whatsappUrl, "_blank");
-    }, 400);
+    } catch (err: any) {
+      console.error("Lead submission error:", err);
+      alert(err.message || "Submission failed. Redirecting to WhatsApp...");
+      const phoneNumber = "919727027052";
+      window.open(`https://wa.me/${phoneNumber}`, "_blank");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

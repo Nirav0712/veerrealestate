@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -131,12 +131,36 @@ const blogPosts: BlogPost[] = [
 
 export default function BlogPage() {
     const [selectedCategory, setSelectedCategory] = useState('All');
+    const [posts, setPosts] = useState<BlogPost[]>(blogPosts);
 
-    const categories = ['All', 'Market Trends', 'Finance', 'Buying Guide', 'Investment', 'Location Guide', 'Legal', 'Technology', 'Commercial', 'Design'];
+    useEffect(() => {
+        fetch('/api/blogs')
+            .then(res => res.ok ? res.json() : { blogs: [] })
+            .then(data => {
+                if (Array.isArray(data.blogs) && data.blogs.length > 0) {
+                    const mapped: BlogPost[] = data.blogs.map((b: any) => ({
+                        id: b.id,
+                        title: b.title,
+                        excerpt: b.excerpt || '',
+                        content: b.content || '',
+                        author: b.author || 'Admin',
+                        date: b.publishedAt ? new Date(b.publishedAt).toISOString().split('T')[0] : '2026-03-23',
+                        category: b.category || 'Market Trends',
+                        image: b.featuredImage || '/images/east/AARADHANA_2.jpeg',
+                        readTime: b.readTime || '5 min read',
+                        slug: b.slug,
+                    }));
+                    setPosts(mapped);
+                }
+            })
+            .catch(err => console.error('Error fetching blogs from DB:', err));
+    }, []);
+
+    const categories = ['All', 'Market Trends', 'Finance', 'Buying Guide', 'Investment', 'Location Guide', 'Legal', 'Technology', 'Commercial', 'Design', 'Luxury Living'];
 
     const filteredPosts = selectedCategory === 'All'
-        ? blogPosts
-        : blogPosts.filter(post => post.category === selectedCategory);
+        ? posts
+        : posts.filter(post => post.category === selectedCategory);
 
     return (
         <>
@@ -224,7 +248,7 @@ export default function BlogPage() {
                                     <div className="flex items-center justify-between pt-4 border-t border-gray-200">
                                         <span className="text-sm text-gray-500">{post.date}</span>
                                         <Link
-                                            href={`/blog/${post.id}`}
+                                            href={`/blog/${(post as any).slug || post.id}`}
                                             className="text-primary font-medium hover:text-primary-dark transition-colors flex items-center gap-2"
                                         >
                                             Read More

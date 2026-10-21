@@ -93,6 +93,52 @@ export default function WestProjectDetailsPage() {
   const [similarProjects, setSimilarProjects] = useState<Project[]>([]);
   const [isFavorite, setIsFavorite] = useState(false);
 
+  // Inquiry form state
+  const [inquiryName, setInquiryName] = useState('');
+  const [inquiryEmail, setInquiryEmail] = useState('');
+  const [inquiryPhone, setInquiryPhone] = useState('');
+  const [inquiryMessage, setInquiryMessage] = useState('');
+  const [inquiryLoading, setInquiryLoading] = useState(false);
+  const [inquirySuccess, setInquirySuccess] = useState(false);
+  const [inquiryError, setInquiryError] = useState<string | null>(null);
+
+  const handleInquirySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!project) return;
+    setInquiryLoading(true);
+    setInquiryError(null);
+
+    try {
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: inquiryName,
+          email: inquiryEmail,
+          phone: inquiryPhone,
+          message: inquiryMessage || `Interested in project: ${project.title}`,
+          leadType: 'project',
+          projectTitle: project.title,
+          projectSlug: project.slug,
+          source: `Project Detail: ${project.title} (East)`,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to submit inquiry');
+
+      setInquirySuccess(true);
+      setInquiryName('');
+      setInquiryEmail('');
+      setInquiryPhone('');
+      setInquiryMessage('');
+    } catch (err: any) {
+      setInquiryError(err.message || 'Submission error. Please try again.');
+    } finally {
+      setInquiryLoading(false);
+    }
+  };
+
   useEffect(() => {
 
     if (!params.slug) return;
@@ -102,24 +148,46 @@ export default function WestProjectDetailsPage() {
         ? params.slug
         : params.slug[0];
 
-    // ✅ ONLY EAST PROJECTS
+    // Check static projects first, then query database API
     const foundProject = projects.find(
       (p) => p.slug === slug && p.zone === "East"
     );
 
-    if (!foundProject) {
-      router.push("/projects/east");
-      return;
+    if (foundProject) {
+      setProject(foundProject);
+      const similar = projects
+        .filter(p => p.slug !== slug && p.zone === "East")
+        .slice(0, 3);
+      setSimilarProjects(similar);
+    } else {
+      fetch(`/api/projects/${slug}`)
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (data && !data.error) {
+            const mapped: Project = {
+              id: data.id,
+              title: data.name || data.title,
+              slug: data.slug,
+              price: Number(data.priceMin) || 0,
+              displayPrice: data.displayPrice || 'On Request',
+              image: data.coverImage || (Array.isArray(data.galleryImages) && data.galleryImages[0]) || '/images/east/AARADHANA_2.jpeg',
+              images: Array.isArray(data.galleryImages) && data.galleryImages.length > 0 ? data.galleryImages : [data.coverImage || '/images/east/AARADHANA_2.jpeg'],
+              status: data.status || 'For Sale',
+              bedrooms: parseInt(data.configurations) || 2,
+              location: data.locationName || 'East Ahmedabad',
+              PlotArea: data.landArea || '1200 sqft',
+              address: data.fullAddress || data.locationName || 'East Ahmedabad',
+              featured: Boolean(data.featured),
+              description: data.description || '',
+              zone: 'East',
+            };
+            setProject(mapped);
+          } else {
+            router.push("/projects/east");
+          }
+        })
+        .catch(() => router.push("/projects/east"));
     }
-
-    setProject(foundProject);
-
-    // ✅ Similar East Projects
-    const similar = projects
-      .filter(p => p.slug !== slug && p.zone === "East")
-      .slice(0, 3);
-
-    setSimilarProjects(similar);
 
   }, [params.slug, router]);
 
@@ -356,35 +424,82 @@ export default function WestProjectDetailsPage() {
                   Request Information
                 </h3>
 
-                <form className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder="Your Name"
-                    className="w-full px-4 py-3 border rounded-lg"
-                  />
-                  <input
-                    type="email"
-                    placeholder="Your Email"
-                    className="w-full px-4 py-3 border rounded-lg"
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Phone Number"
-                    className="w-full px-4 py-3 border rounded-lg"
-                  />
-                  <textarea
-                    rows={4}
-                    placeholder="Message"
-                    className="w-full px-4 py-3 border rounded-lg"
-                    defaultValue={`I'm interested in ${project.title}`}
-                  />
-                  <button
-                    type="submit"
-                    className="w-full bg-primary text-white py-3 rounded-lg font-semibold cursor-pointer"
-                  >
-                    Send Message
-                  </button>
-                </form>
+                {inquirySuccess ? (
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 text-center">
+                    <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <h4 className="font-bold text-emerald-900 mb-1">Inquiry Submitted!</h4>
+                    <p className="text-emerald-700 text-sm mb-4">
+                      Thank you for your interest in {project.title}. Our project specialist will contact you shortly.
+                    </p>
+                    <button
+                      onClick={() => setInquirySuccess(false)}
+                      className="text-xs font-semibold text-emerald-800 hover:text-emerald-950 underline"
+                    >
+                      Send another inquiry
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleInquirySubmit} className="space-y-4">
+                    {inquiryError && (
+                      <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs">
+                        {inquiryError}
+                      </div>
+                    )}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Your Full Name *</label>
+                      <input
+                        type="text"
+                        required
+                        value={inquiryName}
+                        onChange={(e) => setInquiryName(e.target.value)}
+                        placeholder="John Doe"
+                        className="w-full px-4 py-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Email Address</label>
+                      <input
+                        type="email"
+                        value={inquiryEmail}
+                        onChange={(e) => setInquiryEmail(e.target.value)}
+                        placeholder="john@example.com"
+                        className="w-full px-4 py-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Phone Number *</label>
+                      <input
+                        type="tel"
+                        required
+                        value={inquiryPhone}
+                        onChange={(e) => setInquiryPhone(e.target.value)}
+                        placeholder="+91 98765 43210"
+                        className="w-full px-4 py-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Message</label>
+                      <textarea
+                        rows={3}
+                        value={inquiryMessage}
+                        onChange={(e) => setInquiryMessage(e.target.value)}
+                        placeholder={`I am interested in ${project.title}. Please share floor plans and pricing.`}
+                        className="w-full px-4 py-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={inquiryLoading}
+                      className="w-full bg-primary hover:bg-primary/95 text-white py-3 rounded-lg font-semibold cursor-pointer transition disabled:opacity-50 text-sm shadow-md"
+                    >
+                      {inquiryLoading ? 'Submitting...' : 'Send Inquiry'}
+                    </button>
+                  </form>
+                )}
               </div>
             </div>
 

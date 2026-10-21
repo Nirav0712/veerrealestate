@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import pool from "@/lib/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "@/lib/auth";
 import crypto from "crypto";
 
 export async function POST(req: Request) {
@@ -60,7 +61,7 @@ export async function POST(req: Request) {
         role: user.role,
         sessionId: sessionId,
       },
-      process.env.JWT_SECRET as string,
+      JWT_SECRET,
       { expiresIn: "1d" }
     );
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -420,13 +421,52 @@ Vivan Orbit is designed for buyers who want comfort, convenience, and future val
 
 export default function BlogPostPage() {
   const params = useParams();
-  const postId = Number(params.id);
-  const post = blogPosts.find(p => p.id === postId);
+  const idOrSlug = String(params?.id || '');
+  const numericId = Number(idOrSlug);
+
+  const [post, setPost] = useState<BlogPost | null>(() => {
+    return blogPosts.find(p => p.id === numericId || (p as any).slug === idOrSlug) || null;
+  });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!idOrSlug) return;
+    setLoading(true);
+    fetch(`/api/blogs/${encodeURIComponent(idOrSlug)}`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && !data.error) {
+          setPost({
+            id: data.id,
+            title: data.title,
+            excerpt: data.excerpt || '',
+            content: data.content || '',
+            author: data.author || 'Veer Real Estate',
+            date: data.publishedAt ? new Date(data.publishedAt).toISOString().split('T')[0] : '2026-03-23',
+            category: data.category || 'Market Trends',
+            image: data.featuredImage || '/images/east/AARADHANA_2.jpeg',
+            readTime: data.readTime || '5 min read',
+          });
+        }
+      })
+      .catch(err => console.error('Error fetching blog post:', err))
+      .finally(() => setLoading(false));
+  }, [idOrSlug]);
 
   const CONTACT_NUMBERS = {
     East: { wa: '919376996179', tel: '+919376996179' },
     West: { wa: '918866113391', tel: '+918866113391' }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-xl text-gray-500">Loading blog post...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!post) {
     return (
@@ -434,7 +474,8 @@ export default function BlogPostPage() {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-secondary mb-4">Blog Post Not Found</h1>
-            <Link href="/blog" className="text-primary hover:text-primary-dark">
+            <p className="text-gray-500 mb-6">This post may be a private draft or does not exist.</p>
+            <Link href="/blog" className="text-primary hover:text-primary-dark font-semibold">
               ← Back to Blog
             </Link>
           </div>
@@ -506,9 +547,13 @@ export default function BlogPostPage() {
               <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm">
 
                 {/* Content */}
-                <div className="text-gray-700 leading-relaxed whitespace-pre-line space-y-6 text-lg">
-                  {post.title && <h2 className="text-2xl font-bold text-secondary">{post.title}</h2>}
-                  {post.content.replace(/\*/g, '')}
+                <div className="text-gray-700 leading-relaxed space-y-6 text-lg prose max-w-none">
+                  {post.title && <h2 className="text-2xl font-bold text-secondary mb-4">{post.title}</h2>}
+                  {post.content.includes('<') ? (
+                    <div dangerouslySetInnerHTML={{ __html: post.content }} className="space-y-4" />
+                  ) : (
+                    <div className="whitespace-pre-line">{post.content.replace(/\*/g, '')}</div>
+                  )}
                 </div>
 
               </div>

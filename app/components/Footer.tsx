@@ -58,6 +58,7 @@ export default function Footer() {
                                 </span>
                             </FooterLink>
                             <FooterLink href="/properties">Properties</FooterLink>
+                            <FooterLink href="/projects">All Projects</FooterLink>
                             <FooterLink href="/projects/east">East Projects</FooterLink>
                             <FooterLink href="/projects/west">West Projects</FooterLink>
                             <FooterLink href="/blog">Blogs</FooterLink>
