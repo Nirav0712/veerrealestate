@@ -47,14 +47,19 @@ export async function getAuthenticatedAdmin(
     const decoded = jwt.verify(token, JWT_SECRET) as AdminPayload;
     if (!decoded || !decoded.id) return null;
 
-    // Optional: verify user still exists in database
+    // Verify user still exists in database and has admin role
     const [rows] = await pool.query<RowDataPacket[]>(
       'SELECT id, email, role FROM register WHERE id = ? LIMIT 1',
       [decoded.id]
     );
 
     if (rows.length === 0) return null;
-    return decoded;
+    if (rows[0].role !== 'admin' && decoded.role !== 'admin') return null;
+
+    return {
+      ...decoded,
+      role: rows[0].role || decoded.role,
+    };
   } catch (err) {
     return null;
   }
@@ -68,7 +73,7 @@ export async function requireAdmin(
   req: Request | NextRequest
 ): Promise<{ user: AdminPayload } | { errorResponse: NextResponse }> {
   const user = await getAuthenticatedAdmin(req);
-  if (!user) {
+  if (!user || user.role !== 'admin') {
     return {
       errorResponse: NextResponse.json(
         { error: 'Unauthorized: Admin access required.' },

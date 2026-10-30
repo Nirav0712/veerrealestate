@@ -53,7 +53,14 @@ export async function GET(
       galleryImages: gallery.length > 0 ? gallery : (project.coverImage ? [project.coverImage] : []),
       amenities: parseJsonArray(project.amenities),
       approvals: parseJsonArray(project.approvals),
+      reraPhases: parseJsonArray(project.reraPhases),
+      nearbyFacilities: parseJsonArray(project.nearbyFacilities),
+      constructionMilestones: parseJsonArray(project.constructionMilestones),
+      specifications: typeof project.specifications === 'string'
+        ? (() => { try { return JSON.parse(project.specifications); } catch { return {}; } })()
+        : (project.specifications || {}),
       featured: Boolean(project.featured),
+      isReraExempt: Boolean(project.isReraExempt),
       floorPlans: floorPlans || [],
     });
   } catch (error: any) {
@@ -75,52 +82,30 @@ export async function PUT(
     const { id } = await params;
     const body = await req.json();
 
-    const {
-      name,
-      slug,
-      builderName = 'Veer Real Estate',
-      tagline,
-      description = '',
-      category = 'Residential',
-      status = 'Under Construction',
-      zone = 'East',
-      locationId,
-      locationName,
-      fullAddress,
-      pincode,
-      latitude,
-      longitude,
-      priceMin,
-      priceMax,
-      displayPrice,
-      landArea,
-      totalTowers = 1,
-      totalUnits,
-      configurations,
-      possessionDate,
-      reraNumber,
-      amenities = [],
-      approvals = [],
-      coverImage,
-      galleryImages = [],
-      masterPlanImage,
-      sitePlanImage,
-      brochureUrl,
-      featured = false,
-      publishStatus = 'published',
-      metaTitle,
-      metaDescription,
-      primaryKeyword,
-      canonicalUrl,
-      floorPlans = [],
-    } = body;
+    const [existingRows] = await pool.query<RowDataPacket[]>(
+      'SELECT * FROM projects WHERE id = ? LIMIT 1',
+      [id]
+    );
 
-    if (!name || typeof name !== 'string' || !name.trim()) {
+    if (existingRows.length === 0) {
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+    }
+
+    const current = existingRows[0];
+
+    const cleanName = (body.name !== undefined ? body.name : (current.name || '')).trim();
+    if (!cleanName) {
       return NextResponse.json({ error: 'Project name is required' }, { status: 400 });
     }
 
-    // Strict 10 gallery image limit
-    const gallery = Array.isArray(galleryImages) ? galleryImages : [];
+    const cleanBuilder = (body.builderName !== undefined ? body.builderName : (current.builderName || 'Veer Real Estate')).trim();
+
+    // Preserve gallery images unless explicitly provided
+    const currentGallery = parseJsonArray(current.galleryImages);
+    const gallery = body.galleryImages !== undefined
+      ? (Array.isArray(body.galleryImages) ? body.galleryImages : (typeof body.galleryImages === 'string' && body.galleryImages.trim() ? [body.galleryImages.trim()] : []))
+      : (currentGallery.length > 0 ? currentGallery : (current.coverImage ? [current.coverImage] : []));
+
     if (gallery.length > 10) {
       return NextResponse.json(
         { error: 'Maximum 10 gallery images allowed per project. Please remove excess images.' },
@@ -129,26 +114,62 @@ export async function PUT(
     }
 
     const {
-      isReraExempt = false,
-      reraExemptionReason,
-      reraApprovedBy,
-      reraPhases = [],
-      launchDate,
-      expectedPossession,
-      actualCompletion,
-      constructionMilestones = [],
-      totalFloors,
-      availableUnits,
-      areaMin,
-      areaMax,
-      areaUnit = 'sqft',
-      nearbyFacilities = [],
-      specifications = {},
-      projectCode,
+      slug = current.slug,
+      projectCode = current.projectCode,
+      tagline = current.tagline,
+      description = current.description !== undefined ? current.description : '',
+      category = current.category || 'Residential',
+      status = current.status || 'Under Construction',
+      zone = current.zone || 'East',
+      locationId = current.locationId,
+      locationName = current.locationName,
+      fullAddress = current.fullAddress,
+      pincode = current.pincode,
+      latitude = current.latitude,
+      longitude = current.longitude,
+      priceMin = current.priceMin,
+      priceMax = current.priceMax,
+      displayPrice = current.displayPrice,
+      landArea = current.landArea,
+      totalTowers = current.totalTowers || 1,
+      totalFloors = current.totalFloors,
+      totalUnits = current.totalUnits,
+      availableUnits = current.availableUnits,
+      areaMin = current.areaMin,
+      areaMax = current.areaMax,
+      areaUnit = current.areaUnit || 'sqft',
+      configurations = current.configurations,
+      launchDate = current.launchDate,
+      expectedPossession = current.expectedPossession,
+      actualCompletion = current.actualCompletion,
+      possessionDate = current.possessionDate,
+      reraNumber = current.reraNumber,
+      isReraExempt = current.isReraExempt,
+      reraExemptionReason = current.reraExemptionReason,
+      reraApprovedBy = current.reraApprovedBy,
+      reraPhases = body.reraPhases !== undefined ? body.reraPhases : parseJsonArray(current.reraPhases),
+      amenities = body.amenities !== undefined ? body.amenities : parseJsonArray(current.amenities),
+      approvals = body.approvals !== undefined ? body.approvals : parseJsonArray(current.approvals),
+      nearbyFacilities = body.nearbyFacilities !== undefined ? body.nearbyFacilities : parseJsonArray(current.nearbyFacilities),
+      specifications = body.specifications !== undefined ? body.specifications : (typeof current.specifications === 'string' ? (() => { try { return JSON.parse(current.specifications); } catch { return {}; } })() : (current.specifications || {})),
+      constructionMilestones = body.constructionMilestones !== undefined ? body.constructionMilestones : parseJsonArray(current.constructionMilestones),
+      coverImage = current.coverImage,
+      masterPlanImage = current.masterPlanImage,
+      sitePlanImage = current.sitePlanImage,
+      brochureUrl = current.brochureUrl,
+      featured = current.featured,
+      publishStatus = current.publishStatus || 'published',
+      metaTitle = current.metaTitle,
+      metaDescription = current.metaDescription,
+      primaryKeyword = current.primaryKeyword,
+      canonicalUrl = current.canonicalUrl,
+      floorPlans,
     } = body;
 
+    const effectivePublishStatus = publishStatus || 'published';
+
     // Strict RERA Validation for published projects
-    if (publishStatus === 'published') {
+    if (effectivePublishStatus === 'published') {
       if (isReraExempt) {
         if (!reraExemptionReason || typeof reraExemptionReason !== 'string' || reraExemptionReason.trim().length < 8) {
           return NextResponse.json(
@@ -174,6 +195,13 @@ export async function PUT(
 
     const effectiveCover = coverImage || (gallery.length > 0 ? gallery[0] : null);
 
+    const parsedReraPhases = Array.isArray(reraPhases) ? reraPhases : (typeof reraPhases === 'string' && reraPhases.trim() ? [reraPhases.trim()] : []);
+    const parsedNearbyFacilities = Array.isArray(nearbyFacilities) ? nearbyFacilities : (typeof nearbyFacilities === 'string' && nearbyFacilities.trim() ? [nearbyFacilities.trim()] : []);
+    const parsedConstructionMilestones = Array.isArray(constructionMilestones) ? constructionMilestones : (typeof constructionMilestones === 'string' && constructionMilestones.trim() ? [constructionMilestones.trim()] : []);
+    const parsedSpecifications = typeof specifications === 'object' && specifications !== null
+      ? specifications
+      : (() => { try { return JSON.parse(specifications); } catch { return {}; } })();
+
     const conn = await pool.getConnection();
     try {
       await conn.beginTransaction();
@@ -194,54 +222,54 @@ export async function PUT(
           updated_at = NOW()
         WHERE id = ?`,
         [
-          name.trim(),
+          cleanName,
           slug || null,
           projectCode || null,
-          builderName.trim(),
+          cleanBuilder,
           tagline || null,
           description || '',
           category,
           status,
           zone,
-          locationId || null,
+          locationId ? Number(locationId) : null,
           locationName || null,
           fullAddress || null,
           pincode || null,
-          latitude || null,
-          longitude || null,
-          priceMin || null,
-          priceMax || null,
+          latitude ? Number(latitude) : null,
+          longitude ? Number(longitude) : null,
+          priceMin ? Number(priceMin) : null,
+          priceMax ? Number(priceMax) : null,
           displayPrice || null,
           landArea || null,
           Number(totalTowers) || 1,
-          totalFloors ? Number(totalFloors) : null,
-          totalUnits ? Number(totalUnits) : null,
-          availableUnits ? Number(availableUnits) : null,
-          areaMin || null,
-          areaMax || null,
+          totalFloors !== '' && totalFloors !== null && totalFloors !== undefined ? Number(totalFloors) : null,
+          totalUnits !== '' && totalUnits !== null && totalUnits !== undefined ? Number(totalUnits) : null,
+          availableUnits !== '' && availableUnits !== null && availableUnits !== undefined ? Number(availableUnits) : null,
+          areaMin ? Number(areaMin) : null,
+          areaMax ? Number(areaMax) : null,
           areaUnit || 'sqft',
           configurations || null,
-          launchDate || null,
+          launchDate && String(launchDate).trim() ? String(launchDate).trim() : null,
           possessionDate || null,
           expectedPossession || null,
-          actualCompletion || null,
-          reraNumber ? reraNumber.trim() : null,
+          actualCompletion && String(actualCompletion).trim() ? String(actualCompletion).trim() : null,
+          reraNumber ? String(reraNumber).trim() : null,
           isReraExempt ? 1 : 0,
           reraExemptionReason || null,
           reraApprovedBy || null,
-          JSON.stringify(Array.isArray(reraPhases) ? reraPhases : []),
+          JSON.stringify(parsedReraPhases),
           JSON.stringify(Array.isArray(amenities) ? amenities : []),
           JSON.stringify(Array.isArray(approvals) ? approvals : []),
-          JSON.stringify(Array.isArray(nearbyFacilities) ? nearbyFacilities : []),
-          JSON.stringify(specifications || {}),
-          JSON.stringify(Array.isArray(constructionMilestones) ? constructionMilestones : []),
+          JSON.stringify(parsedNearbyFacilities),
+          JSON.stringify(parsedSpecifications),
+          JSON.stringify(parsedConstructionMilestones),
           effectiveCover,
           JSON.stringify(gallery),
           masterPlanImage || null,
           sitePlanImage || null,
           brochureUrl || null,
           featured ? 1 : 0,
-          publishStatus,
+          effectivePublishStatus,
           metaTitle || null,
           metaDescription || null,
           primaryKeyword || null,
@@ -251,7 +279,6 @@ export async function PUT(
       );
 
       // Floor plans synchronization:
-      // If floorPlans array was sent, replace existing plans
       if (Array.isArray(floorPlans)) {
         await conn.query('DELETE FROM project_floor_plans WHERE projectId = ?', [id]);
         for (let i = 0; i < floorPlans.length; i++) {
@@ -267,8 +294,8 @@ export async function PUT(
                 fp.towerBlockName || null,
                 fp.floorNumber || null,
                 fp.unitType || null,
-                fp.carpetArea || null,
-                fp.builtUpArea || null,
+                fp.carpetArea ? Number(fp.carpetArea) : null,
+                fp.builtUpArea ? Number(fp.builtUpArea) : null,
                 fp.areaUnit || 'sqft',
                 fp.imageUrl,
                 fp.documentUrl || null,
@@ -281,7 +308,9 @@ export async function PUT(
       }
 
       await conn.commit();
-      return NextResponse.json({ id, ...body, galleryImages: gallery });
+      const [updatedProjRows] = await pool.query<RowDataPacket[]>('SELECT * FROM projects WHERE id = ?', [id]);
+      const updatedProj = updatedProjRows[0] || { id, ...current, ...body, galleryImages: gallery };
+      return NextResponse.json(updatedProj);
     } catch (txErr) {
       await conn.rollback();
       throw txErr;
@@ -304,10 +333,49 @@ export async function DELETE(
     if ('errorResponse' in authResult) return authResult.errorResponse;
 
     const { id } = await params;
-    await pool.query('DELETE FROM projects WHERE id = ?', [id]);
-    return NextResponse.json({ message: 'Project deleted successfully' });
+
+    // Verify project exists
+    const [existing] = await pool.query<RowDataPacket[]>(
+      'SELECT id, name FROM projects WHERE id = ? LIMIT 1',
+      [id]
+    );
+
+    if (existing.length === 0) {
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+    }
+
+    const conn = await pool.getConnection();
+    try {
+      await conn.beginTransaction();
+
+      // Safely detach CRM inquiries referencing this project
+      await conn.query(
+        "UPDATE crm_inquiries SET projectId = NULL, projectName = CONCAT(IFNULL(projectName, 'Deleted Project'), ' (Archived)') WHERE projectId = ?",
+        [id]
+      );
+
+      // Safely detach social videos referencing this project
+      await conn.query(
+        'UPDATE social_videos SET project_id = NULL WHERE project_id = ?',
+        [id]
+      );
+
+      // Delete dependent floor plans
+      await conn.query('DELETE FROM project_floor_plans WHERE projectId = ?', [id]);
+
+      // Delete the project
+      await conn.query('DELETE FROM projects WHERE id = ?', [id]);
+
+      await conn.commit();
+      return NextResponse.json({ message: 'Project deleted successfully' });
+    } catch (txErr) {
+      await conn.rollback();
+      throw txErr;
+    } finally {
+      conn.release();
+    }
   } catch (error: any) {
     console.error('[projects/[id]] Error deleting project:', error);
-    return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 });
+    return NextResponse.json({ error: error?.message || 'Failed to delete project' }, { status: 500 });
   }
 }

@@ -81,10 +81,29 @@ export async function PUT(
     }
     const current = existingRows[0];
 
+    const finalTitle = (body.title !== undefined ? body.title : (current.title || '')).trim();
+    if (!finalTitle) {
+      return NextResponse.json({ error: 'Property title is required' }, { status: 400 });
+    }
+
+    const finalLocation = (body.location !== undefined ? body.location : (current.location || current.locality || 'Ahmedabad')).trim();
+
+    // Preserve images unless explicitly updated
+    const currentImages = parseJsonArray(current.images);
+    const imageList = body.images !== undefined
+      ? (Array.isArray(body.images) ? body.images : (typeof body.images === 'string' && body.images.trim() ? [body.images.trim()] : []))
+      : (currentImages.length > 0 ? currentImages : (current.image ? [current.image] : []));
+
+    // Strict 6-image limit enforcement
+    if (imageList.length > 6) {
+      return NextResponse.json(
+        { error: 'Maximum 6 images allowed per property. Please remove excess images.' },
+        { status: 400 }
+      );
+    }
+
     const {
-      title = current.title,
       price = current.price,
-      location = current.location,
       type = current.type,
       status = current.status,
       bedrooms = current.bedrooms,
@@ -92,96 +111,82 @@ export async function PUT(
       area = current.area,
       areaUnit = current.areaUnit || 'sqft',
       featured = current.featured,
-      images = [],
-      description = '',
-      yearBuilt = new Date().getFullYear(),
-      parking = 0,
-      transaction = 'resale',
+      description = current.description || '',
+      yearBuilt = current.yearBuilt || new Date().getFullYear(),
+      parking = current.parking || 0,
+      transaction = current.transaction || 'resale',
       // Phase 3 Enhanced Fields
-      slug,
-      propertyCode,
+      slug = current.slug,
+      propertyCode = current.propertyCode,
       locationId = current.locationId,
       locality = current.locality,
       address = current.address,
-      pincode,
-      latitude,
-      longitude,
-      priceOnRequest = false,
-      isNegotiable = true,
-      maintenanceCharges,
-      carpetArea,
-      builtUpArea,
-      superBuiltUpArea,
-      plotArea,
-      balconies = 0,
-      furnishing = 'Semi-Furnished',
-      floorNumber,
-      totalFloors,
-      facing,
-      propertyAge,
-      possessionDate,
-      amenities = [],
-      reraNumber,
-      ownershipType = 'Freehold',
-      approvals = [],
-      coverImage,
-      imageAlts = {},
-      availability = 'Available',
-      publishStatus = 'published',
-      metaTitle,
-      metaDescription,
-      primaryKeyword,
-      canonicalUrl,
+      pincode = current.pincode,
+      latitude = current.latitude,
+      longitude = current.longitude,
+      priceOnRequest = current.priceOnRequest,
+      isNegotiable = current.isNegotiable,
+      maintenanceCharges = current.maintenanceCharges,
+      carpetArea = current.carpetArea,
+      builtUpArea = current.builtUpArea,
+      superBuiltUpArea = current.superBuiltUpArea,
+      plotArea = current.plotArea,
+      balconies = current.balconies || 0,
+      furnishing = current.furnishing || 'Semi-Furnished',
+      floorNumber = current.floorNumber,
+      totalFloors = current.totalFloors,
+      facing = current.facing,
+      propertyAge = current.propertyAge,
+      possessionDate = current.possessionDate,
+      amenities = body.amenities !== undefined ? body.amenities : parseJsonArray(current.amenities),
+      reraNumber = current.reraNumber,
+      ownershipType = current.ownershipType || 'Freehold',
+      approvals = body.approvals !== undefined ? body.approvals : parseJsonArray(current.approvals),
+      coverImage = current.coverImage,
+      imageAlts = body.imageAlts !== undefined ? body.imageAlts : current.imageAlts,
+      availability = current.availability || 'Available',
+      publishStatus = current.publishStatus || 'published',
+      metaTitle = current.metaTitle,
+      metaDescription = current.metaDescription,
+      primaryKeyword = current.primaryKeyword,
+      canonicalUrl = current.canonicalUrl,
       // Dynamic Category & Purpose
-      listingPurpose = 'Sell',
-      propertyCategory = 'Residential',
-      propertySubtype,
+      listingPurpose = current.listingPurpose || 'Sell',
+      propertyCategory = current.propertyCategory || 'Residential',
+      propertySubtype = current.propertySubtype,
       // Rental
-      monthlyRent,
-      securityDeposit,
-      leaseDuration,
-      lockInPeriod,
-      preferredTenant,
+      monthlyRent = current.monthlyRent,
+      securityDeposit = current.securityDeposit,
+      leaseDuration = current.leaseDuration,
+      lockInPeriod = current.lockInPeriod,
+      preferredTenant = current.preferredTenant,
       // Plot
-      plotFrontage,
-      plotDepth,
-      roadWidth,
-      zoning,
-      landUse,
-      naNocStatus,
-      isCornerPlot = false,
-      boundaryWall = false,
+      plotFrontage = current.plotFrontage,
+      plotDepth = current.plotDepth,
+      roadWidth = current.roadWidth,
+      zoning = current.zoning,
+      landUse = current.landUse,
+      naNocStatus = current.naNocStatus,
+      isCornerPlot = current.isCornerPlot,
+      boundaryWall = current.boundaryWall,
       // Commercial
-      washrooms,
-      powerLoad,
-      fitOutStatus,
-      permittedUse,
+      washrooms = current.washrooms,
+      powerLoad = current.powerLoad,
+      fitOutStatus = current.fitOutStatus,
+      permittedUse = current.permittedUse,
       // Agricultural
-      irrigationType,
-      waterAccess = false,
-      electricityConnection = false,
-      landRecordDetails,
+      irrigationType = current.irrigationType,
+      waterAccess = current.waterAccess,
+      electricityConnection = current.electricityConnection,
+      landRecordDetails = current.landRecordDetails,
       // Contact & Misc
-      contactPerson,
-      contactPhone,
-      contactEmail,
-      societyName,
-      highlights,
-      pricePerUnit,
+      contactPerson = current.contactPerson,
+      contactPhone = current.contactPhone,
+      contactEmail = current.contactEmail,
+      societyName = current.societyName,
+      highlights = current.highlights,
+      pricePerUnit = current.pricePerUnit,
     } = body;
-
-    if (!title || typeof title !== 'string' || !title.trim()) {
-      return NextResponse.json({ error: 'Property title is required' }, { status: 400 });
-    }
-
-    // Strict 6-image limit enforcement
-    const imageList = Array.isArray(images) ? images : [];
-    if (imageList.length > 6) {
-      return NextResponse.json(
-        { error: 'Maximum 6 images allowed per property. Please remove excess images.' },
-        { status: 400 }
-      );
-    }
 
     const effectiveCoverImage = coverImage || (imageList.length > 0 ? imageList[0] : null);
 
@@ -207,37 +212,37 @@ export async function PUT(
         updated_at = NOW()
       WHERE id = ?`,
       [
-        title.trim(),
+        finalTitle,
         slug || null,
         propertyCode || null,
         priceOnRequest ? 0 : Number(price) || 0,
-        location.trim(),
-        locationId || null,
+        finalLocation,
+        locationId ? Number(locationId) : null,
         locality || null,
         address || null,
         pincode || null,
-        latitude || null,
-        longitude || null,
-        type,
-        status,
-        transaction,
-        availability,
-        publishStatus,
+        latitude ? Number(latitude) : null,
+        longitude ? Number(longitude) : null,
+        type || 'House',
+        status || 'For Sale',
+        transaction || 'resale',
+        availability || 'Available',
+        publishStatus || 'published',
         priceOnRequest ? 1 : 0,
         isNegotiable ? 1 : 0,
         maintenanceCharges || null,
         Number(area) || 0,
         areaUnit || 'sqft',
-        carpetArea || null,
-        builtUpArea || null,
-        superBuiltUpArea || null,
-        plotArea || null,
+        carpetArea ? Number(carpetArea) : null,
+        builtUpArea ? Number(builtUpArea) : null,
+        superBuiltUpArea ? Number(superBuiltUpArea) : null,
+        plotArea ? Number(plotArea) : null,
         Number(bedrooms) || 0,
         Number(bathrooms) || 0,
         Number(balconies) || 0,
-        furnishing,
-        floorNumber || null,
-        totalFloors || null,
+        furnishing || 'Semi-Furnished',
+        floorNumber !== '' && floorNumber !== null && floorNumber !== undefined ? Number(floorNumber) : null,
+        totalFloors !== '' && totalFloors !== null && totalFloors !== undefined ? Number(totalFloors) : null,
         facing || null,
         propertyAge || null,
         possessionDate || null,
@@ -250,9 +255,9 @@ export async function PUT(
         effectiveCoverImage,
         effectiveCoverImage,
         JSON.stringify(imageList),
-        JSON.stringify(imageAlts || {}),
+        JSON.stringify(typeof imageAlts === 'string' ? (() => { try { return JSON.parse(imageAlts); } catch { return {}; } })() : (imageAlts || {})),
         description || '',
-        yearBuilt || new Date().getFullYear(),
+        yearBuilt ? Number(yearBuilt) : new Date().getFullYear(),
         metaTitle || null,
         metaDescription || null,
         primaryKeyword || null,
@@ -260,8 +265,8 @@ export async function PUT(
         listingPurpose || 'Sell',
         propertyCategory || 'Residential',
         propertySubtype || null,
-        monthlyRent || null,
-        securityDeposit || null,
+        monthlyRent ? Number(monthlyRent) : null,
+        securityDeposit ? Number(securityDeposit) : null,
         leaseDuration || null,
         lockInPeriod || null,
         preferredTenant || null,
@@ -291,7 +296,18 @@ export async function PUT(
       ]
     );
 
-    return NextResponse.json({ success: true, id, ...body, images: imageList });
+    const [updatedRows] = await pool.query<RowDataPacket[]>('SELECT * FROM properties WHERE id = ?', [id]);
+    const updated = updatedRows[0] || { id, ...current, ...body, images: imageList };
+    if (typeof updated.images === 'string') {
+      try { updated.images = JSON.parse(updated.images); } catch { updated.images = []; }
+    }
+    if (typeof updated.amenities === 'string') {
+      try { updated.amenities = JSON.parse(updated.amenities); } catch { updated.amenities = []; }
+    }
+    if (typeof updated.approvals === 'string') {
+      try { updated.approvals = JSON.parse(updated.approvals); } catch { updated.approvals = []; }
+    }
+    return NextResponse.json(updated);
   } catch (error: any) {
     console.error('[properties/[id]] Error updating property:', error);
     return NextResponse.json({ error: error?.message || 'Failed to update property' }, { status: 500 });
@@ -308,10 +324,27 @@ export async function DELETE(
     if ('errorResponse' in authResult) return authResult.errorResponse;
 
     const { id } = await params;
+
+    // Check if property exists
+    const [existing] = await pool.query<RowDataPacket[]>(
+      'SELECT id, title FROM properties WHERE id = ? LIMIT 1',
+      [id]
+    );
+
+    if (existing.length === 0) {
+      return NextResponse.json({ error: 'Property not found' }, { status: 404 });
+    }
+
+    // Safely detach any CRM inquiries referencing this property so historical lead data is retained
+    await pool.query(
+      "UPDATE crm_inquiries SET propertyId = NULL, propertyTitle = CONCAT(IFNULL(propertyTitle, 'Deleted Property'), ' (Archived)') WHERE propertyId = ?",
+      [id]
+    );
+
     await pool.query('DELETE FROM properties WHERE id = ?', [id]);
-    return NextResponse.json({ message: 'Property deleted successfully' });
+    return NextResponse.json({ success: true, message: 'Property deleted successfully' });
   } catch (error: any) {
     console.error('[properties/[id]] Error deleting property:', error);
-    return NextResponse.json({ error: 'Failed to delete property' }, { status: 500 });
+    return NextResponse.json({ error: error?.message || 'Failed to delete property' }, { status: 500 });
   }
 }

@@ -36,6 +36,9 @@ import {
   Layers,
   ArrowUpRight,
   Sparkles,
+  Video,
+  Play,
+  PlaySquare,
 } from 'lucide-react';
 import { generateKeywordSuggestions } from '@/lib/seo';
 
@@ -48,6 +51,7 @@ type ActiveTab =
   | 'crm'
   | 'blog'
   | 'content'
+  | 'social_videos'
   | 'seo';
 
 export default function AdminDashboard() {
@@ -68,6 +72,26 @@ export default function AdminDashboard() {
   const [leadStats, setLeadStats] = useState<Record<string, number>>({ New: 0, Contacted: 0, Qualified: 0, Converted: 0, Lost: 0 });
   const [blogs, setBlogs] = useState<any[]>([]);
   const [websiteContent, setWebsiteContent] = useState<Record<string, any>>({});
+
+  // Social Videos (Reels & Shorts) States
+  const [socialVideos, setSocialVideos] = useState<any[]>([]);
+  const [videoSearch, setVideoSearch] = useState('');
+  const [videoFilterPlatform, setVideoFilterPlatform] = useState('all');
+  const [videoFilterStatus, setVideoFilterStatus] = useState('all');
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [editingVideo, setEditingVideo] = useState<any | null>(null);
+  const [videoFormData, setVideoFormData] = useState<any>({
+    title: '',
+    platform: 'instagram',
+    video_url: '',
+    project_id: '',
+    thumbnail_url: '',
+    description: '',
+    display_order: 0,
+    is_active: true,
+  });
+  const [isUploadingVideoThumb, setIsUploadingVideoThumb] = useState(false);
+  const [deleteConfirmVideoId, setDeleteConfirmVideoId] = useState<number | null>(null);
 
   // CRM Customer Inquiries States
   const [crmInquiries, setCrmInquiries] = useState<any[]>([]);
@@ -102,6 +126,7 @@ export default function AdminDashboard() {
         fetchCrmInquiries(),
         fetchBlogs(),
         fetchWebsiteContent(),
+        fetchSocialVideos(),
       ]);
     } catch (e) {
       console.error('Error loading initial data:', e);
@@ -246,6 +271,18 @@ export default function AdminDashboard() {
     }
   };
 
+  const fetchSocialVideos = async () => {
+    try {
+      const res = await fetch('/api/social-videos?includeInactive=true');
+      if (res.ok) {
+        const data = await res.json();
+        setSocialVideos(Array.isArray(data) ? data : []);
+      }
+    } catch (err) {
+      console.error('Error fetching social videos:', err);
+    }
+  };
+
   // ==========================================
   // SHARED UPLOAD HELPER WITH SIZE & LIMIT CHECK
   // ==========================================
@@ -379,14 +416,34 @@ export default function AdminDashboard() {
     setShowPropModal(true);
   };
 
-  const openEditPropertyModal = (p: any) => {
+  const openEditPropertyModal = async (p: any) => {
     setEditingProp(p);
-    setPropFormData({
-      ...p,
-      images: Array.isArray(p.images) ? p.images : [],
-      amenities: Array.isArray(p.amenities) ? p.amenities : [],
-      approvals: Array.isArray(p.approvals) ? p.approvals : [],
-    });
+    try {
+      const res = await fetch(`/api/properties/${p.id}`);
+      if (res.ok) {
+        const fullData = await res.json();
+        setPropFormData({
+          ...fullData,
+          images: Array.isArray(fullData.images) ? fullData.images : [],
+          amenities: Array.isArray(fullData.amenities) ? fullData.amenities : [],
+          approvals: Array.isArray(fullData.approvals) ? fullData.approvals : [],
+        });
+      } else {
+        setPropFormData({
+          ...p,
+          images: Array.isArray(p.images) ? p.images : [],
+          amenities: Array.isArray(p.amenities) ? p.amenities : [],
+          approvals: Array.isArray(p.approvals) ? p.approvals : [],
+        });
+      }
+    } catch {
+      setPropFormData({
+        ...p,
+        images: Array.isArray(p.images) ? p.images : [],
+        amenities: Array.isArray(p.amenities) ? p.amenities : [],
+        approvals: Array.isArray(p.approvals) ? p.approvals : [],
+      });
+    }
     setShowPropModal(true);
   };
 
@@ -461,7 +518,7 @@ export default function AdminDashboard() {
         body: JSON.stringify(propFormData),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Failed to save property');
 
       showToast(editingProp ? 'Property updated successfully!' : 'Property created successfully!');
@@ -475,12 +532,13 @@ export default function AdminDashboard() {
   const deleteProperty = async (id: number) => {
     try {
       const res = await fetch(`/api/properties/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete property');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Failed to delete property');
       showToast('Property deleted successfully');
       setDeleteConfirmPropId(null);
       fetchProperties();
     } catch (err: any) {
-      alert(err.message);
+      alert(err.message || 'Error deleting property');
     }
   };
 
@@ -660,7 +718,7 @@ export default function AdminDashboard() {
         body: JSON.stringify(projFormData),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Failed to save project');
 
       showToast(editingProj ? 'Project updated successfully!' : 'Project created successfully!');
@@ -674,12 +732,13 @@ export default function AdminDashboard() {
   const deleteProject = async (id: number) => {
     try {
       const res = await fetch(`/api/projects/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete project');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Failed to delete project');
       showToast('Project deleted successfully');
       setDeleteConfirmProjId(null);
       fetchProjects();
     } catch (err: any) {
-      alert(err.message);
+      alert(err.message || 'Error deleting project');
     }
   };
 
@@ -935,6 +994,116 @@ export default function AdminDashboard() {
       fetchWebsiteContent();
     } catch (err: any) {
       alert(err.message);
+    }
+  };
+
+  // ==========================================
+  // 7. SOCIAL VIDEOS (REELS & SHORTS) ACTIONS
+  // ==========================================
+  const openNewVideoModal = () => {
+    setEditingVideo(null);
+    const firstProj = projectsList[0];
+    setVideoFormData({
+      title: '',
+      platform: 'instagram',
+      video_url: '',
+      project_id: firstProj ? firstProj.id : '',
+      thumbnail_url: '',
+      description: '',
+      display_order: socialVideos.length + 1,
+      is_active: true,
+    });
+    setShowVideoModal(true);
+  };
+
+  const openEditVideoModal = (v: any) => {
+    setEditingVideo(v);
+    setVideoFormData({
+      ...v,
+      project_id: v.project_id || '',
+    });
+    setShowVideoModal(true);
+  };
+
+  const handleVideoThumbUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    try {
+      setIsUploadingVideoThumb(true);
+      const url = await uploadFile(files[0], 'image');
+      setVideoFormData({
+        ...videoFormData,
+        thumbnail_url: url,
+      });
+      showToast('Thumbnail uploaded successfully');
+    } catch (err: any) {
+      alert(err.message || 'Thumbnail upload failed');
+    } finally {
+      setIsUploadingVideoThumb(false);
+      e.target.value = '';
+    }
+  };
+
+  const saveSocialVideo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!videoFormData.title?.trim()) {
+      alert('Video title is required');
+      return;
+    }
+    if (!videoFormData.video_url?.trim()) {
+      alert('Video URL is required');
+      return;
+    }
+
+    try {
+      const url = editingVideo ? `/api/social-videos/${editingVideo.id}` : '/api/social-videos';
+      const method = editingVideo ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(videoFormData),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Failed to save social video');
+
+      showToast(editingVideo ? 'Social video updated successfully!' : 'Social video created successfully!');
+      setShowVideoModal(false);
+      fetchSocialVideos();
+    } catch (err: any) {
+      alert(err.message || 'Error saving social video');
+    }
+  };
+
+  const deleteSocialVideo = async (id: number) => {
+    try {
+      const res = await fetch(`/api/social-videos/${id}`, { method: 'DELETE' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Failed to delete social video');
+
+      showToast('Social video deleted successfully');
+      setDeleteConfirmVideoId(null);
+      fetchSocialVideos();
+    } catch (err: any) {
+      alert(err.message || 'Error deleting social video');
+    }
+  };
+
+  const toggleSocialVideoStatus = async (id: number, currentStatus: boolean) => {
+    try {
+      const res = await fetch(`/api/social-videos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_active: !currentStatus }),
+      });
+      if (res.ok) {
+        showToast(!currentStatus ? 'Video activated' : 'Video deactivated');
+        fetchSocialVideos();
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -1302,6 +1471,23 @@ export default function AdminDashboard() {
             </button>
 
             <button
+              onClick={() => { setActiveTab('social_videos'); setMobileSidebarOpen(false); }}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                activeTab === 'social_videos'
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
+                  : 'hover:bg-slate-900 text-slate-300 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <Video className="w-4 h-4" />
+                <span>Social Videos</span>
+              </div>
+              <span className={`text-xs px-2 py-0.5 rounded-full ${activeTab === 'social_videos' ? 'bg-slate-950/20 text-slate-950' : 'bg-slate-800 text-slate-400'}`}>
+                {socialVideos.length}
+              </span>
+            </button>
+
+            <button
               onClick={() => { setActiveTab('seo'); setMobileSidebarOpen(false); }}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                 activeTab === 'seo'
@@ -1352,8 +1538,10 @@ export default function AdminDashboard() {
               {activeTab === 'projects' && 'Project Management'}
               {activeTab === 'locations' && 'Dynamic Locations'}
               {activeTab === 'leads' && 'Builder Consultation Leads'}
+              {activeTab === 'crm' && 'CRM Inquiries & Pipeline'}
               {activeTab === 'blog' && 'Blog & Articles CMS'}
               {activeTab === 'content' && 'Website Content Management'}
+              {activeTab === 'social_videos' && 'Social Video Management'}
               {activeTab === 'seo' && 'Technical & On-Page SEO'}
             </h1>
             <p className="text-sm text-slate-500 mt-1">
@@ -1411,6 +1599,16 @@ export default function AdminDashboard() {
                 New Blog Post
               </button>
             )}
+
+            {activeTab === 'social_videos' && (
+              <button
+                onClick={openNewVideoModal}
+                className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider shadow-md shadow-amber-500/20 flex items-center gap-2 cursor-pointer transition-all"
+              >
+                <Plus className="w-4 h-4 stroke-[2.5]" />
+                Add Social Video
+              </button>
+            )}
           </div>
         </header>
 
@@ -1420,7 +1618,7 @@ export default function AdminDashboard() {
         {activeTab === 'dashboard' && (
           <div className="space-y-8 animate-in fade-in duration-200">
             {/* Stat Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
               <div
                 onClick={() => setActiveTab('properties')}
                 className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all cursor-pointer group"
@@ -1447,6 +1645,22 @@ export default function AdminDashboard() {
                 </div>
                 <div className="text-2xl font-black text-slate-900">{projectsList.length}</div>
                 <div className="text-[11px] text-slate-500 mt-1">East & West Ahmedabad</div>
+              </div>
+
+              <div
+                onClick={() => setActiveTab('social_videos')}
+                className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Social Videos</span>
+                  <div className="w-8 h-8 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Video className="w-4 h-4" />
+                  </div>
+                </div>
+                <div className="text-2xl font-black text-slate-900">{socialVideos.length}</div>
+                <div className="text-[11px] text-slate-500 mt-1">
+                  {socialVideos.filter(v => v.is_active).length} active reels &amp; shorts
+                </div>
               </div>
 
               <div
@@ -1480,17 +1694,17 @@ export default function AdminDashboard() {
               </div>
 
               <div
-                onClick={() => setActiveTab('blog')}
-                className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all cursor-pointer group col-span-2 sm:col-span-1"
+                onClick={() => setActiveTab('crm')}
+                className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Articles</span>
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">CRM Inquiries</span>
                   <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <FileText className="w-4 h-4" />
+                    <MessageSquare className="w-4 h-4" />
                   </div>
                 </div>
-                <div className="text-2xl font-black text-slate-900">{blogs.length}</div>
-                <div className="text-[11px] text-slate-500 mt-1">Published insights</div>
+                <div className="text-2xl font-black text-slate-900">{crmInquiries.length}</div>
+                <div className="text-[11px] text-slate-500 mt-1">Direct website leads</div>
               </div>
             </div>
 
@@ -2775,6 +2989,246 @@ export default function AdminDashboard() {
         )}
 
         {/* ========================================================
+            TAB 9: SOCIAL VIDEOS (REELS & SHORTS SHOWCASE)
+            ======================================================== */}
+        {activeTab === 'social_videos' && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            {/* Top Toolbar */}
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+              <div className="flex flex-1 flex-col sm:flex-row gap-3">
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Search videos by title, project, or URL..."
+                    value={videoSearch}
+                    onChange={(e) => setVideoSearch(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white transition-colors"
+                  />
+                  {videoSearch && (
+                    <button onClick={() => setVideoSearch('')} className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  <select
+                    value={videoFilterPlatform}
+                    onChange={(e) => setVideoFilterPlatform(e.target.value)}
+                    className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700"
+                  >
+                    <option value="all">All Platforms</option>
+                    <option value="instagram">Instagram Reels</option>
+                    <option value="youtube">YouTube Shorts / Videos</option>
+                  </select>
+
+                  <select
+                    value={videoFilterStatus}
+                    onChange={(e) => setVideoFilterStatus(e.target.value)}
+                    className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700"
+                  >
+                    <option value="all">All Statuses</option>
+                    <option value="active">Active Only</option>
+                    <option value="inactive">Inactive Only</option>
+                  </select>
+                </div>
+              </div>
+
+              <button
+                onClick={openNewVideoModal}
+                className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition-colors"
+              >
+                <Plus className="w-4 h-4" /> Add Social Video
+              </button>
+            </div>
+
+            {/* Metrics Ribbon */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
+                <div className="text-xs text-slate-500 font-medium">Total Videos</div>
+                <div className="text-2xl font-black text-slate-900 mt-1">{socialVideos.length}</div>
+              </div>
+              <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
+                <div className="text-xs text-emerald-600 font-medium">Live on Homepage</div>
+                <div className="text-2xl font-black text-emerald-600 mt-1">
+                  {socialVideos.filter((v) => v.is_active === 1 || v.is_active === true).length}
+                </div>
+              </div>
+              <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
+                <div className="text-xs text-pink-600 font-medium">Instagram Reels</div>
+                <div className="text-2xl font-black text-pink-600 mt-1">
+                  {socialVideos.filter((v) => v.platform === 'instagram').length}
+                </div>
+              </div>
+              <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
+                <div className="text-xs text-red-600 font-medium">YouTube Shorts</div>
+                <div className="text-2xl font-black text-red-600 mt-1">
+                  {socialVideos.filter((v) => v.platform === 'youtube').length}
+                </div>
+              </div>
+            </div>
+
+            {/* Video List Table */}
+            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[10px]">
+                    <tr>
+                      <th className="py-3 px-4 w-12 text-center">Order</th>
+                      <th className="py-3 px-4 w-28">Preview</th>
+                      <th className="py-3 px-4">Title & Description</th>
+                      <th className="py-3 px-4 w-32">Platform</th>
+                      <th className="py-3 px-4">Linked Project</th>
+                      <th className="py-3 px-4 w-24 text-center">Status</th>
+                      <th className="py-3 px-4 w-28 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-slate-700">
+                    {socialVideos
+                      .filter((v) => {
+                        const q = videoSearch.toLowerCase();
+                        const matchesSearch =
+                          !q ||
+                          v.title?.toLowerCase().includes(q) ||
+                          v.project_name?.toLowerCase().includes(q) ||
+                          v.video_url?.toLowerCase().includes(q);
+                        const matchesPlatform =
+                          videoFilterPlatform === 'all' || v.platform === videoFilterPlatform;
+                        const matchesStatus =
+                          videoFilterStatus === 'all' ||
+                          (videoFilterStatus === 'active' && Boolean(v.is_active)) ||
+                          (videoFilterStatus === 'inactive' && !v.is_active);
+                        return matchesSearch && matchesPlatform && matchesStatus;
+                      })
+                      .map((v) => (
+                        <tr key={v.id} className="hover:bg-slate-50/70 transition-colors">
+                          <td className="py-3 px-4 text-center font-mono font-bold text-slate-500">
+                            #{v.display_order}
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="relative w-20 aspect-9/16 rounded-lg overflow-hidden bg-slate-900 border border-slate-200 flex items-center justify-center group shadow-xs">
+                              {v.thumbnail_url ? (
+                                <img
+                                  src={v.thumbnail_url}
+                                  alt={v.title}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                />
+                              ) : (
+                                <div className="text-[10px] text-slate-500 text-center px-1">No preview</div>
+                              )}
+                              <div className="absolute inset-0 bg-slate-950/20 flex items-center justify-center">
+                                <PlaySquare className="w-5 h-5 text-white/90 drop-shadow-md" />
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 max-w-xs">
+                            <div className="font-bold text-slate-900 line-clamp-1">{v.title}</div>
+                            {v.description && (
+                              <div className="text-[11px] text-slate-500 line-clamp-2 mt-0.5">
+                                {v.description}
+                              </div>
+                            )}
+                            <a
+                              href={v.video_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-[11px] text-blue-600 hover:underline mt-1 font-mono"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              <span className="truncate max-w-[220px]">{v.video_url}</span>
+                            </a>
+                          </td>
+                          <td className="py-3 px-4">
+                            {v.platform === 'instagram' ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-linear-to-r from-pink-500 to-purple-600 text-white shadow-xs">
+                                Instagram
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-600 text-white shadow-xs">
+                                YouTube
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-3 px-4">
+                            {v.project_name ? (
+                              <div className="space-y-0.5">
+                                <div className="font-semibold text-slate-900 flex items-center gap-1.5">
+                                  <Building2 className="w-3.5 h-3.5 text-amber-600" />
+                                  <span>{v.project_name}</span>
+                                </div>
+                                {v.project_url && (
+                                  <Link
+                                    href={v.project_url}
+                                    target="_blank"
+                                    className="inline-flex items-center gap-1 text-[11px] text-emerald-600 hover:underline font-medium"
+                                  >
+                                    View Project <ArrowUpRight className="w-3 h-3" />
+                                  </Link>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-slate-400 italic">No project linked</span>
+                            )}
+                          </td>
+                          <td className="py-3 px-4 text-center">
+                            <button
+                              onClick={() => toggleSocialVideoStatus(v.id, Boolean(v.is_active))}
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-bold transition-colors ${
+                                v.is_active
+                                  ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                              }`}
+                            >
+                              {v.is_active ? 'Active' : 'Inactive'}
+                            </button>
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            <div className="flex items-center justify-end gap-1.5">
+                              <button
+                                onClick={() => openEditVideoModal(v)}
+                                className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+                                title="Edit Video"
+                              >
+                                <Edit3 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => setDeleteConfirmVideoId(v.id)}
+                                className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors"
+                                title="Delete Video"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+
+                    {socialVideos.length === 0 && (
+                      <tr>
+                        <td colSpan={7} className="py-12 text-center text-slate-400">
+                          <Video className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                          <div className="font-semibold text-slate-700">No social videos yet</div>
+                          <p className="text-xs text-slate-500 mt-1">
+                            Add Instagram Reels or YouTube Shorts to showcase projects on the homepage.
+                          </p>
+                          <button
+                            onClick={openNewVideoModal}
+                            className="mt-3 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs inline-flex items-center gap-1.5"
+                          >
+                            <Plus className="w-4 h-4" /> Add First Video
+                          </button>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================
             TAB 8: TECHNICAL & ON-PAGE SEO
             ======================================================== */}
         {activeTab === 'seo' && (
@@ -3606,7 +4060,7 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                     <div>
                       <label className="font-semibold text-slate-700 mb-1 block">Zone *</label>
                       <select
@@ -3645,6 +4099,18 @@ export default function AdminDashboard() {
                         <option value="Under Construction">Under Construction</option>
                         <option value="Ready to Move">Ready to Move</option>
                         <option value="Completed">Completed</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-slate-700 mb-1 block">Publish Status</label>
+                      <select
+                        value={projFormData.publishStatus || 'published'}
+                        onChange={(e) => setProjFormData({ ...projFormData, publishStatus: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white font-bold"
+                      >
+                        <option value="published">Published</option>
+                        <option value="draft">Draft (Private)</option>
                       </select>
                     </div>
 
@@ -4231,6 +4697,248 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================
+            MODAL 5: SOCIAL VIDEO (REELS & SHORTS)
+            ======================================================== */}
+        {showVideoModal && (
+          <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full max-h-[90vh] flex flex-col border border-slate-200 animate-in zoom-in-95 duration-150">
+              <div className="px-6 py-4 border-b border-slate-150 flex items-center justify-between bg-slate-50/50 rounded-t-2xl">
+                <div>
+                  <h3 className="font-bold text-lg text-slate-900">
+                    {editingVideo ? `Edit Video: ${editingVideo.title}` : 'Add New Social Video'}
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Showcase Instagram Reels &amp; YouTube Shorts above Brand Promise
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowVideoModal(false)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={saveSocialVideo} className="p-6 overflow-y-auto space-y-4 text-xs flex-1">
+                <div>
+                  <label className="font-semibold text-slate-700 mb-1 block">Platform *</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setVideoFormData({ ...videoFormData, platform: 'instagram' })}
+                      className={`p-3 rounded-xl border text-center font-bold flex items-center justify-center gap-2 transition-all ${
+                        videoFormData.platform === 'instagram'
+                          ? 'border-pink-500 bg-pink-50 text-pink-700 shadow-xs'
+                          : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
+                      }`}
+                    >
+                      <PlaySquare className="w-4 h-4 text-pink-600" />
+                      Instagram Reel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setVideoFormData({ ...videoFormData, platform: 'youtube' })}
+                      className={`p-3 rounded-xl border text-center font-bold flex items-center justify-center gap-2 transition-all ${
+                        videoFormData.platform === 'youtube'
+                          ? 'border-red-500 bg-red-50 text-red-700 shadow-xs'
+                          : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Video className="w-4 h-4 text-red-600" />
+                      YouTube Short / Video
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="font-semibold text-slate-700 mb-1 block">Video Title *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Exclusive Walkthrough: Luxury 3 BHK Penthouse"
+                    value={videoFormData.title || ''}
+                    onChange={(e) => setVideoFormData({ ...videoFormData, title: e.target.value })}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-semibold text-slate-700 mb-1 block">Video URL *</label>
+                  <input
+                    type="url"
+                    required
+                    placeholder={
+                      videoFormData.platform === 'instagram'
+                        ? 'https://www.instagram.com/reel/C.../ or https://instagram.com/p/...'
+                        : 'https://youtube.com/shorts/... or https://youtu.be/... or watch?v=...'
+                    }
+                    value={videoFormData.video_url || ''}
+                    onChange={(e) => setVideoFormData({ ...videoFormData, video_url: e.target.value })}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white font-mono text-slate-900"
+                  />
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    {videoFormData.platform === 'instagram'
+                      ? 'Paste the full Instagram Reel URL (e.g. https://www.instagram.com/reel/xyz123/).'
+                      : 'Paste the YouTube Shorts or video link (e.g. https://youtube.com/shorts/xyz123 or https://youtu.be/xyz123).'}
+                  </p>
+                </div>
+
+                <div>
+                  <label className="font-semibold text-slate-700 mb-1 block">Associated Project</label>
+                  <select
+                    value={videoFormData.project_id || ''}
+                    onChange={(e) => {
+                      const selectedId = e.target.value;
+                      const matchedProj = projectsList.find((p) => String(p.id) === String(selectedId));
+                      const slug = matchedProj?.slug || matchedProj?.id;
+                      const zone = (matchedProj?.zone || 'east').toLowerCase();
+                      const project_url = selectedId ? `/projects/${zone}/${slug}` : '';
+                      setVideoFormData({
+                        ...videoFormData,
+                        project_id: selectedId ? Number(selectedId) : null,
+                        project_url,
+                      });
+                    }}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white font-medium"
+                  >
+                    <option value="">-- No Project Linked (Standalone) --</option>
+                    {projectsList.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        [{p.zone || 'East'}] {p.name} {p.category ? `(${p.category})` : ''}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Clicking the project title on the homepage card navigates directly to this project.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="font-semibold text-slate-700 mb-1 block">
+                    Custom Thumbnail Image (Optional)
+                  </label>
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="text"
+                      placeholder="https://... or upload below"
+                      value={videoFormData.thumbnail_url || ''}
+                      onChange={(e) => setVideoFormData({ ...videoFormData, thumbnail_url: e.target.value })}
+                      className="flex-1 px-3 py-2 rounded-lg border border-slate-200 bg-white text-xs"
+                    />
+                    <label className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg cursor-pointer font-semibold flex items-center gap-1.5 shrink-0">
+                      <Upload className="w-4 h-4" />
+                      {isUploadingVideoThumb ? 'Uploading...' : 'Upload'}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleVideoThumbUpload}
+                        disabled={isUploadingVideoThumb}
+                      />
+                    </label>
+                  </div>
+                  {videoFormData.thumbnail_url && (
+                    <div className="mt-2 relative w-24 aspect-9/16 rounded-lg overflow-hidden border border-slate-200">
+                      <img
+                        src={videoFormData.thumbnail_url}
+                        alt="Thumbnail preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="font-semibold text-slate-700 mb-1 block">Description (Optional)</label>
+                  <textarea
+                    rows={2}
+                    placeholder="Short highlight for this video..."
+                    value={videoFormData.description || ''}
+                    onChange={(e) => setVideoFormData({ ...videoFormData, description: e.target.value })}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  <div>
+                    <label className="font-semibold text-slate-700 mb-1 block">Display Order</label>
+                    <input
+                      type="number"
+                      value={videoFormData.display_order ?? 0}
+                      onChange={(e) =>
+                        setVideoFormData({ ...videoFormData, display_order: parseInt(e.target.value) || 0 })
+                      }
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white font-bold"
+                    />
+                  </div>
+                  <div className="flex items-end pb-2">
+                    <label className="flex items-center gap-2 cursor-pointer bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 w-full">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(videoFormData.is_active)}
+                        onChange={(e) =>
+                          setVideoFormData({ ...videoFormData, is_active: e.target.checked })
+                        }
+                      />
+                      <span className="font-bold text-slate-800 text-xs">Active (Show on Home)</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-slate-150 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowVideoModal(false)}
+                    className="px-4 py-2 rounded-lg border border-slate-200 font-semibold hover:bg-slate-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 font-bold text-slate-950 flex items-center gap-1.5"
+                  >
+                    <Save className="w-4 h-4" /> Save Video
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Social Video Confirmation Modal */}
+        {deleteConfirmVideoId && (
+          <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4 animate-in zoom-in-95">
+              <div className="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <div className="text-center">
+                <h3 className="font-bold text-slate-900 text-base">Delete Social Video?</h3>
+                <p className="text-xs text-slate-600 mt-1">
+                  Are you sure you want to delete this video? It will be permanently removed from the showcase. The linked project will NOT be affected.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setDeleteConfirmVideoId(null)}
+                  className="flex-1 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => deleteSocialVideo(deleteConfirmVideoId)}
+                  className="flex-1 py-2 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-500"
+                >
+                  Delete Video
+                </button>
+              </div>
             </div>
           </div>
         )}

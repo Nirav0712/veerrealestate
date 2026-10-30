@@ -148,46 +148,81 @@ export default function WestProjectDetailsPage() {
         ? params.slug
         : params.slug[0];
 
-    // Check static projects first, then query database API
-    const foundProject = projects.find(
-      (p) => p.slug === slug && p.zone === "East"
-    );
+    // Query database API first for live data
+    fetch(`/api/projects/${slug}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data && !data.error && data.id) {
+          const mapped: Project = {
+            id: data.id,
+            title: data.name || data.title,
+            slug: data.slug,
+            price: Number(data.priceMin) || 0,
+            displayPrice: data.displayPrice || 'On Request',
+            image: data.coverImage || (Array.isArray(data.galleryImages) && data.galleryImages[0]) || '/images/east/AARADHANA_2.jpeg',
+            images: Array.isArray(data.galleryImages) && data.galleryImages.length > 0 ? data.galleryImages : [data.coverImage || '/images/east/AARADHANA_2.jpeg'],
+            status: data.status || 'For Sale',
+            bedrooms: parseInt(data.configurations) || 2,
+            location: data.locationName || 'East Ahmedabad',
+            PlotArea: data.landArea || '1200 sqft',
+            address: data.fullAddress || data.locationName || 'East Ahmedabad',
+            featured: Boolean(data.featured),
+            description: data.description || '',
+            zone: 'East',
+          };
+          setProject(mapped);
 
-    if (foundProject) {
-      setProject(foundProject);
-      const similar = projects
-        .filter(p => p.slug !== slug && p.zone === "East")
-        .slice(0, 3);
-      setSimilarProjects(similar);
-    } else {
-      fetch(`/api/projects/${slug}`)
-        .then(r => r.ok ? r.json() : null)
-        .then(data => {
-          if (data && !data.error) {
-            const mapped: Project = {
-              id: data.id,
-              title: data.name || data.title,
-              slug: data.slug,
-              price: Number(data.priceMin) || 0,
-              displayPrice: data.displayPrice || 'On Request',
-              image: data.coverImage || (Array.isArray(data.galleryImages) && data.galleryImages[0]) || '/images/east/AARADHANA_2.jpeg',
-              images: Array.isArray(data.galleryImages) && data.galleryImages.length > 0 ? data.galleryImages : [data.coverImage || '/images/east/AARADHANA_2.jpeg'],
-              status: data.status || 'For Sale',
-              bedrooms: parseInt(data.configurations) || 2,
-              location: data.locationName || 'East Ahmedabad',
-              PlotArea: data.landArea || '1200 sqft',
-              address: data.fullAddress || data.locationName || 'East Ahmedabad',
-              featured: Boolean(data.featured),
-              description: data.description || '',
-              zone: 'East',
-            };
-            setProject(mapped);
+          // Fetch similar projects from live database
+          fetch('/api/projects?zone=East')
+            .then((res) => (res.ok ? res.json() : []))
+            .then((list) => {
+              if (Array.isArray(list)) {
+                const similar = list
+                  .filter((p: any) => p.slug !== slug)
+                  .slice(0, 3)
+                  .map((p: any) => ({
+                    id: p.id,
+                    title: p.name || p.title,
+                    slug: p.slug,
+                    price: Number(p.priceMin) || 0,
+                    displayPrice: p.displayPrice || 'On Request',
+                    image: p.coverImage || (Array.isArray(p.galleryImages) && p.galleryImages[0]) || '/images/east/AARADHANA_2.jpeg',
+                    images: Array.isArray(p.galleryImages) && p.galleryImages.length > 0 ? p.galleryImages : [p.coverImage || '/images/east/AARADHANA_2.jpeg'],
+                    status: p.status || 'For Sale',
+                    bedrooms: parseInt(p.configurations) || 2,
+                    location: p.locationName || 'East Ahmedabad',
+                    PlotArea: p.landArea || '1200 sqft',
+                    address: p.fullAddress || 'East Ahmedabad',
+                    featured: Boolean(p.featured),
+                    description: p.description || '',
+                    zone: 'East' as const,
+                  }));
+                setSimilarProjects(similar);
+              }
+            })
+            .catch(() => {});
+        } else {
+          // Fallback to static projects only if not found in database
+          const fallback = projects.find((p) => p.slug === slug && p.zone === 'East');
+          if (fallback) {
+            setProject(fallback);
+            const similar = projects
+              .filter((p) => p.slug !== slug && p.zone === 'East')
+              .slice(0, 3);
+            setSimilarProjects(similar);
           } else {
-            router.push("/projects/east");
+            router.push('/projects/east');
           }
-        })
-        .catch(() => router.push("/projects/east"));
-    }
+        }
+      })
+      .catch(() => {
+        const fallback = projects.find((p) => p.slug === slug && p.zone === 'East');
+        if (fallback) {
+          setProject(fallback);
+        } else {
+          router.push('/projects/east');
+        }
+      });
 
   }, [params.slug, router]);
 

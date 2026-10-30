@@ -1,4 +1,4 @@
-import pool from '../db';
+import pool from '../db.ts';
 
 let migrationPromise: Promise<void> | null = null;
 
@@ -15,7 +15,7 @@ export async function runMigrations(): Promise<void> {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
       `);
 
-      const [migRows]: any = await conn.query('SELECT version FROM _schema_migrations WHERE version = 2');
+      const [migRows]: any = await conn.query('SELECT version FROM _schema_migrations WHERE version = 3');
       if (migRows && migRows.length > 0) {
         return;
       }
@@ -391,8 +391,57 @@ export async function runMigrations(): Promise<void> {
         WHERE email IN ('admin@gmail.com', 'admin2@gmail.com') OR name LIKE '%admin%'
       `);
 
+      // 11. Social Videos table (Phase 4 & 7)
+      await conn.query(`
+        CREATE TABLE IF NOT EXISTS social_videos (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          title VARCHAR(255) NOT NULL,
+          platform ENUM('instagram', 'youtube') NOT NULL,
+          video_url TEXT NOT NULL,
+          project_id INT NULL,
+          project_url VARCHAR(255) NULL,
+          thumbnail_url TEXT NULL,
+          description TEXT NULL,
+          display_order INT DEFAULT 0,
+          is_active BOOLEAN DEFAULT TRUE,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          INDEX idx_social_videos_platform (platform),
+          INDEX idx_social_videos_active (is_active),
+          INDEX idx_social_videos_order (display_order),
+          INDEX idx_social_videos_project (project_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+      `);
+
+      // Seed initial sample social video showcase if table is empty
+      const [svCount]: any = await conn.query('SELECT COUNT(*) as count FROM social_videos');
+      if (svCount[0].count === 0) {
+        const [firstProj]: any = await conn.query("SELECT id, name, slug, zone FROM projects ORDER BY id ASC LIMIT 2");
+        const p1 = firstProj && firstProj[0];
+        const p2 = firstProj && firstProj[1];
+
+        const p1Url = p1 ? `/projects/${p1.zone === 'West' ? 'west' : 'east'}/${p1.slug}` : '/projects/east/aaradhana-sky-2';
+        const p2Url = p2 ? `/projects/${p2.zone === 'West' ? 'west' : 'east'}/${p2.slug}` : '/projects/east/anushtan-bungalows';
+
+        await conn.query(`
+          INSERT INTO social_videos (title, platform, video_url, project_id, project_url, thumbnail_url, description, display_order, is_active)
+          VALUES 
+          (?, 'instagram', 'https://www.instagram.com/reel/C3bX_example1', ?, ?, '/images/east/AARADHANA_2.jpeg', 'Luxury 2 & 3 BHK sample flat walkthrough reel', 1, 1),
+          (?, 'youtube', 'https://www.youtube.com/shorts/dQw4w9WgXcQ', ?, ?, '/images/east/Anusthan.jpeg', 'Premium bungalows aerial drone site tour', 2, 1)
+        `, [
+          p1 ? `${p1.name} — Exclusive Walkthrough` : 'Aaradhana Sky 2 Walkthrough',
+          p1 ? p1.id : null,
+          p1Url,
+          p2 ? `${p2.name} — Aerial Site Tour` : 'Anushtan Bungalows Drone Tour',
+          p2 ? p2.id : null,
+          p2Url
+        ]);
+        console.log('[migrations] Initial social videos seeded.');
+      }
+
       // Record migration version
       await conn.query('INSERT IGNORE INTO _schema_migrations (version) VALUES (2)');
+      await conn.query('INSERT IGNORE INTO _schema_migrations (version) VALUES (3)');
 
       console.log('[migrations] All migrations completed successfully.');
     } catch (err) {

@@ -224,12 +224,18 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // 1. Validation
-    if (!title || typeof title !== 'string' || !title.trim()) {
+    const cleanTitle = (title || '').trim();
+    if (!cleanTitle) {
       return NextResponse.json({ error: 'Property title is required' }, { status: 400 });
     }
 
+    const cleanLocation = (location || locality || 'Ahmedabad').trim();
+
     // 2. Strict 6-image limit enforcement
-    const imageList = Array.isArray(images) ? images : [];
+    const imageList = Array.isArray(images)
+      ? images
+      : (typeof images === 'string' && images.trim() ? [images.trim()] : []);
+
     if (imageList.length > 6) {
       return NextResponse.json(
         { error: 'Maximum 6 images allowed per property. Please remove excess images.' },
@@ -240,7 +246,7 @@ export async function POST(request: NextRequest) {
     // 3. Auto-generate slug and property code
     let cleanSlug = slug
       ? slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')
-      : title.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      : cleanTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     cleanSlug = `${cleanSlug}-${Date.now().toString().slice(-4)}`;
 
     const effectiveCoverImage = coverImage || (imageList.length > 0 ? imageList[0] : null);
@@ -280,37 +286,37 @@ export async function POST(request: NextRequest) {
         ?, ?, ?, ?, ?, ?
       )`,
       [
-        title.trim(),
+        cleanTitle,
         cleanSlug,
         propertyCode || null,
         priceOnRequest ? 0 : Number(price) || 0,
-        location.trim(),
-        locationId || null,
+        cleanLocation,
+        locationId ? Number(locationId) : null,
         locality || null,
         address || null,
         pincode || null,
-        latitude || null,
-        longitude || null,
-        type,
-        status,
-        transaction,
-        availability,
-        publishStatus,
+        latitude ? Number(latitude) : null,
+        longitude ? Number(longitude) : null,
+        type || 'House',
+        status || 'For Sale',
+        transaction || 'resale',
+        availability || 'Available',
+        publishStatus || 'published',
         priceOnRequest ? 1 : 0,
         isNegotiable ? 1 : 0,
         maintenanceCharges || null,
         Number(area) || 0,
         areaUnit || 'sqft',
-        carpetArea || null,
-        builtUpArea || null,
-        superBuiltUpArea || null,
-        plotArea || null,
+        carpetArea ? Number(carpetArea) : null,
+        builtUpArea ? Number(builtUpArea) : null,
+        superBuiltUpArea ? Number(superBuiltUpArea) : null,
+        plotArea ? Number(plotArea) : null,
         Number(bedrooms) || 0,
         Number(bathrooms) || 0,
         Number(balconies) || 0,
-        furnishing,
-        floorNumber || null,
-        totalFloors || null,
+        furnishing || 'Semi-Furnished',
+        floorNumber !== '' && floorNumber !== null && floorNumber !== undefined ? Number(floorNumber) : null,
+        totalFloors !== '' && totalFloors !== null && totalFloors !== undefined ? Number(totalFloors) : null,
         facing || null,
         propertyAge || null,
         possessionDate || null,
@@ -325,16 +331,16 @@ export async function POST(request: NextRequest) {
         JSON.stringify(imageList),
         JSON.stringify(imageAlts || {}),
         description || '',
-        yearBuilt || new Date().getFullYear(),
-        metaTitle || `${title.trim()} for ${status} in ${location} | Veer Real Estate`,
-        metaDescription || description.substring(0, 160) || null,
-        primaryKeyword || `${type} in ${location}, buy property Ahmedabad`,
+        yearBuilt ? Number(yearBuilt) : new Date().getFullYear(),
+        metaTitle || `${cleanTitle} for ${status || 'Sale'} in ${cleanLocation} | Veer Real Estate`,
+        metaDescription || (description ? description.substring(0, 160) : null),
+        primaryKeyword || `${type} in ${cleanLocation}, buy property Ahmedabad`,
         canonicalUrl || null,
         listingPurpose || 'Sell',
         propertyCategory || 'Residential',
         propertySubtype || null,
-        monthlyRent || null,
-        securityDeposit || null,
+        monthlyRent ? Number(monthlyRent) : null,
+        securityDeposit ? Number(securityDeposit) : null,
         leaseDuration || null,
         lockInPeriod || null,
         preferredTenant || null,

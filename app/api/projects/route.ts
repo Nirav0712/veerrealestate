@@ -150,12 +150,18 @@ export async function POST(req: NextRequest) {
       floorPlans = [], // array of floor plans
     } = body;
 
-    if (!name || typeof name !== 'string' || !name.trim()) {
+    const cleanName = (name || '').trim();
+    if (!cleanName) {
       return NextResponse.json({ error: 'Project name is required' }, { status: 400 });
     }
 
+    const cleanBuilder = (builderName || 'Veer Real Estate').trim();
+
     // 1. Enforce strict 10 gallery image limit
-    const gallery = Array.isArray(galleryImages) ? galleryImages : [];
+    const gallery = Array.isArray(galleryImages)
+      ? galleryImages
+      : (typeof galleryImages === 'string' && galleryImages.trim() ? [galleryImages.trim()] : []);
+
     if (gallery.length > 10) {
       return NextResponse.json(
         { error: 'Maximum 10 gallery images allowed per project. Please remove excess images.' },
@@ -183,7 +189,9 @@ export async function POST(req: NextRequest) {
       projectCode,
     } = body;
 
-    if (publishStatus === 'published') {
+    const effectivePublishStatus = publishStatus || 'published';
+
+    if (effectivePublishStatus === 'published') {
       if (isReraExempt) {
         if (!reraExemptionReason || typeof reraExemptionReason !== 'string' || reraExemptionReason.trim().length < 8) {
           return NextResponse.json(
@@ -210,10 +218,18 @@ export async function POST(req: NextRequest) {
     // 3. Clean unique slug
     let cleanSlug = slug
       ? slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')
-      : name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      : cleanName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     cleanSlug = `${cleanSlug}-${Date.now().toString().slice(-4)}`;
 
     const effectiveCover = coverImage || (gallery.length > 0 ? gallery[0] : null);
+
+    // Parse JSON fields safely
+    const parsedReraPhases = Array.isArray(reraPhases) ? reraPhases : (typeof reraPhases === 'string' && reraPhases.trim() ? [reraPhases.trim()] : []);
+    const parsedNearbyFacilities = Array.isArray(nearbyFacilities) ? nearbyFacilities : (typeof nearbyFacilities === 'string' && nearbyFacilities.trim() ? [nearbyFacilities.trim()] : []);
+    const parsedConstructionMilestones = Array.isArray(constructionMilestones) ? constructionMilestones : (typeof constructionMilestones === 'string' && constructionMilestones.trim() ? [constructionMilestones.trim()] : []);
+    const parsedSpecifications = typeof specifications === 'object' && specifications !== null
+      ? specifications
+      : (() => { try { return JSON.parse(specifications); } catch { return {}; } })();
 
     const conn = await pool.getConnection();
     try {
@@ -242,57 +258,57 @@ export async function POST(req: NextRequest) {
           ?, ?, ?, ?, ?, ?
         )`,
         [
-          name.trim(),
+          cleanName,
           cleanSlug,
           projectCode || null,
-          builderName.trim(),
+          cleanBuilder,
           tagline || null,
           description || '',
-          category,
-          status,
-          zone,
-          locationId || null,
+          category || 'Residential',
+          status || 'Under Construction',
+          zone || 'East',
+          locationId ? Number(locationId) : null,
           locationName || null,
           fullAddress || null,
           pincode || null,
-          latitude || null,
-          longitude || null,
-          priceMin || null,
-          priceMax || null,
+          latitude ? Number(latitude) : null,
+          longitude ? Number(longitude) : null,
+          priceMin ? Number(priceMin) : null,
+          priceMax ? Number(priceMax) : null,
           displayPrice || null,
           landArea || null,
           Number(totalTowers) || 1,
-          totalFloors ? Number(totalFloors) : null,
-          totalUnits ? Number(totalUnits) : null,
-          availableUnits ? Number(availableUnits) : null,
-          areaMin || null,
-          areaMax || null,
+          totalFloors !== '' && totalFloors !== null && totalFloors !== undefined ? Number(totalFloors) : null,
+          totalUnits !== '' && totalUnits !== null && totalUnits !== undefined ? Number(totalUnits) : null,
+          availableUnits !== '' && availableUnits !== null && availableUnits !== undefined ? Number(availableUnits) : null,
+          areaMin ? Number(areaMin) : null,
+          areaMax ? Number(areaMax) : null,
           areaUnit || 'sqft',
           configurations || null,
-          launchDate || null,
+          launchDate && String(launchDate).trim() ? String(launchDate).trim() : null,
           possessionDate || null,
           expectedPossession || null,
-          actualCompletion || null,
+          actualCompletion && String(actualCompletion).trim() ? String(actualCompletion).trim() : null,
           reraNumber ? reraNumber.trim() : null,
           isReraExempt ? 1 : 0,
           reraExemptionReason || null,
           reraApprovedBy || null,
-          JSON.stringify(Array.isArray(reraPhases) ? reraPhases : []),
+          JSON.stringify(parsedReraPhases),
           JSON.stringify(Array.isArray(amenities) ? amenities : []),
           JSON.stringify(Array.isArray(approvals) ? approvals : []),
-          JSON.stringify(Array.isArray(nearbyFacilities) ? nearbyFacilities : []),
-          JSON.stringify(specifications || {}),
-          JSON.stringify(Array.isArray(constructionMilestones) ? constructionMilestones : []),
+          JSON.stringify(parsedNearbyFacilities),
+          JSON.stringify(parsedSpecifications),
+          JSON.stringify(parsedConstructionMilestones),
           effectiveCover,
           JSON.stringify(gallery),
           masterPlanImage || null,
           sitePlanImage || null,
           brochureUrl || null,
           featured ? 1 : 0,
-          publishStatus,
-          metaTitle || `${name.trim()} by ${builderName} in ${locationName || zone} | Veer Real Estate`,
-          metaDescription || description.substring(0, 160) || null,
-          primaryKeyword || `${name.trim()}, projects in ${locationName || zone}`,
+          effectivePublishStatus,
+          metaTitle || `${cleanName} by ${cleanBuilder} in ${locationName || zone} | Veer Real Estate`,
+          metaDescription || (description ? description.substring(0, 160) : null),
+          primaryKeyword || `${cleanName}, projects in ${locationName || zone}`,
           canonicalUrl || null,
         ]
       );

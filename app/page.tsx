@@ -10,6 +10,7 @@ import { ArrowRight } from "lucide-react";
 import GoogleReviews from './components/GoogleReviews';
 import Partner from './components/Partner';
 import Projects from './components/Projects';
+import ProjectsInMotion from './components/ProjectsInMotion';
 
 export default function HomePage() {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -588,6 +589,9 @@ From understanding your requirements and shortlisting suitable properties to sit
           </div>
         </div>
       </section>
+
+            {/* Projects in Motion (Social Video Showcase) */}
+      <ProjectsInMotion />
 
       <section className="py-10 md:py-20 bg-gray-50">
         <div className="container mx-auto px-4">
