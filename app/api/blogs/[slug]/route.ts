@@ -49,9 +49,21 @@ export async function GET(
       }
     }
 
+    let project = null;
+    if (blog.projectId) {
+      const [projRows] = await pool.query<RowDataPacket[]>(
+        'SELECT id, name, slug, zone, category, status, displayPrice, configurations, fullAddress, image, images FROM projects WHERE id = ? LIMIT 1',
+        [blog.projectId]
+      );
+      if (projRows.length > 0) {
+        project = projRows[0];
+      }
+    }
+
     return NextResponse.json({
       ...blog,
       tags: parseJsonArray(blog.tags),
+      project,
     });
   } catch (error: any) {
     console.error('[blogs/[slug]] Error fetching blog post:', error);
@@ -89,6 +101,10 @@ export async function PUT(
       metaDescription,
       primaryKeyword,
       canonicalUrl,
+      metaRobots,
+      projectId,
+      relatedProjects,
+      relatedProperties,
     } = body;
 
     if (!title || typeof title !== 'string' || !title.trim()) {
@@ -97,13 +113,15 @@ export async function PUT(
 
     const isNumeric = /^\d+$/.test(identifier);
     const whereColumn = isNumeric ? 'id' : 'slug';
+    const effectiveProjectId = projectId ? parseInt(projectId, 10) : null;
 
     await pool.query(
       `UPDATE blogs SET
         title = ?, slug = ?, excerpt = ?, content = ?, author = ?,
         category = ?, tags = ?, featuredImage = ?, imageAlt = ?, readTime = ?,
         publishStatus = ?, publishedAt = ?, metaTitle = ?, metaDescription = ?,
-        primaryKeyword = ?, canonicalUrl = ?, updated_at = NOW()
+        primaryKeyword = ?, canonicalUrl = ?, metaRobots = ?, projectId = ?,
+        relatedProjects = ?, relatedProperties = ?, updated_at = NOW()
       WHERE ${whereColumn} = ?`,
       [
         title.trim(),
@@ -122,6 +140,10 @@ export async function PUT(
         metaDescription || null,
         primaryKeyword || null,
         canonicalUrl || null,
+        metaRobots || 'index, follow',
+        effectiveProjectId,
+        JSON.stringify(Array.isArray(relatedProjects) ? relatedProjects : []),
+        JSON.stringify(Array.isArray(relatedProperties) ? relatedProperties : []),
         identifier,
       ]
     );

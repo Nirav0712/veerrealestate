@@ -1,7 +1,9 @@
 import { MetadataRoute } from 'next';
+import { getSeoSettingsServer } from '@/lib/seo-server';
 
-export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://veerrealestate.com';
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const seoConfig = await getSeoSettingsServer();
+  const baseUrl = seoConfig.canonicalDomain || process.env.NEXT_PUBLIC_SITE_URL || 'https://veerrealestate.com';
 
   return {
     rules: [

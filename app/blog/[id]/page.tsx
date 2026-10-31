@@ -20,6 +20,17 @@ interface BlogPost {
   area?: string;
   locationName?: string;
   zone?: 'East' | 'West';
+  project?: {
+    id: number;
+    name: string;
+    slug: string;
+    zone: string;
+    category?: string;
+    status?: string;
+    displayPrice?: string;
+    configurations?: string;
+    fullAddress?: string;
+  } | null;
 }
 
 const blogPosts: BlogPost[] = [
@@ -446,6 +457,7 @@ export default function BlogPostPage() {
             category: data.category || 'Market Trends',
             image: data.featuredImage || '/images/east/AARADHANA_2.jpeg',
             readTime: data.readTime || '5 min read',
+            project: data.project || null,
           });
         }
       })
@@ -597,6 +609,48 @@ export default function BlogPostPage() {
 
             {/* RIGHT SIDEBAR */}
             <div className="space-y-6">
+
+              {/* Associated Project Card (Phase 4: Project-Wise Blog CMS) */}
+              {post.project && (
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                  <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider mb-2">
+                    <i className="fas fa-building"></i> Associated Project
+                  </div>
+                  <h4 className="text-xl font-bold text-secondary mb-2">{post.project.name}</h4>
+                  <div className="space-y-2 text-sm text-gray-600 mb-4">
+                    {post.project.displayPrice && (
+                      <div className="flex justify-between">
+                        <span>Price:</span>
+                        <span className="font-bold text-primary">{post.project.displayPrice}</span>
+                      </div>
+                    )}
+                    {post.project.configurations && (
+                      <div className="flex justify-between">
+                        <span>Configurations:</span>
+                        <span className="font-medium text-gray-800">{post.project.configurations}</span>
+                      </div>
+                    )}
+                    {post.project.zone && (
+                      <div className="flex justify-between">
+                        <span>Zone:</span>
+                        <span className="font-medium text-gray-800">{post.project.zone} Ahmedabad</span>
+                      </div>
+                    )}
+                    {post.project.status && (
+                      <div className="flex justify-between">
+                        <span>Status:</span>
+                        <span className="font-semibold text-green-600">{post.project.status}</span>
+                      </div>
+                    )}
+                  </div>
+                  <Link
+                    href={`/projects/${post.project.zone === 'West' ? 'west' : 'east'}/${post.project.slug}`}
+                    className="block w-full text-center py-2.5 px-4 rounded-lg bg-secondary hover:bg-secondary-dark text-white text-sm font-semibold transition-all shadow-sm"
+                  >
+                    Explore Associated Project →
+                  </Link>
+                </div>
+              )}
 
               {/* Property Highlights */}
               <div className="bg-white p-6 rounded-2xl shadow-sm sticky top-24">

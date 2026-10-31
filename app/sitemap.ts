@@ -1,9 +1,11 @@
 import { MetadataRoute } from 'next';
 import pool from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
+import { getSeoSettingsServer } from '@/lib/seo-server';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://veerrealestate.com';
+  const seoConfig = await getSeoSettingsServer();
+  const baseUrl = seoConfig.canonicalDomain || process.env.NEXT_PUBLIC_SITE_URL || 'https://veerrealestate.com';
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {

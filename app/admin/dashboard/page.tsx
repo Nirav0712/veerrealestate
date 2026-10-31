@@ -39,8 +39,14 @@ import {
   Video,
   Play,
   PlaySquare,
+  Columns,
+  ListFilter,
+  UserCheck,
 } from 'lucide-react';
 import { generateKeywordSuggestions } from '@/lib/seo';
+import CrmKanbanView from './components/CrmKanbanView';
+import SeoSettingsForm from './components/SeoSettingsForm';
+import UserManagementTab from './components/UserManagementTab';
 
 type ActiveTab =
   | 'dashboard'
@@ -52,11 +58,13 @@ type ActiveTab =
   | 'blog'
   | 'content'
   | 'social_videos'
-  | 'seo';
+  | 'seo'
+  | 'users';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [crmViewMode, setCrmViewMode] = useState<'kanban' | 'list'>('kanban');
 
   // Dynamic Navigation states
   const [propNavOpen, setPropNavOpen] = useState(false);
@@ -900,6 +908,9 @@ export default function AdminDashboard() {
       metaTitle: '',
       metaDescription: '',
       primaryKeyword: '',
+      canonicalUrl: '',
+      metaRobots: 'index, follow',
+      projectId: '',
     });
     setShowBlogModal(true);
   };
@@ -1500,6 +1511,20 @@ export default function AdminDashboard() {
                 <span>SEO &amp; Sitemap</span>
               </div>
             </button>
+
+            <button
+              onClick={() => { setActiveTab('users'); setMobileSidebarOpen(false); }}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                activeTab === 'users'
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
+                  : 'hover:bg-slate-900 text-slate-300 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <Users className="w-4 h-4" />
+                <span>Staff &amp; Roles</span>
+              </div>
+            </button>
           </nav>
         </div>
 
@@ -1543,6 +1568,7 @@ export default function AdminDashboard() {
               {activeTab === 'content' && 'Website Content Management'}
               {activeTab === 'social_videos' && 'Social Video Management'}
               {activeTab === 'seo' && 'Technical & On-Page SEO'}
+              {activeTab === 'users' && 'Staff Users & Role-Based Permissions'}
             </h1>
             <p className="text-sm text-slate-500 mt-1">
               Veer Real Estate Enterprise Content Management System
@@ -2378,6 +2404,56 @@ export default function AdminDashboard() {
             ======================================================== */}
         {activeTab === 'crm' && (
           <div className="space-y-6 animate-in fade-in duration-200">
+            {/* View Mode Toggle: Kanban Board vs List View */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs">
+              <div className="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => setCrmViewMode('kanban')}
+                  className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+                    crmViewMode === 'kanban'
+                      ? 'bg-white text-slate-950 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <Columns className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Kanban Pipeline Board</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCrmViewMode('list')}
+                  className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+                    crmViewMode === 'list'
+                      ? 'bg-white text-slate-950 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <ListFilter className="w-3.5 h-3.5 text-blue-500" />
+                  <span>List / Table View</span>
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                Pipeline Leads: <strong className="text-slate-900 font-black">{crmInquiries.length}</strong>
+              </div>
+            </div>
+
+            {/* KANBAN BOARD VIEW */}
+            {crmViewMode === 'kanban' && (
+              <CrmKanbanView
+                inquiries={crmInquiries}
+                onUpdateInquiry={updateCrmInquiry}
+                onDeleteInquiry={deleteCrmInquiry}
+                onSelectInquiry={(inq) => setSelectedInquiry(inq)}
+                selectedInquiryId={selectedInquiry?.id}
+                onRefresh={() => fetchCrmInquiries()}
+                isLoading={crmLoading}
+              />
+            )}
+
+            {/* LIST / TABLE VIEW */}
+            {crmViewMode === 'list' && (
+              <>
             {/* Lead Status Filter Pills */}
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
               {[
@@ -2705,6 +2781,8 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
+              </>
+            )}
           </div>
         )}
 
@@ -3233,6 +3311,9 @@ export default function AdminDashboard() {
             ======================================================== */}
         {activeTab === 'seo' && (
           <div className="space-y-6 animate-in fade-in duration-200">
+            {/* Global SEO, Google Site Verification & Analytics Form */}
+            <SeoSettingsForm />
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Dynamic Sitemap Card */}
               <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
@@ -3291,6 +3372,15 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* ========================================================
+            TAB 9: STAFF USERS & ROLE-BASED ACCESS CONTROL
+            ======================================================== */}
+        {activeTab === 'users' && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <UserManagementTab />
           </div>
         )}
 
@@ -3964,6 +4054,43 @@ export default function AdminDashboard() {
                       />
                     </div>
                   </div>
+
+                  <div>
+                    <label className="font-semibold text-slate-700 mb-1 block">Meta Description</label>
+                    <textarea
+                      rows={2}
+                      placeholder="Concise overview snippet for search engines..."
+                      value={propFormData.metaDescription || ''}
+                      onChange={(e) => setPropFormData({ ...propFormData, metaDescription: e.target.value })}
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label className="font-semibold text-slate-700 mb-1 block">Canonical URL Override</label>
+                      <input
+                        type="url"
+                        placeholder="https://veerrealestate.com/properties/..."
+                        value={propFormData.canonicalUrl || ''}
+                        onChange={(e) => setPropFormData({ ...propFormData, canonicalUrl: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white font-mono text-[11px]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-slate-700 mb-1 block">Robots Directives</label>
+                      <select
+                        value={propFormData.metaRobots || 'index, follow'}
+                        onChange={(e) => setPropFormData({ ...propFormData, metaRobots: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white font-semibold"
+                      >
+                        <option value="index, follow">index, follow (Allow search indexing)</option>
+                        <option value="noindex, follow">noindex, follow (Hide from search)</option>
+                        <option value="noindex, nofollow">noindex, nofollow (Block completely)</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Submit Buttons */}
@@ -4447,6 +4574,75 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
+                {/* 8. Project On-Page SEO (Phase 3) */}
+                <div className="bg-slate-50/70 p-4 rounded-xl border border-slate-200/80 space-y-3">
+                  <h4 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    8. Project On-Page SEO &amp; Search Visibility
+                  </h4>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label className="font-semibold text-slate-700 mb-1 block">SEO Meta Title</label>
+                      <input
+                        type="text"
+                        placeholder="Project Name in Zone, Ahmedabad | Veer Real Estate"
+                        value={projFormData.metaTitle || ''}
+                        onChange={(e) => setProjFormData({ ...projFormData, metaTitle: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-slate-700 mb-1 block">Primary Keywords</label>
+                      <input
+                        type="text"
+                        placeholder="new flats in Ahmedabad, buy luxury apartment"
+                        value={projFormData.primaryKeyword || ''}
+                        onChange={(e) => setProjFormData({ ...projFormData, primaryKeyword: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="font-semibold text-slate-700 mb-1 block">Meta Description</label>
+                    <textarea
+                      rows={2}
+                      placeholder="Concise overview snippet for search engines..."
+                      value={projFormData.metaDescription || ''}
+                      onChange={(e) => setProjFormData({ ...projFormData, metaDescription: e.target.value })}
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label className="font-semibold text-slate-700 mb-1 block">Canonical URL Override</label>
+                      <input
+                        type="url"
+                        placeholder="https://veerrealestate.com/projects/..."
+                        value={projFormData.canonicalUrl || ''}
+                        onChange={(e) => setProjFormData({ ...projFormData, canonicalUrl: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white font-mono text-[11px]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-slate-700 mb-1 block">Robots Directives</label>
+                      <select
+                        value={projFormData.metaRobots || 'index, follow'}
+                        onChange={(e) => setProjFormData({ ...projFormData, metaRobots: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white font-semibold"
+                      >
+                        <option value="index, follow">index, follow (Allow search indexing)</option>
+                        <option value="noindex, follow">noindex, follow (Hide from search)</option>
+                        <option value="noindex, nofollow">noindex, nofollow (Block completely)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Submit Buttons */}
                 <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
                   <button
@@ -4679,6 +4875,98 @@ export default function AdminDashboard() {
                     onChange={(e) => setBlogFormData({ ...blogFormData, featuredImage: e.target.value })}
                     className="w-full px-3 py-2 rounded-lg border border-slate-200"
                   />
+                </div>
+
+                {/* Project-Wise Blog Association (Phase 4) */}
+                <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
+                  <label className="font-bold text-slate-900 block flex items-center gap-1.5 text-xs">
+                    <Building2 className="w-3.5 h-3.5 text-primary" />
+                    Associated Real Estate Project (Project-Wise Article)
+                  </label>
+                  <select
+                    value={blogFormData.projectId || ''}
+                    onChange={(e) => setBlogFormData({ ...blogFormData, projectId: e.target.value ? parseInt(e.target.value, 10) : null })}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white font-semibold text-slate-800 text-xs"
+                  >
+                    <option value="">None (Independent General Real Estate Guide)</option>
+                    {projectsList.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name} ({p.zone} Ahmedabad) — {p.displayPrice || p.configurations || ''}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-[11px] text-slate-500">
+                    Links this blog post to the selected development. Visitors reading this article will see an interactive project showcase card with direct exploration link.
+                  </p>
+                </div>
+
+                {/* On-Page SEO Settings (Phase 3) */}
+                <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-3">
+                  <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                    On-Page SEO &amp; Indexing Controls
+                  </h4>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label className="font-semibold text-slate-700 mb-1 block">SEO Title Tag</label>
+                      <input
+                        type="text"
+                        placeholder="Article Title | Veer Real Estate"
+                        value={blogFormData.metaTitle || ''}
+                        onChange={(e) => setBlogFormData({ ...blogFormData, metaTitle: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-slate-700 mb-1 block">Primary Focus Keyword</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 2 BHK flats in Narol"
+                        value={blogFormData.primaryKeyword || ''}
+                        onChange={(e) => setBlogFormData({ ...blogFormData, primaryKeyword: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="font-semibold text-slate-700 mb-1 block">Meta Description (150-160 chars recommended)</label>
+                    <textarea
+                      rows={2}
+                      placeholder="Concise overview for search engine result snippets..."
+                      value={blogFormData.metaDescription || ''}
+                      onChange={(e) => setBlogFormData({ ...blogFormData, metaDescription: e.target.value })}
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label className="font-semibold text-slate-700 mb-1 block">Canonical URL Override</label>
+                      <input
+                        type="url"
+                        placeholder="https://veerrealestate.com/blog/..."
+                        value={blogFormData.canonicalUrl || ''}
+                        onChange={(e) => setBlogFormData({ ...blogFormData, canonicalUrl: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white font-mono text-[11px]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-slate-700 mb-1 block">Robots Directives</label>
+                      <select
+                        value={blogFormData.metaRobots || 'index, follow'}
+                        onChange={(e) => setBlogFormData({ ...blogFormData, metaRobots: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white font-semibold"
+                      >
+                        <option value="index, follow">index, follow (Allow search indexing)</option>
+                        <option value="noindex, follow">noindex, follow (Hide from search)</option>
+                        <option value="noindex, nofollow">noindex, nofollow (Block completely)</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="pt-3 border-t border-slate-150 flex justify-end gap-2">

@@ -67,10 +67,14 @@ export async function GET(req: NextRequest) {
 
     // Fetch paginated blogs
     const [rows] = await pool.query<RowDataPacket[]>(
-      `SELECT id, title, slug, excerpt, author, category, tags, featuredImage, imageAlt,
-              readTime, publishStatus, publishedAt, metaTitle, metaDescription, created_at
-       FROM blogs ${whereSql}
-       ORDER BY publishedAt DESC, id DESC
+      `SELECT b.id, b.title, b.slug, b.excerpt, b.author, b.category, b.tags, b.featuredImage, b.imageAlt,
+              b.readTime, b.publishStatus, b.publishedAt, b.metaTitle, b.metaDescription, b.metaRobots,
+              b.projectId, b.relatedProjects, b.relatedProperties, b.created_at,
+              p.name as projectName, p.slug as projectSlug, p.zone as projectZone, p.displayPrice as projectPrice
+       FROM blogs b
+       LEFT JOIN projects p ON b.projectId = p.id
+       ${whereSql ? whereSql.replace(/title/g, 'b.title').replace(/excerpt/g, 'b.excerpt').replace(/content/g, 'b.content').replace(/category/g, 'b.category').replace(/publishStatus/g, 'b.publishStatus') : ''}
+       ORDER BY b.publishedAt DESC, b.id DESC
        LIMIT ? OFFSET ?`,
       [...params, limit, offset]
     );
@@ -121,6 +125,10 @@ export async function POST(req: NextRequest) {
       metaDescription,
       primaryKeyword,
       canonicalUrl,
+      metaRobots = 'index, follow',
+      projectId = null,
+      relatedProjects = [],
+      relatedProperties = [],
     } = body;
 
     if (!title || typeof title !== 'string' || !title.trim()) {
@@ -147,13 +155,15 @@ export async function POST(req: NextRequest) {
     }
 
     const effectiveDate = publishedAt ? new Date(publishedAt) : new Date();
+    const effectiveProjectId = projectId ? parseInt(projectId, 10) : null;
 
     const [result] = await pool.query<ResultSetHeader>(
       `INSERT INTO blogs (
         title, slug, excerpt, content, author, category, tags,
         featuredImage, imageAlt, readTime, publishStatus, publishedAt,
-        metaTitle, metaDescription, primaryKeyword, canonicalUrl
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        metaTitle, metaDescription, primaryKeyword, canonicalUrl,
+        metaRobots, projectId, relatedProjects, relatedProperties
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         title.trim(),
         cleanSlug,
@@ -171,6 +181,10 @@ export async function POST(req: NextRequest) {
         metaDescription || excerpt.substring(0, 160) || null,
         primaryKeyword || null,
         canonicalUrl || null,
+        metaRobots,
+        effectiveProjectId,
+        JSON.stringify(Array.isArray(relatedProjects) ? relatedProjects : []),
+        JSON.stringify(Array.isArray(relatedProperties) ? relatedProperties : []),
       ]
     );
 

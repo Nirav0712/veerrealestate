@@ -15,12 +15,17 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search')?.trim() || '';
     const status = searchParams.get('status') || 'all';
     const leadType = searchParams.get('leadType') || 'all';
+    const includeArchived = searchParams.get('archived') === 'true';
     const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
     const limit = Math.min(100, Math.max(5, parseInt(searchParams.get('limit') || '25')));
     const offset = (page - 1) * limit;
 
     let whereClauses: string[] = [];
     let params: any[] = [];
+
+    if (!includeArchived) {
+      whereClauses.push('(is_archived = 0 OR is_archived IS NULL)');
+    }
 
     if (status && status !== 'all') {
       whereClauses.push('status = ?');

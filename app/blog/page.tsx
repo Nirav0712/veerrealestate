@@ -167,28 +167,28 @@ export default function BlogPage() {
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 
-            {/* Hero Section */}
-            <section className="relative bg-linear-to-br from-secondary to-secondary-light text-white py-12 md:py-24">
-                <div className="container mx-auto px-4">
-                    <div className="max-w-3xl mx-auto text-center">
-                        <h1 className="text-5xl md:text-6xl font-bold mb-6">Real Estate Insights & News</h1>
-                        <p className="text-xl md:text-2xl opacity-95">
-                            Stay updated with the latest trends, tips, and insights from India's real estate market
-                        </p>
-                    </div>
+            {/* Clean Header (Disruptive full-bleed hero banner removed per Phase 4 requirements) */}
+            <section className="pt-10 pb-4 bg-white">
+                <div className="container mx-auto px-4 text-center">
+                    <h1 className="text-3xl md:text-4xl font-bold text-secondary mb-2">
+                        Real Estate Insights & Articles
+                    </h1>
+                    <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
+                        Expert market analysis, neighborhood guides, and property investment tips from Veer Real Estate
+                    </p>
                 </div>
             </section>
 
             {/* Category Filter */}
-            <section className="py-8 bg-white border-b border-gray-200">
+            <section className="py-6 bg-white border-b border-gray-200">
                 <div className="container mx-auto px-4">
-                    <div className="flex flex-wrap gap-3 justify-center">
+                    <div className="flex flex-wrap gap-2.5 justify-center">
                         {categories.map((category) => (
                             <button
                                 key={category}
                                 onClick={() => setSelectedCategory(category)}
-                                className={`px-6 py-2 rounded-full font-medium transition-all ${selectedCategory === category
-                                    ? 'bg-primary text-white'
+                                className={`px-5 py-1.5 rounded-full text-sm font-semibold transition-all cursor-pointer ${selectedCategory === category
+                                    ? 'bg-primary text-white shadow-sm'
                                     : 'bg-gray-100 text-gray-700 hover:bg-secondary hover:text-white'
                                     }`}
                             >
