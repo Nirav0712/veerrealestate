@@ -42,6 +42,10 @@ export async function POST(req: NextRequest) {
       projectId,
       projectName,
       source = 'Website Inquiry',
+      marketingConsent = false,
+      termsConsent = true,
+      recaptchaToken,
+      whatsappNumber,
       honeypot,
     } = body;
 
@@ -66,13 +70,39 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 4. Insert into crm_inquiries
+    if (termsConsent === false) {
+      return NextResponse.json(
+        { error: 'Please accept the Terms and Privacy Policy to proceed.' },
+        { status: 400 }
+      );
+    }
+
+    // 4. Anti-spam / ReCAPTCHA verification if token provided and secret key exists
+    if (recaptchaToken && process.env.RECAPTCHA_SECRET_KEY) {
+      try {
+        const verifyRes = await fetch(
+          `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`,
+          { method: 'POST' }
+        );
+        const verifyData = await verifyRes.json();
+        if (!verifyData.success) {
+          return NextResponse.json(
+            { error: 'CAPTCHA verification failed. Please try again.' },
+            { status: 400 }
+          );
+        }
+      } catch (recaptchaErr) {
+        console.warn('[inquiries] ReCAPTCHA verification check failed:', recaptchaErr);
+      }
+    }
+
+    // 5. Insert into crm_inquiries
     const [result] = await pool.query<ResultSetHeader>(
       `INSERT INTO crm_inquiries (
         leadType, name, phone, email, subject, message,
         propertyId, propertyTitle, projectId, projectName,
-        status, source, ipAddress, userAgent
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'New', ?, ?, ?)`,
+        status, source, ipAddress, userAgent, marketingConsent
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'New', ?, ?, ?, ?)`,
       [
         leadType,
         name.trim(),
@@ -87,13 +117,28 @@ export async function POST(req: NextRequest) {
         source,
         ip,
         userAgent,
+        marketingConsent ? 1 : 0,
       ]
     );
+
+    // 6. Generate WhatsApp click-to-chat URL if applicable
+    const targetWhatsApp = (whatsappNumber || '919727027052').replace(/[^0-9]/g, '');
+    const waText =
+      `*New Inquiry - Veer Real Estate*%0A%0A` +
+      `*Name:* ${encodeURIComponent(name.trim())}%0A` +
+      `*Phone:* ${encodeURIComponent(cleanPhone)}%0A` +
+      (email ? `*Email:* ${encodeURIComponent(String(email).trim())}%0A` : '') +
+      (subject ? `*Subject:* ${encodeURIComponent(String(subject).trim())}%0A` : '') +
+      (message ? `*Message:* ${encodeURIComponent(String(message).trim())}%0A` : '') +
+      `*Source:* ${encodeURIComponent(source)}`;
+
+    const whatsappUrl = `https://wa.me/${targetWhatsApp}?text=${waText}`;
 
     return NextResponse.json(
       {
         success: true,
         inquiryId: result.insertId,
+        whatsappUrl,
         message: 'Thank you! Your inquiry has been submitted. Our property consultant will contact you shortly.',
       },
       { status: 201 }

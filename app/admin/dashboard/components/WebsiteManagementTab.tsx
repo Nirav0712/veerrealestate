@@ -29,6 +29,17 @@ import {
   AlertCircle,
   Link as LinkIcon,
   HelpCircle,
+  MapPin,
+  Building2,
+  PhoneCall,
+  Mail,
+  MessageSquare,
+  ArrowUp,
+  ArrowDown,
+  Edit3,
+  X,
+  Sliders,
+  Navigation,
 } from 'lucide-react';
 import SeoSettingsForm from './SeoSettingsForm';
 
@@ -55,6 +66,13 @@ export default function WebsiteManagementTab({ initialSubTab }: { initialSubTab?
 
   // Content Store State for all sections
   const [contentStore, setContentStore] = useState<Record<string, any>>({});
+
+  // Dynamic Branches State
+  const [branches, setBranches] = useState<any[]>([]);
+  const [branchesLoading, setBranchesLoading] = useState(false);
+  const [editingBranch, setEditingBranch] = useState<any | null>(null);
+  const [isBranchModalOpen, setIsBranchModalOpen] = useState(false);
+  const [savingBranch, setSavingBranch] = useState(false);
 
   // Media Library state
   const [mediaFiles, setMediaFiles] = useState<Array<{ name: string; url: string; size: number; updatedAt: string; extension: string; folder: string }>>([]);
@@ -111,15 +129,169 @@ export default function WebsiteManagementTab({ initialSubTab }: { initialSubTab?
     }
   };
 
+  // Load branches
+  const loadBranches = async () => {
+    try {
+      setBranchesLoading(true);
+      const res = await fetch('/api/admin/branches');
+      if (res.ok) {
+        const data = await res.json();
+        setBranches(data.branches || []);
+      }
+    } catch (err) {
+      console.error('Failed to load branches:', err);
+    } finally {
+      setBranchesLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadAllContent();
+    loadBranches();
   }, []);
 
   useEffect(() => {
     if (activeSubTab === 'media') {
       loadMedia();
     }
+    if (activeSubTab === 'contact' || activeSubTab === 'footer') {
+      loadBranches();
+    }
   }, [activeSubTab]);
+
+  const handleAddNewBranch = () => {
+    setEditingBranch({
+      id: '',
+      name: '',
+      displayTitle: '',
+      address: '',
+      city: 'Ahmedabad',
+      state: 'Gujarat',
+      postalCode: '380052',
+      country: 'India',
+      phones: [{ number: '', label: 'Office' }],
+      email: 'horseveer@gmail.com',
+      whatsapp: '919727027052',
+      mapUrl: '',
+      mapEmbedUrl: '',
+      facebook: '',
+      instagram: '',
+      youtube: '',
+      googleReview: '',
+      linkedin: '',
+      isActive: 1,
+      displayOrder: branches.length + 1,
+    });
+    setIsBranchModalOpen(true);
+  };
+
+  const handleEditBranch = (b: any) => {
+    setEditingBranch({
+      ...b,
+      phones: Array.isArray(b.phones) && b.phones.length > 0 ? b.phones : [{ number: '', label: 'Office' }],
+      isActive: b.isActive ? 1 : 0,
+    });
+    setIsBranchModalOpen(true);
+  };
+
+  const handleSaveBranch = async () => {
+    if (!editingBranch) return;
+    if (!editingBranch.name || !editingBranch.name.trim()) {
+      alert('Please enter a branch name.');
+      return;
+    }
+    if (!editingBranch.address || !editingBranch.address.trim()) {
+      alert('Please enter the branch address.');
+      return;
+    }
+
+    try {
+      setSavingBranch(true);
+      const isNew = !editingBranch.id || !branches.some((b) => b.id === editingBranch.id);
+      const endpoint = isNew ? '/api/admin/branches' : `/api/admin/branches/${editingBranch.id}`;
+      const method = isNew ? 'POST' : 'PUT';
+
+      const res = await fetch(endpoint, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingBranch),
+      });
+
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.error || 'Failed to save branch');
+      }
+
+      setFeedback({ type: 'success', message: `Branch "${editingBranch.name}" saved successfully!` });
+      setTimeout(() => setFeedback(null), 3500);
+      setIsBranchModalOpen(false);
+      setEditingBranch(null);
+      await loadBranches();
+    } catch (err: any) {
+      alert(err.message || 'Error saving branch');
+    } finally {
+      setSavingBranch(false);
+    }
+  };
+
+  const handleDeleteBranch = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete branch "${name}"? This action cannot be undone.`)) {
+      return;
+    }
+    try {
+      const res = await fetch(`/api/admin/branches/${id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to delete');
+      }
+      setFeedback({ type: 'success', message: `Branch "${name}" deleted successfully.` });
+      setTimeout(() => setFeedback(null), 3000);
+      await loadBranches();
+    } catch (err: any) {
+      alert(err.message || 'Error deleting branch');
+    }
+  };
+
+  const handleToggleBranchActive = async (b: any) => {
+    try {
+      const updatedActive = b.isActive ? 0 : 1;
+      const res = await fetch(`/api/admin/branches/${b.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: updatedActive }),
+      });
+      if (res.ok) {
+        setBranches((prev) =>
+          prev.map((item) => (item.id === b.id ? { ...item, isActive: updatedActive } : item))
+        );
+      }
+    } catch (err) {
+      console.error('Error toggling branch status:', err);
+    }
+  };
+
+  const handleMoveBranch = async (index: number, direction: 'up' | 'down') => {
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= branches.length) return;
+
+    const newBranches = [...branches];
+    const temp = newBranches[index];
+    newBranches[index] = newBranches[newIndex];
+    newBranches[newIndex] = temp;
+
+    setBranches(newBranches);
+
+    try {
+      const orderedIds = newBranches.map((b) => b.id);
+      await fetch('/api/admin/branches/reorder', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds }),
+      });
+    } catch (err) {
+      console.error('Error saving reorder:', err);
+    }
+  };
 
   // Save specific section to DB
   const saveSection = async (sectionKey: string, customData?: any) => {
@@ -238,6 +410,7 @@ export default function WebsiteManagementTab({ initialSubTab }: { initialSubTab?
   const pageAboutData = contentStore.page_about_us || {};
   const pageContactData = contentStore.page_contact_us || {};
   const pageBuilderData = contentStore.page_builder_consultation || {};
+  const contactFormSettings = contentStore.contact_form_settings || {};
 
   if (loading) {
     return (
@@ -1154,70 +1327,196 @@ export default function WebsiteManagementTab({ initialSubTab }: { initialSubTab?
           )}
 
           {pageSection === 'contact_us' && (
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-6">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                <div>
-                  <h3 className="text-base font-bold text-slate-900">Contact Us Page (/contact)</h3>
-                  <p className="text-xs text-slate-500">Update contact numbers, WhatsApp redirect target, email and Google Maps.</p>
+            <div className="space-y-6">
+              {/* Branch Management Callout */}
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center shrink-0 mt-0.5">
+                    <MapPin className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-900">Dynamic Multi-Branch Office Addresses</h4>
+                    <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                      Branch offices, phone numbers with labels, WhatsApp, and Google Maps are unified under <strong>Branch Management</strong> and dynamically update both the Contact page and Footer.
+                    </p>
+                  </div>
                 </div>
                 <button
-                  onClick={() => saveSection('page_contact_us')}
-                  disabled={savingKey === 'page_contact_us'}
-                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer"
+                  onClick={() => setActiveSubTab('contact')}
+                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shrink-0 cursor-pointer shadow-xs flex items-center gap-1.5"
                 >
-                  <Save className="w-3.5 h-3.5" />
-                  <span>{savingKey === 'page_contact_us' ? 'Saving...' : 'Save Contact Page'}</span>
+                  <span>Go to Branch Management</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Contact Form Settings */}
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-6">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900">Contact Inquiry Form Settings</h3>
+                    <p className="text-xs text-slate-500">
+                      Configure form headline, subject dropdown options, optional marketing consent text, and success notifications.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => saveSection('contact_form_settings')}
+                    disabled={savingKey === 'contact_form_settings'}
+                    className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>{savingKey === 'contact_form_settings' ? 'Saving...' : 'Save Form Settings'}</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Form Heading</label>
+                    <input
+                      type="text"
+                      value={contactFormSettings.title || 'Send Message'}
+                      onChange={(e) => updateSectionField('contact_form_settings', ['title'], e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Submit Button Label</label>
+                    <input
+                      type="text"
+                      value={contactFormSettings.submitButtonText || 'Send via WhatsApp'}
+                      onChange={(e) => updateSectionField('contact_form_settings', ['submitButtonText'], e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Inquiry Notification Email</label>
+                    <input
+                      type="email"
+                      value={contactFormSettings.notificationEmail || 'horseveer@gmail.com'}
+                      onChange={(e) => updateSectionField('contact_form_settings', ['notificationEmail'], e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
+                    />
+                  </div>
+                </div>
+
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Phone Number (Display)</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Hero Subtitle</label>
                   <input
                     type="text"
-                    value={pageContactData.phone || ''}
-                    onChange={(e) => updateSectionField('page_contact_us', ['phone'], e.target.value)}
+                    value={contactFormSettings.subtitle || "Have questions? We're here to help you find your dream property"}
+                    onChange={(e) => updateSectionField('contact_form_settings', ['subtitle'], e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">WhatsApp Number (e.g. 919727027052)</label>
-                  <input
-                    type="text"
-                    value={pageContactData.whatsapp || ''}
-                    onChange={(e) => updateSectionField('page_contact_us', ['whatsapp'], e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Inquiry Email</label>
-                  <input
-                    type="email"
-                    value={pageContactData.email || ''}
-                    onChange={(e) => updateSectionField('page_contact_us', ['email'], e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
-                  />
-                </div>
-              </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Office Address</label>
-                <input
-                  type="text"
-                  value={pageContactData.address || ''}
-                  onChange={(e) => updateSectionField('page_contact_us', ['address'], e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
-                />
-              </div>
+                {/* Subject Dropdown Options Manager */}
+                <div className="border border-slate-200/80 rounded-xl p-4 bg-slate-50/50 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Dynamic Subject Dropdown Options</h4>
+                      <p className="text-[11px] text-slate-500">Inquiry categories users can choose from when submitting the contact form.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const subjects = Array.isArray(contactFormSettings.subjects) ? [...contactFormSettings.subjects] : [];
+                        subjects.push({ id: 'sub_' + Date.now().toString(36), label: 'New Subject' });
+                        updateSectionField('contact_form_settings', ['subjects'], subjects);
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Subject</span>
+                    </button>
+                  </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Google Maps Embed URL</label>
-                <input
-                  type="text"
-                  value={pageContactData.mapEmbedUrl || ''}
-                  onChange={(e) => updateSectionField('page_contact_us', ['mapEmbedUrl'], e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
-                />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                    {(contactFormSettings.subjects || [
+                      { id: 'buy', label: 'Buying' },
+                      { id: 'sell', label: 'Selling' },
+                      { id: 'rent', label: 'Renting' },
+                      { id: 'invest', label: 'Investment Consultation' },
+                      { id: 'builder', label: 'Builder Consultation' },
+                      { id: 'general', label: 'General Inquiry' },
+                    ]).map((sub: any, sIdx: number) => (
+                      <div key={sub.id || sIdx} className="flex items-center gap-2 p-2 rounded-xl border border-slate-200 bg-white">
+                        <input
+                          type="text"
+                          value={sub.label || ''}
+                          onChange={(e) => {
+                            const subjects = [...(contactFormSettings.subjects || [])];
+                            subjects[sIdx] = { ...subjects[sIdx], label: e.target.value };
+                            updateSectionField('contact_form_settings', ['subjects'], subjects);
+                          }}
+                          className="flex-1 px-2.5 py-1 rounded-lg border border-slate-200 text-xs font-medium"
+                          placeholder="Subject label"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const subjects = contactFormSettings.subjects.filter((_: any, i: number) => i !== sIdx);
+                            updateSectionField('contact_form_settings', ['subjects'], subjects);
+                          }}
+                          className="p-1 text-rose-500 hover:text-rose-700 cursor-pointer"
+                          title="Delete Subject"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Marketing Consent & Success Message */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2 border border-slate-200/80 rounded-xl p-4 bg-slate-50/50">
+                    <label className="flex items-center gap-2 text-xs font-bold text-slate-800 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={contactFormSettings.showMarketingConsent !== false}
+                        onChange={(e) =>
+                          updateSectionField('contact_form_settings', ['showMarketingConsent'], e.target.checked)
+                        }
+                        className="rounded accent-amber-500 h-4 w-4"
+                      />
+                      <span>Show Optional Marketing Consent Checkbox</span>
+                    </label>
+                    <p className="text-[11px] text-slate-500">
+                      Unselected by default as per compliance regulations.
+                    </p>
+                    <textarea
+                      rows={2}
+                      value={
+                        contactFormSettings.marketingConsentText ||
+                        'I would like to receive communication via SMS, RCS SMS, Email & WhatsApp services for offers, updates & transactions.'
+                      }
+                      onChange={(e) =>
+                        updateSectionField('contact_form_settings', ['marketingConsentText'], e.target.value)
+                      }
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                      placeholder="Consent text displayed beside checkbox"
+                    />
+                  </div>
+
+                  <div className="space-y-2 border border-slate-200/80 rounded-xl p-4 bg-slate-50/50">
+                    <label className="block text-xs font-bold text-slate-800">Submission Success Message</label>
+                    <p className="text-[11px] text-slate-500">
+                      Shown to the user once the inquiry is successfully saved in the CRM.
+                    </p>
+                    <textarea
+                      rows={3}
+                      value={
+                        contactFormSettings.successMessage ||
+                        'Thank you! Your message has been sent. Our property consultant will contact you shortly.'
+                      }
+                      onChange={(e) =>
+                        updateSectionField('contact_form_settings', ['successMessage'], e.target.value)
+                      }
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                      placeholder="Confirmation message"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -1412,70 +1711,501 @@ export default function WebsiteManagementTab({ initialSubTab }: { initialSubTab?
           SUB-TAB 4: FOOTER
           ======================================================== */}
       {activeSubTab === 'footer' && (
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-            <div>
-              <h3 className="text-base font-bold text-slate-900">Footer Configuration</h3>
-              <p className="text-xs text-slate-500">Edit company description, office branch headings, RERA disclaimer, and copyright text.</p>
+        <div className="space-y-6">
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h3 className="text-base font-bold text-slate-900">Footer Management</h3>
+                <p className="text-xs text-slate-500">
+                  Manage company branding, Quick Links, Property Types, Builder Consultation banner, and copyright disclaimers.
+                </p>
+              </div>
+              <button
+                onClick={() => saveSection('footer_config')}
+                disabled={savingKey === 'footer_config'}
+                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>{savingKey === 'footer_config' ? 'Saving...' : 'Save Footer'}</span>
+              </button>
             </div>
-            <button
-              onClick={() => saveSection('footer_config')}
-              disabled={savingKey === 'footer_config'}
-              className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer"
-            >
-              <Save className="w-3.5 h-3.5" />
-              <span>{savingKey === 'footer_config' ? 'Saving...' : 'Save Footer'}</span>
-            </button>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Company Description</label>
-              <textarea
-                rows={3}
-                value={footerData.description || ''}
-                onChange={(e) => updateSectionField('footer_config', ['description'], e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">RERA Disclaimer</label>
-              <textarea
-                rows={3}
-                value={footerData.reraDisclaimer || ''}
-                onChange={(e) => updateSectionField('footer_config', ['reraDisclaimer'], e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
-              />
-            </div>
-          </div>
+            {/* 1. Company Section */}
+            <div className="border border-slate-200/70 rounded-xl p-4 bg-slate-50/50 space-y-4">
+              <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                <Building2 className="w-3.5 h-3.5 text-amber-600" />
+                <span>Company Branding in Footer</span>
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Company Name</label>
+                  <input
+                    type="text"
+                    value={footerData.companyName || 'Veer Real Estate'}
+                    onChange={(e) => updateSectionField('footer_config', ['companyName'], e.target.value)}
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Tagline</label>
+                  <input
+                    type="text"
+                    value={footerData.tagline || 'Your Trusted Partner in Real Estate'}
+                    onChange={(e) => updateSectionField('footer_config', ['tagline'], e.target.value)}
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Footer Logo URL</label>
+                  <input
+                    type="text"
+                    value={footerData.logoUrl || '/images/veer-logo-old.png'}
+                    onChange={(e) => updateSectionField('footer_config', ['logoUrl'], e.target.value)}
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                  />
+                </div>
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">East Branch Office Label</label>
-              <input
-                type="text"
-                value={footerData.eastOffice || ''}
-                onChange={(e) => updateSectionField('footer_config', ['eastOffice'], e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
-              />
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Company Description</label>
+                <textarea
+                  rows={2}
+                  value={footerData.description || ''}
+                  onChange={(e) => updateSectionField('footer_config', ['description'], e.target.value)}
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                  placeholder="Short description displayed below the logo in the footer."
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">West Branch Office Label</label>
-              <input
-                type="text"
-                value={footerData.westOffice || ''}
-                onChange={(e) => updateSectionField('footer_config', ['westOffice'], e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
-              />
+
+            {/* 2. Quick Links Manager */}
+            <div className="border border-slate-200/70 rounded-xl p-4 bg-slate-50/50 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                    <LinkIcon className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Column 2: Quick Links</span>
+                  </h4>
+                  <p className="text-[11px] text-slate-500">Add, edit, reorder or toggle links in the Quick Links column.</p>
+                </div>
+                <button
+                  onClick={() => {
+                    const links = Array.isArray(footerData.quickLinks) ? [...footerData.quickLinks] : [];
+                    links.push({
+                      id: 'ql_' + Date.now().toString(36),
+                      label: 'New Link',
+                      url: '/',
+                      is_active: true,
+                      is_new: false,
+                      order: links.length + 1,
+                    });
+                    updateSectionField('footer_config', ['quickLinks'], links);
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Quick Link</span>
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                {(footerData.quickLinks || []).map((ql: any, idx: number) => (
+                  <div
+                    key={ql.id || idx}
+                    className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-white"
+                  >
+                    <span className="text-xs font-bold text-slate-400 w-5 text-center">{idx + 1}</span>
+                    <input
+                      type="text"
+                      value={ql.label || ''}
+                      onChange={(e) => {
+                        const links = [...footerData.quickLinks];
+                        links[idx] = { ...links[idx], label: e.target.value };
+                        updateSectionField('footer_config', ['quickLinks'], links);
+                      }}
+                      placeholder="Label"
+                      className="w-40 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium"
+                    />
+                    <input
+                      type="text"
+                      value={ql.url || ''}
+                      onChange={(e) => {
+                        const links = [...footerData.quickLinks];
+                        links[idx] = { ...links[idx], url: e.target.value };
+                        updateSectionField('footer_config', ['quickLinks'], links);
+                      }}
+                      placeholder="Destination Path (/about-us)"
+                      className="flex-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                    />
+                    <label className="flex items-center gap-1.5 text-xs text-amber-700 font-semibold px-2 py-1 rounded bg-amber-50 border border-amber-200 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(ql.is_new)}
+                        onChange={(e) => {
+                          const links = [...footerData.quickLinks];
+                          links[idx] = { ...links[idx], is_new: e.target.checked };
+                          updateSectionField('footer_config', ['quickLinks'], links);
+                        }}
+                        className="rounded accent-amber-500"
+                      />
+                      <span>"New" Badge</span>
+                    </label>
+                    <button
+                      onClick={() => {
+                        const links = [...footerData.quickLinks];
+                        links[idx] = { ...links[idx], is_active: ql.is_active === false ? true : false };
+                        updateSectionField('footer_config', ['quickLinks'], links);
+                      }}
+                      title={ql.is_active === false ? 'Hidden' : 'Visible'}
+                      className={`p-1.5 rounded-lg border text-xs cursor-pointer ${
+                        ql.is_active === false
+                          ? 'bg-rose-50 border-rose-200 text-rose-600'
+                          : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                      }`}
+                    >
+                      {ql.is_active === false ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (idx === 0) return;
+                        const links = [...footerData.quickLinks];
+                        const t = links[idx];
+                        links[idx] = links[idx - 1];
+                        links[idx - 1] = t;
+                        updateSectionField('footer_config', ['quickLinks'], links);
+                      }}
+                      disabled={idx === 0}
+                      className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-30 cursor-pointer"
+                      title="Move Up"
+                    >
+                      <ArrowUp className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (idx === footerData.quickLinks.length - 1) return;
+                        const links = [...footerData.quickLinks];
+                        const t = links[idx];
+                        links[idx] = links[idx + 1];
+                        links[idx + 1] = t;
+                        updateSectionField('footer_config', ['quickLinks'], links);
+                      }}
+                      disabled={idx === footerData.quickLinks.length - 1}
+                      className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-30 cursor-pointer"
+                      title="Move Down"
+                    >
+                      <ArrowDown className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (!confirm(`Remove quick link "${ql.label}"?`)) return;
+                        const links = footerData.quickLinks.filter((_: any, i: number) => i !== idx);
+                        updateSectionField('footer_config', ['quickLinks'], links);
+                      }}
+                      className="p-1.5 text-rose-500 hover:text-rose-700 cursor-pointer"
+                      title="Delete Link"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Copyright Notice</label>
-              <input
-                type="text"
-                value={footerData.copyright || ''}
-                onChange={(e) => updateSectionField('footer_config', ['copyright'], e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
-              />
+
+            {/* 3. Property Types Manager */}
+            <div className="border border-slate-200/70 rounded-xl p-4 bg-slate-50/50 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                    <Layers className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Column 3: Property Types</span>
+                  </h4>
+                  <p className="text-[11px] text-slate-500">Manage property category links displayed in the footer.</p>
+                </div>
+                <button
+                  onClick={() => {
+                    const pts = Array.isArray(footerData.propertyTypes) ? [...footerData.propertyTypes] : [];
+                    pts.push({
+                      id: 'pt_' + Date.now().toString(36),
+                      label: 'New Property Type',
+                      url: '/properties?type=',
+                      is_active: true,
+                      order: pts.length + 1,
+                    });
+                    updateSectionField('footer_config', ['propertyTypes'], pts);
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Property Type</span>
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                {(footerData.propertyTypes || []).map((pt: any, idx: number) => (
+                  <div
+                    key={pt.id || idx}
+                    className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-white"
+                  >
+                    <span className="text-xs font-bold text-slate-400 w-5 text-center">{idx + 1}</span>
+                    <input
+                      type="text"
+                      value={pt.label || ''}
+                      onChange={(e) => {
+                        const pts = [...footerData.propertyTypes];
+                        pts[idx] = { ...pts[idx], label: e.target.value };
+                        updateSectionField('footer_config', ['propertyTypes'], pts);
+                      }}
+                      placeholder="Label"
+                      className="w-44 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium"
+                    />
+                    <input
+                      type="text"
+                      value={pt.url || ''}
+                      onChange={(e) => {
+                        const pts = [...footerData.propertyTypes];
+                        pts[idx] = { ...pts[idx], url: e.target.value };
+                        updateSectionField('footer_config', ['propertyTypes'], pts);
+                      }}
+                      placeholder="URL (/properties?type=Apartment)"
+                      className="flex-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                    />
+                    <button
+                      onClick={() => {
+                        const pts = [...footerData.propertyTypes];
+                        pts[idx] = { ...pts[idx], is_active: pt.is_active === false ? true : false };
+                        updateSectionField('footer_config', ['propertyTypes'], pts);
+                      }}
+                      title={pt.is_active === false ? 'Hidden' : 'Visible'}
+                      className={`p-1.5 rounded-lg border text-xs cursor-pointer ${
+                        pt.is_active === false
+                          ? 'bg-rose-50 border-rose-200 text-rose-600'
+                          : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                      }`}
+                    >
+                      {pt.is_active === false ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (idx === 0) return;
+                        const pts = [...footerData.propertyTypes];
+                        const t = pts[idx];
+                        pts[idx] = pts[idx - 1];
+                        pts[idx - 1] = t;
+                        updateSectionField('footer_config', ['propertyTypes'], pts);
+                      }}
+                      disabled={idx === 0}
+                      className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-30 cursor-pointer"
+                      title="Move Up"
+                    >
+                      <ArrowUp className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (idx === footerData.propertyTypes.length - 1) return;
+                        const pts = [...footerData.propertyTypes];
+                        const t = pts[idx];
+                        pts[idx] = pts[idx + 1];
+                        pts[idx + 1] = t;
+                        updateSectionField('footer_config', ['propertyTypes'], pts);
+                      }}
+                      disabled={idx === footerData.propertyTypes.length - 1}
+                      className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-30 cursor-pointer"
+                      title="Move Down"
+                    >
+                      <ArrowDown className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (!confirm(`Remove property type "${pt.label}"?`)) return;
+                        const pts = footerData.propertyTypes.filter((_: any, i: number) => i !== idx);
+                        updateSectionField('footer_config', ['propertyTypes'], pts);
+                      }}
+                      className="p-1.5 text-rose-500 hover:text-rose-700 cursor-pointer"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 4. Column 4: Dynamic Active Branches Preview */}
+            <div className="border border-slate-200/70 rounded-xl p-4 bg-slate-50/50 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                    <MapPin className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Column 4: Active Branches in Footer</span>
+                  </h4>
+                  <p className="text-[11px] text-slate-500">
+                    These branch cards are generated dynamically from active records in Branch Management (Sub-tab 7).
+                  </p>
+                </div>
+                <button
+                  onClick={() => setActiveSubTab('contact')}
+                  className="text-xs text-amber-600 hover:text-amber-700 font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  <span>Manage Branches →</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {branches.filter((b) => b.isActive).map((b) => (
+                  <div key={b.id} className="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-900 text-xs">{b.displayTitle || b.name}</span>
+                      <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-semibold">
+                        Active
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 line-clamp-2">{b.address}</p>
+                    <div className="flex flex-wrap gap-1 text-[10px] text-slate-600">
+                      {Array.isArray(b.phones) &&
+                        b.phones.map((p: any, i: number) => (
+                          <span key={i} className="bg-slate-100 px-1.5 py-0.5 rounded">
+                            {typeof p === 'string' ? p : p.number}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 5. Builder Consultation Special Banner Editor */}
+            <div className="border border-slate-200/70 rounded-xl p-4 bg-slate-50/50 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Builder Consultation Special Banner</span>
+                  </h4>
+                  <p className="text-[11px] text-slate-500">Gold-accented banner above the footer bottom line.</p>
+                </div>
+                <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={footerData.builderBanner?.enabled !== false}
+                    onChange={(e) =>
+                      updateSectionField('footer_config', ['builderBanner', 'enabled'], e.target.checked)
+                    }
+                    className="rounded accent-amber-500"
+                  />
+                  <span>Banner Enabled</span>
+                </label>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Banner Title</label>
+                  <input
+                    type="text"
+                    value={footerData.builderBanner?.title || ''}
+                    onChange={(e) =>
+                      updateSectionField('footer_config', ['builderBanner', 'title'], e.target.value)
+                    }
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Badge Text</label>
+                  <input
+                    type="text"
+                    value={footerData.builderBanner?.badgeText || ''}
+                    onChange={(e) =>
+                      updateSectionField('footer_config', ['builderBanner', 'badgeText'], e.target.value)
+                    }
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Banner Subtitle</label>
+                <textarea
+                  rows={2}
+                  value={footerData.builderBanner?.subtitle || ''}
+                  onChange={(e) =>
+                    updateSectionField('footer_config', ['builderBanner', 'subtitle'], e.target.value)
+                  }
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Consultant Name</label>
+                  <input
+                    type="text"
+                    value={footerData.builderBanner?.consultantName || ''}
+                    onChange={(e) =>
+                      updateSectionField('footer_config', ['builderBanner', 'consultantName'], e.target.value)
+                    }
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Button Text</label>
+                  <input
+                    type="text"
+                    value={footerData.builderBanner?.buttonText || ''}
+                    onChange={(e) =>
+                      updateSectionField('footer_config', ['builderBanner', 'buttonText'], e.target.value)
+                    }
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Button URL</label>
+                  <input
+                    type="text"
+                    value={footerData.builderBanner?.buttonUrl || ''}
+                    onChange={(e) =>
+                      updateSectionField('footer_config', ['builderBanner', 'buttonUrl'], e.target.value)
+                    }
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 6. Legal, Copyright & RERA Disclaimer */}
+            <div className="border border-slate-200/70 rounded-xl p-4 bg-slate-50/50 space-y-4">
+              <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                <FileText className="w-3.5 h-3.5 text-amber-600" />
+                <span>Copyright & RERA Disclaimer</span>
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Copyright Notice</label>
+                  <input
+                    type="text"
+                    value={footerData.copyright || ''}
+                    onChange={(e) => updateSectionField('footer_config', ['copyright'], e.target.value)}
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Builder Link Text</label>
+                  <input
+                    type="text"
+                    value={footerData.builderLinkText || ''}
+                    onChange={(e) => updateSectionField('footer_config', ['builderLinkText'], e.target.value)}
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">RERA Disclaimer</label>
+                <textarea
+                  rows={2}
+                  value={footerData.reraDisclaimer || ''}
+                  onChange={(e) => updateSectionField('footer_config', ['reraDisclaimer'], e.target.value)}
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -1646,138 +2376,632 @@ export default function WebsiteManagementTab({ initialSubTab }: { initialSubTab?
       )}
 
       {/* ========================================================
-          SUB-TAB 7: CONTACT & SOCIAL
+          SUB-TAB 7: CONTACT & SOCIAL + MULTI-BRANCH MANAGEMENT
           ======================================================== */}
       {activeSubTab === 'contact' && (
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-            <div>
-              <h3 className="text-base font-bold text-slate-900">Contact & Social Media Information</h3>
-              <p className="text-xs text-slate-500">Edit business phone, WhatsApp redirection number, office address and social channels.</p>
+        <div className="space-y-6">
+          {/* Branch Offices Management Card */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-amber-600" />
+                  <span>Dynamic Branch Offices Management</span>
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Manage physical branches, independent phone numbers with custom labels, WhatsApp chat, Google Maps and social media channels. Changes immediately update both the Footer and Contact Us page.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={loadBranches}
+                  disabled={branchesLoading}
+                  className="px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                  title="Refresh Branches"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${branchesLoading ? 'animate-spin' : ''}`} />
+                  <span>Refresh</span>
+                </button>
+                <button
+                  onClick={handleAddNewBranch}
+                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add New Branch</span>
+                </button>
+              </div>
             </div>
-            <button
-              onClick={() => saveSection('company_info')}
-              disabled={savingKey === 'company_info'}
-              className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer"
-            >
-              <Save className="w-3.5 h-3.5" />
-              <span>{savingKey === 'company_info' ? 'Saving...' : 'Save Contact Info'}</span>
-            </button>
+
+            {branchesLoading && branches.length === 0 ? (
+              <div className="p-8 text-center text-xs text-slate-400">Loading branches from database...</div>
+            ) : branches.length === 0 ? (
+              <div className="p-8 text-center text-xs text-slate-500 bg-slate-50 rounded-xl">
+                No branches configured yet. Click "Add New Branch" to create your first office.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {branches.map((b, idx) => {
+                  const phoneList = Array.isArray(b.phones)
+                    ? b.phones.map((p: any) => (typeof p === 'string' ? { number: p, label: 'Office' } : p))
+                    : [];
+
+                  return (
+                    <div
+                      key={b.id || idx}
+                      className={`p-4 rounded-xl border transition-all ${
+                        b.isActive
+                          ? 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
+                          : 'border-slate-200 bg-slate-50 opacity-60'
+                      }`}
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                        {/* Branch Details */}
+                        <div className="space-y-2 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">
+                              #{idx + 1}
+                            </span>
+                            <h4 className="text-sm font-bold text-slate-900">{b.name}</h4>
+                            {b.displayTitle && b.displayTitle !== b.name && (
+                              <span className="text-xs text-slate-500 font-medium">({b.displayTitle})</span>
+                            )}
+                            <span
+                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                b.isActive
+                                  ? 'bg-emerald-100 text-emerald-800'
+                                  : 'bg-rose-100 text-rose-800'
+                              }`}
+                            >
+                              {b.isActive ? 'Active on Website' : 'Inactive / Hidden'}
+                            </span>
+                          </div>
+
+                          <p className="text-xs text-slate-600 leading-relaxed flex items-start gap-1.5">
+                            <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                            <span>{b.address}</span>
+                          </p>
+
+                          {/* Phone numbers chips */}
+                          <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                            {phoneList.map((ph: any, pIdx: number) => (
+                              <span
+                                key={pIdx}
+                                className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-50 border border-amber-200 text-amber-900"
+                              >
+                                <PhoneCall className="w-3 h-3 text-amber-600" />
+                                <span className="text-[10px] text-amber-600 uppercase font-bold">
+                                  {ph.label || 'Office'}:
+                                </span>
+                                <span>{ph.number}</span>
+                              </span>
+                            ))}
+
+                            {b.whatsapp && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800">
+                                <i className="fab fa-whatsapp text-xs text-emerald-600"></i>
+                                <span>+{b.whatsapp}</span>
+                              </span>
+                            )}
+
+                            {b.email && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700">
+                                <Mail className="w-3 h-3 text-slate-500" />
+                                <span>{b.email}</span>
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Action buttons */}
+                        <div className="flex items-center gap-1 self-end sm:self-center shrink-0">
+                          <button
+                            onClick={() => handleToggleBranchActive(b)}
+                            title={b.isActive ? 'Deactivate branch' : 'Activate branch'}
+                            className={`p-2 rounded-lg border text-xs cursor-pointer ${
+                              b.isActive
+                                ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100'
+                                : 'bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100'
+                            }`}
+                          >
+                            {b.isActive ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                          </button>
+                          <button
+                            onClick={() => handleMoveBranch(idx, 'up')}
+                            disabled={idx === 0}
+                            title="Move Up"
+                            className="p-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
+                          >
+                            <ArrowUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleMoveBranch(idx, 'down')}
+                            disabled={idx === branches.length - 1}
+                            title="Move Down"
+                            className="p-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
+                          >
+                            <ArrowDown className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleEditBranch(b)}
+                            title="Edit Branch"
+                            className="p-2 rounded-lg border border-slate-200 bg-white text-amber-700 hover:bg-amber-50 cursor-pointer"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteBranch(b.id, b.name)}
+                            title="Delete Branch"
+                            className="p-2 rounded-lg border border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Company Name</label>
-              <input
-                type="text"
-                value={contactData.companyName || 'Veer Real Estate'}
-                onChange={(e) => updateSectionField('company_info', ['companyName'], e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Official Phone Number</label>
-              <input
-                type="text"
-                value={contactData.phone || '+91 97270 27052'}
-                onChange={(e) => updateSectionField('company_info', ['phone'], e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">WhatsApp Target (e.g. 919727027052)</label>
-              <input
-                type="text"
-                value={contactData.whatsapp || '919727027052'}
-                onChange={(e) => updateSectionField('company_info', ['whatsapp'], e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
-              />
-            </div>
-          </div>
+          {/* Edit / Add Branch Modal */}
+          {isBranchModalOpen && editingBranch && (
+            <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+              <div className="bg-white rounded-2xl max-w-2xl w-full border border-slate-200 shadow-xl overflow-hidden my-8">
+                <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-amber-600" />
+                    <h3 className="text-base font-bold text-slate-900">
+                      {editingBranch.id && branches.some((b) => b.id === editingBranch.id)
+                        ? `Edit Branch: ${editingBranch.name}`
+                        : 'Add New Office Branch'}
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsBranchModalOpen(false);
+                      setEditingBranch(null);
+                    }}
+                    className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Contact Email</label>
-              <input
-                type="email"
-                value={contactData.email || 'info@veerrealestate.com'}
-                onChange={(e) => updateSectionField('company_info', ['email'], e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Physical Office Address</label>
-              <input
-                type="text"
-                value={contactData.address || 'Ahmedabad, Gujarat, India'}
-                onChange={(e) => updateSectionField('company_info', ['address'], e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
-              />
-            </div>
-          </div>
+                <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                  {/* Basic Information */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        Branch Name <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={editingBranch.name || ''}
+                        onChange={(e) => setEditingBranch({ ...editingBranch, name: e.target.value })}
+                        placeholder="e.g. East Ahmedabad"
+                        className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">Display Title</label>
+                      <input
+                        type="text"
+                        value={editingBranch.displayTitle || ''}
+                        onChange={(e) => setEditingBranch({ ...editingBranch, displayTitle: e.target.value })}
+                        placeholder="Title displayed on footer/contact (e.g. East Ahmedabad Office)"
+                        className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
+                      />
+                    </div>
+                  </div>
 
-          {/* Social Links */}
-          <div className="pt-2 border-t border-slate-100">
-            <label className="block text-xs font-bold text-slate-700 mb-3">Social Media URLs</label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {/* Complete Address */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Complete Address <span className="text-rose-500">*</span>
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={editingBranch.address || ''}
+                      onChange={(e) => setEditingBranch({ ...editingBranch, address: e.target.value })}
+                      placeholder="e.g. C-238, Sumel 7, Odhav, Ahmedabad - 382415"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">City</label>
+                      <input
+                        type="text"
+                        value={editingBranch.city || 'Ahmedabad'}
+                        onChange={(e) => setEditingBranch({ ...editingBranch, city: e.target.value })}
+                        className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">State</label>
+                      <input
+                        type="text"
+                        value={editingBranch.state || 'Gujarat'}
+                        onChange={(e) => setEditingBranch({ ...editingBranch, state: e.target.value })}
+                        className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">Postal Code</label>
+                      <input
+                        type="text"
+                        value={editingBranch.postalCode || '380052'}
+                        onChange={(e) => setEditingBranch({ ...editingBranch, postalCode: e.target.value })}
+                        className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">Country</label>
+                      <input
+                        type="text"
+                        value={editingBranch.country || 'India'}
+                        onChange={(e) => setEditingBranch({ ...editingBranch, country: e.target.value })}
+                        className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Multiple Phone Numbers Manager */}
+                  <div className="border border-slate-200/80 rounded-xl p-4 bg-slate-50/50 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <PhoneCall className="w-3.5 h-3.5 text-amber-600" />
+                        <span>Phone Numbers (Multiple Supported)</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const currentPhones = Array.isArray(editingBranch.phones) ? [...editingBranch.phones] : [];
+                          currentPhones.push({ number: '', label: 'Office' });
+                          setEditingBranch({ ...editingBranch, phones: currentPhones });
+                        }}
+                        className="text-xs text-amber-600 hover:text-amber-700 font-bold flex items-center gap-1 cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add Phone</span>
+                      </button>
+                    </div>
+
+                    <div className="space-y-2">
+                      {(editingBranch.phones || []).map((ph: any, pIdx: number) => (
+                        <div key={pIdx} className="flex items-center gap-2">
+                          <select
+                            value={ph.label || 'Office'}
+                            onChange={(e) => {
+                              const newPhones = [...editingBranch.phones];
+                              newPhones[pIdx] = { ...newPhones[pIdx], label: e.target.value };
+                              setEditingBranch({ ...editingBranch, phones: newPhones });
+                            }}
+                            className="w-32 px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs bg-white font-semibold"
+                          >
+                            <option value="Office">Office</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Support">Support</option>
+                            <option value="Direct">Direct</option>
+                            <option value="Reception">Reception</option>
+                            <option value="General">General</option>
+                          </select>
+                          <input
+                            type="text"
+                            value={ph.number || ''}
+                            onChange={(e) => {
+                              const newPhones = [...editingBranch.phones];
+                              newPhones[pIdx] = { ...newPhones[pIdx], number: e.target.value };
+                              setEditingBranch({ ...editingBranch, phones: newPhones });
+                            }}
+                            placeholder="+91 93769 96179"
+                            className="flex-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newPhones = editingBranch.phones.filter((_: any, i: number) => i !== pIdx);
+                              setEditingBranch({ ...editingBranch, phones: newPhones });
+                            }}
+                            className="p-1.5 text-rose-500 hover:text-rose-700 cursor-pointer"
+                            title="Remove Phone"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Email & WhatsApp */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">Email Address</label>
+                      <input
+                        type="email"
+                        value={editingBranch.email || ''}
+                        onChange={(e) => setEditingBranch({ ...editingBranch, email: e.target.value })}
+                        placeholder="horseveer@gmail.com"
+                        className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        WhatsApp Number (Digits with country code)
+                      </label>
+                      <input
+                        type="text"
+                        value={editingBranch.whatsapp || ''}
+                        onChange={(e) => setEditingBranch({ ...editingBranch, whatsapp: e.target.value })}
+                        placeholder="919727027052"
+                        className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Google Maps Link & Map Embed */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">Google Maps URL</label>
+                      <input
+                        type="text"
+                        value={editingBranch.mapUrl || ''}
+                        onChange={(e) => setEditingBranch({ ...editingBranch, mapUrl: e.target.value })}
+                        placeholder="https://maps.google.com/?q=..."
+                        className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        Google Maps Embed URL (Iframe src)
+                      </label>
+                      <input
+                        type="text"
+                        value={editingBranch.mapEmbedUrl || ''}
+                        onChange={(e) => setEditingBranch({ ...editingBranch, mapEmbedUrl: e.target.value })}
+                        placeholder="https://www.google.com/maps/embed?..."
+                        className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Social Links */}
+                  <div className="border-t border-slate-100 pt-3 space-y-3">
+                    <label className="block text-xs font-bold text-slate-700">Branch-Specific Social Links</label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] text-slate-500 mb-1">Facebook URL</label>
+                        <input
+                          type="text"
+                          value={editingBranch.facebook || ''}
+                          onChange={(e) => setEditingBranch({ ...editingBranch, facebook: e.target.value })}
+                          className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-slate-500 mb-1">Instagram URL</label>
+                        <input
+                          type="text"
+                          value={editingBranch.instagram || ''}
+                          onChange={(e) => setEditingBranch({ ...editingBranch, instagram: e.target.value })}
+                          className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-slate-500 mb-1">YouTube URL</label>
+                        <input
+                          type="text"
+                          value={editingBranch.youtube || ''}
+                          onChange={(e) => setEditingBranch({ ...editingBranch, youtube: e.target.value })}
+                          className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-slate-500 mb-1">Google Review URL</label>
+                        <input
+                          type="text"
+                          value={editingBranch.googleReview || ''}
+                          onChange={(e) => setEditingBranch({ ...editingBranch, googleReview: e.target.value })}
+                          className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                        />
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="block text-[11px] text-slate-500 mb-1">LinkedIn URL</label>
+                        <input
+                          type="text"
+                          value={editingBranch.linkedin || ''}
+                          onChange={(e) => setEditingBranch({ ...editingBranch, linkedin: e.target.value })}
+                          className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Active Toggle & Order */}
+                  <div className="flex items-center justify-between border-t border-slate-100 pt-3">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(editingBranch.isActive)}
+                        onChange={(e) => setEditingBranch({ ...editingBranch, isActive: e.target.checked ? 1 : 0 })}
+                        className="rounded accent-amber-500 h-4 w-4"
+                      />
+                      <span className="text-xs font-bold text-slate-800">Active (Visible on Website)</span>
+                    </label>
+
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-slate-500">Display Order:</span>
+                      <input
+                        type="number"
+                        value={editingBranch.displayOrder || 0}
+                        onChange={(e) =>
+                          setEditingBranch({ ...editingBranch, displayOrder: parseInt(e.target.value) || 0 })
+                        }
+                        className="w-16 px-2 py-1 rounded border border-slate-200 text-xs text-center"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 p-4 border-t border-slate-100 bg-slate-50">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsBranchModalOpen(false);
+                      setEditingBranch(null);
+                    }}
+                    className="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-100 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveBranch}
+                    disabled={savingBranch}
+                    className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>{savingBranch ? 'Saving...' : 'Save Branch'}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Company General Information Card */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
-                <label className="block text-[11px] text-slate-500 mb-1">East Ahmedabad Facebook</label>
+                <h3 className="text-base font-bold text-slate-900">Company Master Contact Information</h3>
+                <p className="text-xs text-slate-500">Edit business phone, WhatsApp redirection number, and master company details.</p>
+              </div>
+              <button
+                onClick={() => saveSection('company_info')}
+                disabled={savingKey === 'company_info'}
+                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>{savingKey === 'company_info' ? 'Saving...' : 'Save Company Info'}</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Company Name</label>
                 <input
                   type="text"
-                  value={contactData.eastFb || 'https://www.facebook.com/people/Veer-Real-Estate-East-Ahmedabad/61571731020972/'}
-                  onChange={(e) => updateSectionField('company_info', ['eastFb'], e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                  value={contactData.companyName || 'Veer Real Estate'}
+                  onChange={(e) => updateSectionField('company_info', ['companyName'], e.target.value)}
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
                 />
               </div>
-
               <div>
-                <label className="block text-[11px] text-slate-500 mb-1">West Ahmedabad Facebook</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Official Phone Number</label>
                 <input
                   type="text"
-                  value={contactData.westFb || 'https://www.facebook.com/people/Veer-Real-Estate/61558935522154/'}
-                  onChange={(e) => updateSectionField('company_info', ['westFb'], e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                  value={contactData.phone || '+91 97270 27052'}
+                  onChange={(e) => updateSectionField('company_info', ['phone'], e.target.value)}
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
                 />
               </div>
-
               <div>
-                <label className="block text-[11px] text-slate-500 mb-1">East Ahmedabad Instagram</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">WhatsApp Target (e.g. 919727027052)</label>
                 <input
                   type="text"
-                  value={contactData.eastInsta || 'https://www.instagram.com/veerrealestateeastahmedabad/?hl=en'}
-                  onChange={(e) => updateSectionField('company_info', ['eastInsta'], e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                  value={contactData.whatsapp || '919727027052'}
+                  onChange={(e) => updateSectionField('company_info', ['whatsapp'], e.target.value)}
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
                 />
               </div>
+            </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-[11px] text-slate-500 mb-1">West Ahmedabad Instagram</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Contact Email</label>
                 <input
-                  type="text"
-                  value={contactData.westInsta || 'https://www.instagram.com/veer.real_estate/'}
-                  onChange={(e) => updateSectionField('company_info', ['westInsta'], e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                  type="email"
+                  value={contactData.email || 'info@veerrealestate.com'}
+                  onChange={(e) => updateSectionField('company_info', ['email'], e.target.value)}
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
                 />
               </div>
-
               <div>
-                <label className="block text-[11px] text-slate-500 mb-1">YouTube Channel</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Physical Office Address</label>
                 <input
                   type="text"
-                  value={contactData.youtube || 'https://www.youtube.com/@VeerRealEstate'}
-                  onChange={(e) => updateSectionField('company_info', ['youtube'], e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                  value={contactData.address || 'Ahmedabad, Gujarat, India'}
+                  onChange={(e) => updateSectionField('company_info', ['address'], e.target.value)}
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs"
                 />
               </div>
+            </div>
 
-              <div>
-                <label className="block text-[11px] text-slate-500 mb-1">LinkedIn Profile</label>
-                <input
-                  type="text"
-                  value={contactData.linkedin || 'https://www.linkedin.com/company/veer-real-estate-ahmedabad/?viewAsMember=true'}
-                  onChange={(e) => updateSectionField('company_info', ['linkedin'], e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
-                />
+            {/* Social Links */}
+            <div className="pt-2 border-t border-slate-100">
+              <label className="block text-xs font-bold text-slate-700 mb-3">Company Social Media URLs</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] text-slate-500 mb-1">East Ahmedabad Facebook</label>
+                  <input
+                    type="text"
+                    value={contactData.eastFb || 'https://www.facebook.com/people/Veer-Real-Estate-East-Ahmedabad/61571731020972/'}
+                    onChange={(e) => updateSectionField('company_info', ['eastFb'], e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] text-slate-500 mb-1">West Ahmedabad Facebook</label>
+                  <input
+                    type="text"
+                    value={contactData.westFb || 'https://www.facebook.com/people/Veer-Real-Estate/61558935522154/'}
+                    onChange={(e) => updateSectionField('company_info', ['westFb'], e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] text-slate-500 mb-1">East Ahmedabad Instagram</label>
+                  <input
+                    type="text"
+                    value={contactData.eastInsta || 'https://www.instagram.com/veerrealestateeastahmedabad/?hl=en'}
+                    onChange={(e) => updateSectionField('company_info', ['eastInsta'], e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] text-slate-500 mb-1">West Ahmedabad Instagram</label>
+                  <input
+                    type="text"
+                    value={contactData.westInsta || 'https://www.instagram.com/veer.real_estate/'}
+                    onChange={(e) => updateSectionField('company_info', ['westInsta'], e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] text-slate-500 mb-1">YouTube Channel</label>
+                  <input
+                    type="text"
+                    value={contactData.youtube || 'https://www.youtube.com/@VeerRealEstate'}
+                    onChange={(e) => updateSectionField('company_info', ['youtube'], e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] text-slate-500 mb-1">LinkedIn Profile</label>
+                  <input
+                    type="text"
+                    value={contactData.linkedin || 'https://www.linkedin.com/company/veer-real-estate-ahmedabad/?viewAsMember=true'}
+                    onChange={(e) => updateSectionField('company_info', ['linkedin'], e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -1884,3 +3108,4 @@ export default function WebsiteManagementTab({ initialSubTab }: { initialSubTab?
     </div>
   );
 }
+

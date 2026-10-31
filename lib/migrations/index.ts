@@ -15,7 +15,7 @@ export async function runMigrations(): Promise<void> {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
       `);
 
-      const [migRows]: any = await conn.query('SELECT version FROM _schema_migrations WHERE version = 4');
+      const [migRows]: any = await conn.query('SELECT version FROM _schema_migrations WHERE version = 5');
       if (migRows && migRows.length > 0) {
         return;
       }
@@ -609,10 +609,48 @@ export async function runMigrations(): Promise<void> {
         console.log('[migrations] Default SEO settings seeded.');
       }
 
+      // 6. Branches table
+      await conn.query(`
+        CREATE TABLE IF NOT EXISTS branches (
+          id VARCHAR(64) PRIMARY KEY,
+          name VARCHAR(150) NOT NULL,
+          displayTitle VARCHAR(200) NOT NULL,
+          address TEXT NOT NULL,
+          city VARCHAR(100) DEFAULT 'Ahmedabad',
+          state VARCHAR(100) DEFAULT 'Gujarat',
+          postalCode VARCHAR(20) DEFAULT '380052',
+          country VARCHAR(50) DEFAULT 'India',
+          phones JSON NOT NULL,
+          email VARCHAR(150),
+          whatsapp VARCHAR(50),
+          mapUrl TEXT,
+          mapEmbedUrl TEXT,
+          facebook TEXT,
+          instagram TEXT,
+          youtube TEXT,
+          googleReview TEXT,
+          linkedin TEXT,
+          isActive TINYINT(1) DEFAULT 1,
+          displayOrder INT DEFAULT 0,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          INDEX idx_branches_order (displayOrder),
+          INDEX idx_branches_active (isActive)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+      `);
+
+      // 7. Add marketingConsent to crm_inquiries if missing
+      const [crmMarketingCols]: any = await conn.query('SHOW COLUMNS FROM crm_inquiries');
+      const crmMarketingNames = crmMarketingCols.map((c: any) => c.Field);
+      if (!crmMarketingNames.includes('marketingConsent')) {
+        await conn.query('ALTER TABLE crm_inquiries ADD COLUMN marketingConsent TINYINT(1) DEFAULT 0');
+      }
+
       // Record migration version
       await conn.query('INSERT IGNORE INTO _schema_migrations (version) VALUES (2)');
       await conn.query('INSERT IGNORE INTO _schema_migrations (version) VALUES (3)');
       await conn.query('INSERT IGNORE INTO _schema_migrations (version) VALUES (4)');
+      await conn.query('INSERT IGNORE INTO _schema_migrations (version) VALUES (5)');
 
       console.log('[migrations] All migrations completed successfully.');
     } catch (err) {
