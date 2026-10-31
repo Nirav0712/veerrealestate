@@ -92,6 +92,8 @@ export async function getAuthenticatedAdmin(
         crm: ['view', 'create', 'edit', 'delete', 'export'],
         seo: ['view', 'edit'],
         social_videos: ['view', 'create', 'edit', 'delete'],
+        content: ['view', 'edit'],
+        media: ['view', 'create', 'delete'],
         users: ['view', 'create', 'edit', 'delete'],
         roles: ['view', 'create', 'edit', 'delete'],
       };

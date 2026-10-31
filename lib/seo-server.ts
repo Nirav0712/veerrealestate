@@ -23,3 +23,4 @@ export async function getSeoSettingsServer(): Promise<SeoSettings> {
   }
   return DEFAULT_SEO_CONFIG;
 }
+

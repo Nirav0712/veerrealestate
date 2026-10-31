@@ -1,77 +1,65 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 export default function AboutPage() {
+    const [content, setContent] = useState<any>({});
+
+    useEffect(() => {
+        fetch('/api/content?key=page_about_us')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data && data.contentData) {
+                    setContent(data.contentData);
+                }
+            })
+            .catch(err => console.error('Error loading about us page content:', err));
+    }, []);
+
     return (
         <>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
 
             {/* Hero Section */}
             <section className="relative bg-linear-to-br from-secondary to-secondary-light text-white py-12 md:py-24">
                 <div className="container mx-auto px-4">
                     <div className="max-w-3xl mx-auto text-center">
-                        <h1 className="text-5xl md:text-6xl font-bold mb-6">About Veer Real Estate</h1>
+                        <h1 className="text-5xl md:text-6xl font-bold mb-6">
+                            {content.heroTitle || 'About Veer Real Estate'}
+                        </h1>
                         <p className="text-lg md:text-xl lg:text-xl opacity-95">
-                            Trusted Real Estate Broker in Ahmedabad
+                            {content.heroSubtitle || 'Trusted Real Estate Broker in Ahmedabad'}
                         </p>
                     </div>
                 </div>
             </section>
 
-            {/* Our Story */}
+            {/* Our Story / Founder Spotlight */}
             <section className="py-10 md:py-20">
-
                 <div className="container mx-auto px-4">
-
-                    {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div>
-                            <h2 className="text-4xl font-bold text-secondary mb-6">Our Story</h2>
-                            <p className="text-gray-600 leading-relaxed mb-4">
-                                Founded in 2012, Veer Real Estate has grown from a small local real estate agency to one of the most trusted
-                                property platforms in the country. Our journey began with a simple mission: to make property buying
-                                and renting accessible, transparent, and stress-free for everyone.
-                            </p>
-                            <p className="text-gray-600 leading-relaxed mb-4">
-                                Over the years, we've helped thousands of families find their dream homes, investors discover lucrative
-                                opportunities, and property owners connect with the right buyers and tenants.
-                            </p>
-                            <p className="text-gray-600 leading-relaxed">
-                                Today, we're proud to offer a comprehensive platform that combines cutting-edge technology with
-                                personalized service, making your property journey smooth and successful.
-                            </p>
-                        </div>
-                        <div className="relative h-96 rounded-2xl overflow-hidden shadow-lg">
-                            <Image
-                                src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80"
-                                alt="About Veer RealEstate"
-                                fill
-                                className="object-cover"
-                            />
-                        </div>
-                    </div> */}
-
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:gap-16 items-center">
                         <div className="p-6 md:p-12 lg:p-16 order-2 md:order-1">
                             <p className="text-secondary font-bold mb-3">
-                                Meet Our Founder
+                                {content.founderTitle || 'Meet Our Founder'}
                             </p>
                             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#16243E] mb-6">
-                                SUDHIR PRAJAPATI
+                                {content.founderName || 'SUDHIR PRAJAPATI'}
                             </h2>
                             <p className="text-gray-500 leading-relaxed mb-4 text-base md:text-lg lg:text-xl">
-                                Our founder continues to guide the company with strategic insight and a client-first approach — ensuring that every real estate transaction delivers exceptional value and long-term success.
+                                {content.founderParagraph1 ||
+                                    'Our founder continues to guide the company with strategic insight and a client-first approach — ensuring that every real estate transaction delivers exceptional value and long-term success.'}
                             </p>
                             <p className="text-gray-500 leading-relaxed text-base md:text-lg lg:text-xl">
-                                With a strong focus on integrity and innovation, we aim to redefine the property experience for buyers, sellers, and investors alike.
+                                {content.founderParagraph2 ||
+                                    'With a strong focus on integrity and innovation, we aim to redefine the property experience for buyers, sellers, and investors alike.'}
                             </p>
                         </div>
                         <div className="relative w-full h-[350px] md:h-[500px] order-1 md:order-2 rounded-2xl overflow-hidden border-2 border-[#e4c272] shadow-xl group transform transition duration-500 hover:-translate-y-3">
                             <img
-                                src="/images/team/sudhir.jpeg"
-                                alt="sudhir"
-                                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                src={content.founderImage || '/images/team/sudhir.jpeg'}
+                                alt={content.founderName || 'Sudhir Prajapati'}
+                                className="object-cover transition-transform duration-700 group-hover:scale-110 h-full w-full"
                             />
                         </div>
                     </div>

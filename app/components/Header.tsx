@@ -1,10 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [headerConfig, setHeaderConfig] = useState<any>({});
+
+    useEffect(() => {
+        fetch('/api/content?key=header_config')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data?.contentData) setHeaderConfig(data.contentData);
+            })
+            .catch(() => {});
+    }, []);
 
     return (
         <>
@@ -15,8 +25,11 @@ export default function Header() {
                     <nav className="flex items-center justify-between py-4">
                         {/* Logo */}
                         <Link href="/" className="text-2xl font-bold text-secondary">
-                            {/* Veer<span className="text-primary">RealEstate</span> */}
-                            <img src="/images/veer-logo-old.png" alt="veer-logo" className="w-40" />
+                            <img
+                                src={headerConfig.logoUrl || '/images/veer-logo-old.png'}
+                                alt={headerConfig.logoAlt || 'Veer Real Estate'}
+                                className="w-40"
+                            />
                         </Link>
                         {/* Desktop Menu */}
                         <ul className="hidden lg:flex items-center gap-8">

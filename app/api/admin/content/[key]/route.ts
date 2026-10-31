@@ -6,6 +6,50 @@ import { ensureSchema } from '@/lib/migrate';
 import { requireAdmin } from '@/lib/auth';
 import type { RowDataPacket } from 'mysql2';
 
+// GET /api/admin/content/[key] - Protected: Admin fetch single content section
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ key: string }> }
+) {
+  try {
+    const authResult = await requireAdmin(req);
+    if ('errorResponse' in authResult) return authResult.errorResponse;
+
+    await ensureSchema();
+    const { key } = await params;
+
+    const [rows] = await pool.query<RowDataPacket[]>(
+      'SELECT sectionKey, title, contentData, updatedBy, updated_at FROM website_content WHERE sectionKey = ? LIMIT 1',
+      [key]
+    );
+
+    if (rows.length === 0) {
+      return NextResponse.json({ error: 'Section not found' }, { status: 404 });
+    }
+
+    const row = rows[0];
+    let data = row.contentData;
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+      } catch {
+        data = {};
+      }
+    }
+
+    return NextResponse.json({
+      sectionKey: row.sectionKey,
+      title: row.title,
+      contentData: data,
+      updatedBy: row.updatedBy,
+      updated_at: row.updated_at,
+    });
+  } catch (error: any) {
+    console.error('[admin/content/[key]] Error fetching content section:', error);
+    return NextResponse.json({ error: error?.message || 'Failed to fetch content' }, { status: 500 });
+  }
+}
+
 // PUT /api/admin/content/[key] - Protected: Admin update structured content section
 export async function PUT(
   req: NextRequest,

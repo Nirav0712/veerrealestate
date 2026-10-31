@@ -1,7 +1,7 @@
 "use client";
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 interface FormData {
     name: string;
@@ -26,6 +26,18 @@ export default function ContactPage() {
     });
 
     const [loading, setLoading] = useState(false);
+    const [contactInfo, setContactInfo] = useState<any>({});
+
+    useEffect(() => {
+        fetch('/api/content?key=page_contact_us')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data?.contentData) {
+                    setContactInfo(data.contentData);
+                }
+            })
+            .catch(err => console.error('Error fetching contact info:', err));
+    }, []);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -69,7 +81,7 @@ export default function ContactPage() {
             console.error('Inquiry persistence error:', err);
         }
 
-        const phoneNumber = "919727027052";
+        const phoneNumber = (contactInfo.whatsapp || "919727027052").replace(/[^0-9]/g, '');
 
         const message =
             `*New Contact Form Message*%0A%0A` +

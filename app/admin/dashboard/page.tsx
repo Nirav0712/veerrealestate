@@ -47,6 +47,7 @@ import { generateKeywordSuggestions } from '@/lib/seo';
 import CrmKanbanView from './components/CrmKanbanView';
 import SeoSettingsForm from './components/SeoSettingsForm';
 import UserManagementTab from './components/UserManagementTab';
+import WebsiteManagementTab from './components/WebsiteManagementTab';
 
 type ActiveTab =
   | 'dashboard'
@@ -1477,8 +1478,11 @@ export default function AdminDashboard() {
             >
               <div className="flex items-center gap-3">
                 <Globe className="w-4 h-4" />
-                <span>Website Content</span>
+                <span>Website Management</span>
               </div>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${activeTab === 'content' ? 'bg-slate-950/20 text-slate-950' : 'bg-amber-500/20 text-amber-400'}`}>
+                CMS
+              </span>
             </button>
 
             <button
@@ -2863,207 +2867,10 @@ export default function AdminDashboard() {
         )}
 
         {/* ========================================================
-            TAB 7: WEBSITE CONTENT MANAGEMENT
+            TAB 7: CENTRALIZED WEBSITE MANAGEMENT CMS
             ======================================================== */}
         {activeTab === 'content' && (
-          <div className="space-y-6 animate-in fade-in duration-200">
-            {/* Section selector buttons */}
-            <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
-              {[
-                { key: 'hero_slides', label: 'Homepage Hero Slides' },
-                { key: 'company_info', label: 'Company Contact & Socials' },
-                { key: 'about_us', label: 'About Us Content' },
-              ].map((sec) => (
-                <button
-                  key={sec.key}
-                  onClick={() => setContentSectionKey(sec.key as any)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    contentSectionKey === sec.key
-                      ? 'bg-amber-500 text-slate-950 shadow-xs'
-                      : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
-                  }`}
-                >
-                  {sec.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Dynamic Section Editor */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-slate-900 capitalize">
-                    Edit {contentSectionKey.replace('_', ' ')}
-                  </h3>
-                  <p className="text-xs text-slate-500">Live data rendered on public pages</p>
-                </div>
-                <button
-                  onClick={saveWebsiteContentSection}
-                  className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider shadow-sm flex items-center gap-2 cursor-pointer"
-                >
-                  <Save className="w-4 h-4" /> Save Section
-                </button>
-              </div>
-
-              {/* HERO SLIDES EDITOR */}
-              {contentSectionKey === 'hero_slides' && (
-                <div className="space-y-4">
-                  {(editableContent.slides || []).map((sl: any, idx: number) => (
-                    <div key={idx} className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-amber-700">Slide #{idx + 1}</span>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                        <div>
-                          <label className="block text-slate-600 font-semibold mb-1">Image URL</label>
-                          <input
-                            type="text"
-                            value={sl.image || ''}
-                            onChange={(e) => {
-                              const updated = [...editableContent.slides];
-                              updated[idx].image = e.target.value;
-                              setEditableContent({ ...editableContent, slides: updated });
-                            }}
-                            className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-slate-600 font-semibold mb-1">Headline Title</label>
-                          <input
-                            type="text"
-                            value={sl.title || ''}
-                            onChange={(e) => {
-                              const updated = [...editableContent.slides];
-                              updated[idx].title = e.target.value;
-                              setEditableContent({ ...editableContent, slides: updated });
-                            }}
-                            className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white"
-                          />
-                        </div>
-                      </div>
-                      <div className="text-xs">
-                        <label className="block text-slate-600 font-semibold mb-1">Subtitle</label>
-                        <input
-                          type="text"
-                          value={sl.subtitle || ''}
-                          onChange={(e) => {
-                            const updated = [...editableContent.slides];
-                            updated[idx].subtitle = e.target.value;
-                            setEditableContent({ ...editableContent, slides: updated });
-                          }}
-                          className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* COMPANY INFO EDITOR */}
-              {contentSectionKey === 'company_info' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                  <div>
-                    <label className="font-semibold text-slate-700 mb-1 block">Company Name</label>
-                    <input
-                      type="text"
-                      value={editableContent.companyName || ''}
-                      onChange={(e) => setEditableContent({ ...editableContent, companyName: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-semibold text-slate-700 mb-1 block">Contact Phone</label>
-                    <input
-                      type="text"
-                      value={editableContent.phone || ''}
-                      onChange={(e) => setEditableContent({ ...editableContent, phone: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-semibold text-slate-700 mb-1 block">WhatsApp Number (e.g. 919727027052)</label>
-                    <input
-                      type="text"
-                      value={editableContent.whatsapp || ''}
-                      onChange={(e) => setEditableContent({ ...editableContent, whatsapp: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-semibold text-slate-700 mb-1 block">Email</label>
-                    <input
-                      type="text"
-                      value={editableContent.email || ''}
-                      onChange={(e) => setEditableContent({ ...editableContent, email: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-semibold text-slate-700 mb-1 block">Years of Experience</label>
-                    <input
-                      type="text"
-                      value={editableContent.experienceYears || ''}
-                      onChange={(e) => setEditableContent({ ...editableContent, experienceYears: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-semibold text-slate-700 mb-1 block">Properties Sold Counter</label>
-                    <input
-                      type="text"
-                      value={editableContent.propertiesSold || ''}
-                      onChange={(e) => setEditableContent({ ...editableContent, propertiesSold: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* ABOUT US CONTENT EDITOR */}
-              {contentSectionKey === 'about_us' && (
-                <div className="space-y-4 text-xs">
-                  <div>
-                    <label className="font-semibold text-slate-700 mb-1 block">Main Heading</label>
-                    <input
-                      type="text"
-                      value={editableContent.heading || ''}
-                      onChange={(e) => setEditableContent({ ...editableContent, heading: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-semibold text-slate-700 mb-1 block">Detailed Description</label>
-                    <textarea
-                      rows={4}
-                      value={editableContent.description || ''}
-                      onChange={(e) => setEditableContent({ ...editableContent, description: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="font-semibold text-slate-700 mb-1 block">Founder Name</label>
-                      <input
-                        type="text"
-                        value={editableContent.founderName || ''}
-                        onChange={(e) => setEditableContent({ ...editableContent, founderName: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200"
-                      />
-                    </div>
-                    <div>
-                      <label className="font-semibold text-slate-700 mb-1 block">Founder Role</label>
-                      <input
-                        type="text"
-                        value={editableContent.founderRole || ''}
-                        onChange={(e) => setEditableContent({ ...editableContent, founderRole: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          <WebsiteManagementTab />
         )}
 
         {/* ========================================================
