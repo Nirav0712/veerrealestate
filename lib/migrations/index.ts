@@ -15,7 +15,7 @@ export async function runMigrations(): Promise<void> {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
       `);
 
-      const [migRows]: any = await conn.query('SELECT version FROM _schema_migrations WHERE version = 5');
+      const [migRows]: any = await conn.query('SELECT version FROM _schema_migrations WHERE version = 6');
       if (migRows && migRows.length > 0) {
         return;
       }
@@ -646,11 +646,27 @@ export async function runMigrations(): Promise<void> {
         await conn.query('ALTER TABLE crm_inquiries ADD COLUMN marketingConsent TINYINT(1) DEFAULT 0');
       }
 
+      // 8. Uploaded Files table for serverless / Vercel cloud storage fallback
+      await conn.query(`
+        CREATE TABLE IF NOT EXISTS uploaded_files (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          filename VARCHAR(255) NOT NULL UNIQUE,
+          folder VARCHAR(50) DEFAULT 'uploads',
+          mimeType VARCHAR(100) NOT NULL,
+          size INT NOT NULL,
+          data LONGBLOB NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          INDEX idx_uploaded_filename (filename),
+          INDEX idx_uploaded_folder (folder)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+      `);
+
       // Record migration version
       await conn.query('INSERT IGNORE INTO _schema_migrations (version) VALUES (2)');
       await conn.query('INSERT IGNORE INTO _schema_migrations (version) VALUES (3)');
       await conn.query('INSERT IGNORE INTO _schema_migrations (version) VALUES (4)');
       await conn.query('INSERT IGNORE INTO _schema_migrations (version) VALUES (5)');
+      await conn.query('INSERT IGNORE INTO _schema_migrations (version) VALUES (6)');
 
       console.log('[migrations] All migrations completed successfully.');
     } catch (err) {

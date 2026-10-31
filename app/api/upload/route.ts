@@ -4,9 +4,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join, basename } from 'path';
 import { existsSync } from 'fs';
+import pool from '@/lib/db';
+import { ensureSchema } from '@/lib/migrate';
 import { requireAdmin } from '@/lib/auth';
 
-// 20 MB strict limit in bytes
+// 20 MB strict limit in bytes for images
 const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
 // 30 MB for documents (PDF brochures / plans)
 const MAX_DOC_SIZE = 30 * 1024 * 1024;
@@ -63,6 +65,52 @@ function validateMagicBytes(buffer: Buffer): { valid: boolean; detectedMime?: st
   return { valid: false };
 }
 
+/**
+ * Upload to Cloudinary if environment variables are configured.
+ */
+async function uploadToCloudinary(buffer: Buffer, filename: string, isDocument: boolean): Promise<string | null> {
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+  const apiKey = process.env.CLOUDINARY_API_KEY;
+  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+  if (!cloudName || !apiKey || !apiSecret) {
+    return null;
+  }
+
+  try {
+    const crypto = await import('crypto');
+    const timestamp = Math.round(new Date().getTime() / 1000);
+    const folder = isDocument ? 'veer_documents' : 'veer_uploads';
+    const paramsToSign = `folder=${folder}&timestamp=${timestamp}${apiSecret}`;
+    const signature = crypto.createHash('sha1').update(paramsToSign).digest('hex');
+
+    const form = new FormData();
+    const blob = new Blob([new Uint8Array(buffer)]);
+    form.append('file', blob, filename);
+    form.append('api_key', apiKey);
+    form.append('timestamp', String(timestamp));
+    form.append('signature', signature);
+    form.append('folder', folder);
+
+    const resourceType = isDocument ? 'raw' : 'image';
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, {
+      method: 'POST',
+      body: form,
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      return data.secure_url || data.url || null;
+    } else {
+      console.warn('[upload] Cloudinary upload returned non-200:', await res.text());
+      return null;
+    }
+  } catch (err) {
+    console.warn('[upload] Cloudinary upload failed, falling back to database:', err);
+    return null;
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     // 1. Verify admin authorization
@@ -70,6 +118,8 @@ export async function POST(request: NextRequest) {
     if ('errorResponse' in authResult) {
       return authResult.errorResponse;
     }
+
+    await ensureSchema();
 
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
@@ -129,16 +179,54 @@ export async function POST(request: NextRequest) {
     const safeName = rawName.replace(/[^a-zA-Z0-9.-]/g, '_').substring(0, 80);
     const uniquePrefix = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
     const uniqueFilename = `${uniquePrefix}-${safeName}`;
-
     const subfolder = isDocument ? 'documents' : 'uploads';
-    const uploadDir = join(process.cwd(), 'public', subfolder);
 
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
+    // 6. Check Cloudinary first if configured
+    const cloudinaryUrl = await uploadToCloudinary(buffer, uniqueFilename, isDocument);
+    if (cloudinaryUrl) {
+      // Also register metadata in uploaded_files for Media Library listing
+      try {
+        await pool.query(
+          `INSERT INTO uploaded_files (filename, folder, mimeType, size, data)
+           VALUES (?, ?, ?, ?, ?)
+           ON DUPLICATE KEY UPDATE mimeType = VALUES(mimeType), size = VALUES(size)`,
+          [uniqueFilename, subfolder, magicCheck.detectedMime, file.size, Buffer.from(cloudinaryUrl, 'utf8')]
+        );
+      } catch (dbErr) {
+        console.warn('[upload] Error saving cloudinary reference in DB:', dbErr);
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'File uploaded successfully to cloud storage',
+        url: cloudinaryUrl,
+        fileName: safeName,
+        size: file.size,
+        mimeType: magicCheck.detectedMime,
+      });
     }
 
-    const filePath = join(uploadDir, uniqueFilename);
-    await writeFile(filePath, buffer);
+    // 7. Store in Hostinger MySQL uploaded_files table (guaranteed persistent across serverless instances)
+    await pool.query(
+      `INSERT INTO uploaded_files (filename, folder, mimeType, size, data)
+       VALUES (?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE mimeType = VALUES(mimeType), size = VALUES(size), data = VALUES(data)`,
+      [uniqueFilename, subfolder, magicCheck.detectedMime, file.size, buffer]
+    );
+
+    // 8. Try local disk write (works on local development / persistent VPS, safely catches and ignores on Vercel)
+    try {
+      const uploadDir = join(process.cwd(), 'public', subfolder);
+      if (!existsSync(uploadDir)) {
+        await mkdir(uploadDir, { recursive: true });
+      }
+      const filePath = join(uploadDir, uniqueFilename);
+      await writeFile(filePath, buffer);
+    } catch (fsErr: any) {
+      // Expected on Vercel / AWS Lambda read-only container: /var/task is read-only.
+      // File is already securely stored in MySQL and served by app/uploads/[filename]/route.ts!
+      console.log('[upload] Serverless environment detected; file stored in MySQL database.');
+    }
 
     const publicUrl = `/${subfolder}/${uniqueFilename}`;
 
